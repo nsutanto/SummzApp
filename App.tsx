@@ -5,6 +5,7 @@
  * @format
  */
 
+import React from 'react';
 import { StatusBar, StyleSheet, useColorScheme } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
@@ -12,6 +13,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { enableScreens } from 'react-native-screens';
 import LoginScreen from './src/screens/LoginScreen';
 import MainScreen from './src/screens/MainScreen';
+import { AuthProvider } from './src/context/AuthContext';
 
 // Enable screens for iOS
 enableScreens();
@@ -22,23 +24,25 @@ function App() {
   const isDarkMode = useColorScheme() === 'dark';
 
   return (
-    <SafeAreaProvider>
-      <NavigationContainer>
-        <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-        <Stack.Navigator initialRouteName="LoginScreen">
-          <Stack.Screen 
-            name="LoginScreen" 
-            component={LoginScreen}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen 
-            name="MainScreen" 
-            component={MainScreen}
-            options={{ headerShown: false }}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </SafeAreaProvider>
+    <AuthProvider>
+      <SafeAreaProvider>
+        <NavigationContainer>
+          <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+          <Stack.Navigator initialRouteName="LoginScreen">
+            <Stack.Screen 
+              name="LoginScreen" 
+              component={LoginScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen 
+              name="MainScreen" 
+              component={MainScreen}
+              options={{ headerShown: false }}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </SafeAreaProvider>
+    </AuthProvider>
   );
 }
 
