@@ -5,12 +5,19 @@ import { useNavigation } from '@react-navigation/native';
 const MainScreen = () => {
   const navigation = useNavigation();
 
+  const handleLogout = () => {
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'LoginScreen' }],
+    });
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Main Screen</Text>
       <Button
         title="Logout"
-        onPress={() => navigation.navigate('LoginScreen')}
+        onPress={handleLogout}
       />
     </View>
   );
