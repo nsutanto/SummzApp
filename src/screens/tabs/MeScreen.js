@@ -34,10 +34,6 @@ const MeScreen = () => {
 
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Profile</Text>
-      </View>
-      
       <View style={styles.content}>
         {user && (
           <View style={styles.profileCard}>
@@ -55,34 +51,30 @@ const MeScreen = () => {
           </View>
         )}
         
+        {/* Account Section */}
         <View style={styles.section}>
+          <Text style={styles.sectionHeader}>Account</Text>
+          
           <TouchableOpacity style={styles.menuItem}>
-            <Text style={styles.menuIcon}>⚙️</Text>
-            <Text style={styles.menuText}>Settings</Text>
+            <Text style={styles.menuIcon}>👤</Text>
+            <Text style={styles.menuText}>View Profile</Text>
             <Text style={styles.menuArrow}>›</Text>
           </TouchableOpacity>
           
-          <TouchableOpacity style={styles.menuItem}>
-            <Text style={styles.menuIcon}>🔔</Text>
-            <Text style={styles.menuText}>Notifications</Text>
+          <TouchableOpacity style={[styles.menuItem, styles.lastMenuItem]}>
+            <Text style={styles.menuIcon}>💳</Text>
+            <Text style={styles.menuText}>Subscription</Text>
             <Text style={styles.menuArrow}>›</Text>
           </TouchableOpacity>
+        </View>
+        
+        {/* App Settings Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionHeader}>App Settings</Text>
           
-          <TouchableOpacity style={styles.menuItem}>
-            <Text style={styles.menuIcon}>💾</Text>
-            <Text style={styles.menuText}>Storage & Sync</Text>
-            <Text style={styles.menuArrow}>›</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.menuItem}>
-            <Text style={styles.menuIcon}>❓</Text>
-            <Text style={styles.menuText}>Help & Support</Text>
-            <Text style={styles.menuArrow}>›</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.menuItem}>
-            <Text style={styles.menuIcon}>📄</Text>
-            <Text style={styles.menuText}>Privacy Policy</Text>
+          <TouchableOpacity style={[styles.menuItem, styles.lastMenuItem]}>
+            <Text style={styles.menuIcon}>🔤</Text>
+            <Text style={styles.menuText}>Text Size</Text>
             <Text style={styles.menuArrow}>›</Text>
           </TouchableOpacity>
         </View>
@@ -100,20 +92,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f8f9fa',
   },
-  header: {
-    backgroundColor: '#fff',
-    padding: 20,
-    paddingTop: 60,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e9ecef',
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#333',
-  },
   content: {
     padding: 20,
+    paddingTop: 60,
   },
   profileCard: {
     backgroundColor: '#fff',
@@ -157,7 +138,7 @@ const styles = StyleSheet.create({
   section: {
     backgroundColor: '#fff',
     borderRadius: 12,
-    marginBottom: 30,
+    marginBottom: 20,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -167,12 +148,26 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
+  sectionHeader: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 8,
+    backgroundColor: '#f8f9fa',
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+  },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#f1f3f4',
+  },
+  lastMenuItem: {
+    borderBottomWidth: 0,
   },
   menuIcon: {
     fontSize: 20,

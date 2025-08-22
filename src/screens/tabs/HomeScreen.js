@@ -7,16 +7,16 @@ const HomeScreen = () => {
 
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Home</Text>
-        {user && (
-          <Text style={styles.welcomeText}>
-            Welcome back, {user.displayName || user.email || 'User'}!
-          </Text>
-        )}
-      </View>
-      
       <View style={styles.content}>
+        {user && (
+          <View style={styles.welcomeCard}>
+            <Text style={styles.welcomeTitle}>Welcome back!</Text>
+            <Text style={styles.welcomeText}>
+              {user.displayName || user.email || 'User'}
+            </Text>
+          </View>
+        )}
+        
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Recent Activity</Text>
           <Text style={styles.cardText}>Your recent summaries will appear here</Text>
@@ -38,25 +38,34 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f8f9fa',
   },
-  header: {
-    backgroundColor: '#fff',
+  content: {
     padding: 20,
     paddingTop: 60,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e9ecef',
   },
-  title: {
-    fontSize: 28,
+  welcomeCard: {
+    backgroundColor: '#4285F4',
+    padding: 20,
+    borderRadius: 12,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  welcomeTitle: {
+    fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#fff',
     marginBottom: 5,
   },
   welcomeText: {
     fontSize: 16,
-    color: '#666',
-  },
-  content: {
-    padding: 20,
+    color: '#fff',
+    opacity: 0.9,
   },
   card: {
     backgroundColor: '#fff',

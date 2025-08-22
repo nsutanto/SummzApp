@@ -4,11 +4,6 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-nati
 const LibraryScreen = () => {
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Library</Text>
-        <Text style={styles.subtitle}>Your saved summaries and collections</Text>
-      </View>
-      
       <View style={styles.content}>
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Recent Summaries</Text>
@@ -50,25 +45,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f8f9fa',
   },
-  header: {
-    backgroundColor: '#fff',
-    padding: 20,
-    paddingTop: 60,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e9ecef',
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 5,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
-  },
   content: {
     padding: 20,
+    paddingTop: 60,
   },
   section: {
     marginBottom: 30,
