@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { commonStyles, colors, spacing } from '../../styles';
+import { EmptyState } from '../../components';
 
 const LibraryScreen = () => {
   return (
@@ -8,14 +9,13 @@ const LibraryScreen = () => {
       <View style={commonStyles.content}>
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Recent Summaries</Text>
-          <View style={styles.emptyState}>
-            <Text style={styles.emptyIcon}>📖</Text>
-            <Text style={styles.emptyTitle}>No summaries yet</Text>
-            <Text style={styles.emptyText}>Start creating summaries to see them here</Text>
-            <TouchableOpacity style={styles.createButton}>
-              <Text style={commonStyles.buttonText}>Create Your First Summary</Text>
-            </TouchableOpacity>
-          </View>
+          <EmptyState
+            icon="📖"
+            title="No summaries yet"
+            description="Start creating summaries to see them here"
+            buttonText="Create Your First Summary"
+            onButtonPress={() => {}}
+          />
         </View>
         
         <View style={styles.section}>
@@ -50,42 +50,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: colors.text.primary,
     marginBottom: spacing.md,
-  },
-  emptyState: {
-    backgroundColor: colors.white,
-    padding: spacing.xxl,
-    borderRadius: 12,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  emptyIcon: {
-    fontSize: 48,
-    marginBottom: spacing.md,
-  },
-  emptyTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: colors.text.primary,
-    marginBottom: 8,
-  },
-  emptyText: {
-    fontSize: 14,
-    color: colors.text.secondary,
-    textAlign: 'center',
-    marginBottom: spacing.lg,
-  },
-  createButton: {
-    backgroundColor: colors.primary,
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 8,
   },
   collectionCard: {
     backgroundColor: colors.white,

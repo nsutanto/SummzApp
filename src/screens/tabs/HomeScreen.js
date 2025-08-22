@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import { commonStyles, colors, spacing } from '../../styles';
+import { Card } from '../../components';
 
 const HomeScreen = () => {
   const { user } = useAuth();
@@ -18,17 +19,17 @@ const HomeScreen = () => {
           </View>
         )}
         
-        <View style={commonStyles.card}>
+        <Card>
           <Text style={styles.cardTitle}>Recent Activity</Text>
           <Text style={styles.cardText}>Your recent summaries will appear here</Text>
-        </View>
+        </Card>
         
-        <View style={commonStyles.card}>
+        <Card>
           <Text style={styles.cardTitle}>Quick Actions</Text>
           <TouchableOpacity style={styles.actionButton}>
             <Text style={commonStyles.buttonText}>Create New Summary</Text>
           </TouchableOpacity>
-        </View>
+        </Card>
       </View>
     </ScrollView>
   );

@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { commonStyles, colors, spacing } from '../../styles';
+import { CategoryCard } from '../../components';
 
 const ExploreScreen = () => {
   return (
@@ -9,22 +10,26 @@ const ExploreScreen = () => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Trending Categories</Text>
           <View style={styles.categoryGrid}>
-            <TouchableOpacity style={styles.categoryCard}>
-              <Text style={styles.categoryEmoji}>📚</Text>
-              <Text style={styles.categoryText}>Education</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.categoryCard}>
-              <Text style={styles.categoryEmoji}>💼</Text>
-              <Text style={styles.categoryText}>Business</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.categoryCard}>
-              <Text style={styles.categoryEmoji}>🔬</Text>
-              <Text style={styles.categoryText}>Science</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.categoryCard}>
-              <Text style={styles.categoryEmoji}>🎨</Text>
-              <Text style={styles.categoryText}>Arts</Text>
-            </TouchableOpacity>
+            <CategoryCard 
+              emoji="📚" 
+              title="Education" 
+              onPress={() => {}} 
+            />
+            <CategoryCard 
+              emoji="💼" 
+              title="Business" 
+              onPress={() => {}} 
+            />
+            <CategoryCard 
+              emoji="🔬" 
+              title="Science" 
+              onPress={() => {}} 
+            />
+            <CategoryCard 
+              emoji="🎨" 
+              title="Arts" 
+              onPress={() => {}} 
+            />
           </View>
         </View>
         
@@ -55,31 +60,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-  },
-  categoryCard: {
-    backgroundColor: colors.white,
-    width: '48%',
-    padding: spacing.lg,
-    borderRadius: 12,
-    alignItems: 'center',
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  categoryEmoji: {
-    fontSize: 32,
-    marginBottom: 8,
-  },
-  categoryText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: colors.text.primary,
   },
   summaryCard: {
     backgroundColor: colors.white,

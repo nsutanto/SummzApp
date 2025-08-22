@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'rea
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../context/AuthContext';
 import { commonStyles, colors, spacing } from '../../styles';
+import { Section, MenuItem } from '../../components';
 
 const MeScreen = () => {
   const navigation = useNavigation();
@@ -53,32 +54,29 @@ const MeScreen = () => {
         )}
         
         {/* Account Section */}
-        <View style={commonStyles.section}>
-          <Text style={commonStyles.sectionHeader}>Account</Text>
-          
-          <TouchableOpacity style={commonStyles.menuItem}>
-            <Text style={commonStyles.menuIcon}>👤</Text>
-            <Text style={commonStyles.menuText}>View Profile</Text>
-            <Text style={commonStyles.menuArrow}>›</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={[commonStyles.menuItem, commonStyles.lastMenuItem]}>
-            <Text style={commonStyles.menuIcon}>💳</Text>
-            <Text style={commonStyles.menuText}>Subscription</Text>
-            <Text style={commonStyles.menuArrow}>›</Text>
-          </TouchableOpacity>
-        </View>
+        <Section title="Account">
+          <MenuItem 
+            icon="👤" 
+            text="View Profile" 
+            onPress={() => {}} 
+          />
+          <MenuItem 
+            icon="💳" 
+            text="Subscription" 
+            onPress={() => {}} 
+            isLast={true}
+          />
+        </Section>
         
         {/* App Settings Section */}
-        <View style={commonStyles.section}>
-          <Text style={commonStyles.sectionHeader}>App Settings</Text>
-          
-          <TouchableOpacity style={[commonStyles.menuItem, commonStyles.lastMenuItem]}>
-            <Text style={commonStyles.menuIcon}>🔤</Text>
-            <Text style={commonStyles.menuText}>Text Size</Text>
-            <Text style={commonStyles.menuArrow}>›</Text>
-          </TouchableOpacity>
-        </View>
+        <Section title="App Settings">
+          <MenuItem 
+            icon="🔤" 
+            text="Text Size" 
+            onPress={() => {}} 
+            isLast={true}
+          />
+        </Section>
         
         <TouchableOpacity style={commonStyles.buttonDanger} onPress={handleLogout}>
           <Text style={commonStyles.buttonText}>Logout</Text>
