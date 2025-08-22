@@ -21,7 +21,10 @@ const LoginScreen = () => {
   const handleGoogleSignIn = async () => {
     try {
       await signInWithGoogle();
-      navigation.navigate('MainScreen');
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'MainScreen' }],
+      });
     } catch (error) {
       Alert.alert('Error', error.message);
     }
@@ -39,7 +42,10 @@ const LoginScreen = () => {
       } else {
         await signInWithEmail(email, password);
       }
-      navigation.navigate('MainScreen');
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'MainScreen' }],
+      });
     } catch (error) {
       Alert.alert('Error', error.message);
     }

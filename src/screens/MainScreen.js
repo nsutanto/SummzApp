@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { BackHandler } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useFocusEffect } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 // Import tab screens
@@ -11,6 +13,20 @@ import MeScreen from './tabs/MeScreen';
 const Tab = createBottomTabNavigator();
 
 const MainScreen = () => {
+  // Prevent back button from going to LoginScreen
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        // Return true to prevent default back action
+        return true;
+      };
+
+      const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () => subscription?.remove();
+    }, [])
+  );
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
