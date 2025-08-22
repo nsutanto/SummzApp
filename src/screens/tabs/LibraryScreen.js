@@ -1,10 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { commonStyles, colors, spacing } from '../../styles';
 
 const LibraryScreen = () => {
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.content}>
+    <ScrollView style={commonStyles.container}>
+      <View style={commonStyles.content}>
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Recent Summaries</Text>
           <View style={styles.emptyState}>
@@ -12,7 +13,7 @@ const LibraryScreen = () => {
             <Text style={styles.emptyTitle}>No summaries yet</Text>
             <Text style={styles.emptyText}>Start creating summaries to see them here</Text>
             <TouchableOpacity style={styles.createButton}>
-              <Text style={styles.createButtonText}>Create Your First Summary</Text>
+              <Text style={commonStyles.buttonText}>Create Your First Summary</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -41,26 +42,18 @@ const LibraryScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f8f9fa',
-  },
-  content: {
-    padding: 20,
-    paddingTop: 60,
-  },
   section: {
-    marginBottom: 30,
+    marginBottom: spacing.xl,
   },
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 16,
+    color: colors.text.primary,
+    marginBottom: spacing.md,
   },
   emptyState: {
-    backgroundColor: '#fff',
-    padding: 40,
+    backgroundColor: colors.white,
+    padding: spacing.xxl,
     borderRadius: 12,
     alignItems: 'center',
     shadowColor: '#000',
@@ -74,34 +67,29 @@ const styles = StyleSheet.create({
   },
   emptyIcon: {
     fontSize: 48,
-    marginBottom: 16,
+    marginBottom: spacing.md,
   },
   emptyTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: colors.text.primary,
     marginBottom: 8,
   },
   emptyText: {
     fontSize: 14,
-    color: '#666',
+    color: colors.text.secondary,
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: spacing.lg,
   },
   createButton: {
-    backgroundColor: '#4285F4',
+    backgroundColor: colors.primary,
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 8,
   },
-  createButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
   collectionCard: {
-    backgroundColor: '#fff',
-    padding: 16,
+    backgroundColor: colors.white,
+    padding: spacing.md,
     borderRadius: 12,
     flexDirection: 'row',
     alignItems: 'center',
@@ -117,7 +105,7 @@ const styles = StyleSheet.create({
   },
   collectionIcon: {
     fontSize: 24,
-    marginRight: 16,
+    marginRight: spacing.md,
   },
   collectionInfo: {
     flex: 1,
@@ -125,11 +113,11 @@ const styles = StyleSheet.create({
   collectionName: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
+    color: colors.text.primary,
   },
   collectionCount: {
     fontSize: 14,
-    color: '#666',
+    color: colors.text.secondary,
     marginTop: 2,
   },
 });

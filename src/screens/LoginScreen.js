@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../context/AuthContext';
+import { commonStyles, colors, spacing } from '../styles';
 
 const LoginScreen = () => {
   const navigation = useNavigation();

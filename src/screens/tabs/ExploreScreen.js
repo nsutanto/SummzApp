@@ -1,10 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { commonStyles, colors, spacing } from '../../styles';
 
 const ExploreScreen = () => {
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.content}>
+    <ScrollView style={commonStyles.container}>
+      <View style={commonStyles.content}>
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Trending Categories</Text>
           <View style={styles.categoryGrid}>
@@ -41,22 +42,14 @@ const ExploreScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f8f9fa',
-  },
-  content: {
-    padding: 20,
-    paddingTop: 60,
-  },
   section: {
-    marginBottom: 30,
+    marginBottom: spacing.xl,
   },
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 16,
+    color: colors.text.primary,
+    marginBottom: spacing.md,
   },
   categoryGrid: {
     flexDirection: 'row',
@@ -64,9 +57,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   categoryCard: {
-    backgroundColor: '#fff',
+    backgroundColor: colors.white,
     width: '48%',
-    padding: 20,
+    padding: spacing.lg,
     borderRadius: 12,
     alignItems: 'center',
     marginBottom: 12,
@@ -86,11 +79,11 @@ const styles = StyleSheet.create({
   categoryText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#333',
+    color: colors.text.primary,
   },
   summaryCard: {
-    backgroundColor: '#fff',
-    padding: 20,
+    backgroundColor: colors.white,
+    padding: spacing.lg,
     borderRadius: 12,
     shadowColor: '#000',
     shadowOffset: {
@@ -104,18 +97,18 @@ const styles = StyleSheet.create({
   summaryTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: colors.text.primary,
     marginBottom: 8,
   },
   summaryDescription: {
     fontSize: 14,
-    color: '#666',
+    color: colors.text.secondary,
     marginBottom: 8,
     lineHeight: 20,
   },
   summaryMeta: {
     fontSize: 12,
-    color: '#999',
+    color: colors.text.light,
   },
 });
 

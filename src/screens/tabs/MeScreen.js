@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../context/AuthContext';
+import { commonStyles, colors, spacing } from '../../styles';
 
 const MeScreen = () => {
   const navigation = useNavigation();
@@ -33,8 +34,8 @@ const MeScreen = () => {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.content}>
+    <ScrollView style={commonStyles.container}>
+      <View style={commonStyles.content}>
         {user && (
           <View style={styles.profileCard}>
             <View style={styles.avatarContainer}>
@@ -52,35 +53,35 @@ const MeScreen = () => {
         )}
         
         {/* Account Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionHeader}>Account</Text>
+        <View style={commonStyles.section}>
+          <Text style={commonStyles.sectionHeader}>Account</Text>
           
-          <TouchableOpacity style={styles.menuItem}>
-            <Text style={styles.menuIcon}>👤</Text>
-            <Text style={styles.menuText}>View Profile</Text>
-            <Text style={styles.menuArrow}>›</Text>
+          <TouchableOpacity style={commonStyles.menuItem}>
+            <Text style={commonStyles.menuIcon}>👤</Text>
+            <Text style={commonStyles.menuText}>View Profile</Text>
+            <Text style={commonStyles.menuArrow}>›</Text>
           </TouchableOpacity>
           
-          <TouchableOpacity style={[styles.menuItem, styles.lastMenuItem]}>
-            <Text style={styles.menuIcon}>💳</Text>
-            <Text style={styles.menuText}>Subscription</Text>
-            <Text style={styles.menuArrow}>›</Text>
+          <TouchableOpacity style={[commonStyles.menuItem, commonStyles.lastMenuItem]}>
+            <Text style={commonStyles.menuIcon}>💳</Text>
+            <Text style={commonStyles.menuText}>Subscription</Text>
+            <Text style={commonStyles.menuArrow}>›</Text>
           </TouchableOpacity>
         </View>
         
         {/* App Settings Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionHeader}>App Settings</Text>
+        <View style={commonStyles.section}>
+          <Text style={commonStyles.sectionHeader}>App Settings</Text>
           
-          <TouchableOpacity style={[styles.menuItem, styles.lastMenuItem]}>
-            <Text style={styles.menuIcon}>🔤</Text>
-            <Text style={styles.menuText}>Text Size</Text>
-            <Text style={styles.menuArrow}>›</Text>
+          <TouchableOpacity style={[commonStyles.menuItem, commonStyles.lastMenuItem]}>
+            <Text style={commonStyles.menuIcon}>🔤</Text>
+            <Text style={commonStyles.menuText}>Text Size</Text>
+            <Text style={commonStyles.menuArrow}>›</Text>
           </TouchableOpacity>
         </View>
         
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <Text style={styles.logoutButtonText}>Logout</Text>
+        <TouchableOpacity style={commonStyles.buttonDanger} onPress={handleLogout}>
+          <Text style={commonStyles.buttonText}>Logout</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -88,20 +89,12 @@ const MeScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f8f9fa',
-  },
-  content: {
-    padding: 20,
-    paddingTop: 60,
-  },
   profileCard: {
-    backgroundColor: '#fff',
-    padding: 30,
+    backgroundColor: colors.white,
+    padding: spacing.xl,
     borderRadius: 12,
     alignItems: 'center',
-    marginBottom: 30,
+    marginBottom: spacing.xl,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -115,85 +108,25 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#4285F4',
+    backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: spacing.md,
   },
   avatarText: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#fff',
+    color: colors.white,
   },
   userName: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
+    color: colors.text.primary,
     marginBottom: 4,
   },
   userEmail: {
     fontSize: 14,
-    color: '#666',
-  },
-  section: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    marginBottom: 20,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  sectionHeader: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 8,
-    backgroundColor: '#f8f9fa',
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
-  },
-  menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f1f3f4',
-  },
-  lastMenuItem: {
-    borderBottomWidth: 0,
-  },
-  menuIcon: {
-    fontSize: 20,
-    marginRight: 16,
-    width: 24,
-  },
-  menuText: {
-    flex: 1,
-    fontSize: 16,
-    color: '#333',
-  },
-  menuArrow: {
-    fontSize: 20,
-    color: '#999',
-  },
-  logoutButton: {
-    backgroundColor: '#dc3545',
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  logoutButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+    color: colors.text.secondary,
   },
 });
 
