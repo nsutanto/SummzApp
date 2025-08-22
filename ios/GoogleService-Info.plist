@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>116693254687-ihinn7t61ohbdi0ed10rb5odl7i347u8.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.116693254687-ihinn7t61ohbdi0ed10rb5odl7i347u8</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>116693254687-4ckl2qmski3ldt47nqv0uqadc5lp1lg0.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCtpS9b48ThD5gVxDBU73eWC0qdbtO2db0</string>
+	<key>GCM_SENDER_ID</key>
+	<string>116693254687</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.summz.app</string>
+	<key>PROJECT_ID</key>
+	<string>summzapp</string>
+	<key>STORAGE_BUCKET</key>
+	<string>summzapp.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:116693254687:ios:c6873f92647bb237d50b2a</string>
+</dict>
+</plist>
