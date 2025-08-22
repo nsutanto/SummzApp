@@ -1,82 +1,58 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useAuth } from '../../context/AuthContext';
 import { commonStyles, colors, spacing } from '../../styles';
 import { Card } from '../../components';
 
 const HomeScreen = () => {
   const { user } = useAuth();
+  const [search, setSearch] = useState('');
 
   return (
     <ScrollView style={commonStyles.container}>
       <View style={commonStyles.content}>
-        {user && (
-          <View style={styles.welcomeCard}>
-            <Text style={styles.welcomeTitle}>Welcome back!</Text>
-            <Text style={styles.welcomeText}>
-              {user.displayName || user.email || 'User'}
-            </Text>
+        {/* Search Bar */}
+        <View style={styles.searchBarContainer}>
+          <View style={styles.searchBarWrapper}>
+            <Icon name="search" size={24} color={colors.text.secondary} style={styles.searchIcon} />
+            <TextInput
+              style={styles.searchBar}
+              placeholder="Search for books"
+              placeholderTextColor={colors.text.secondary}
+              value={search}
+              onChangeText={setSearch}
+              returnKeyType="search"
+            />
           </View>
-        )}
-        
-        <Card>
-          <Text style={styles.cardTitle}>Recent Activity</Text>
-          <Text style={styles.cardText}>Your recent summaries will appear here</Text>
-        </Card>
-        
-        <Card>
-          <Text style={styles.cardTitle}>Quick Actions</Text>
-          <TouchableOpacity style={styles.actionButton}>
-            <Text style={commonStyles.buttonText}>Create New Summary</Text>
-          </TouchableOpacity>
-        </Card>
+        </View>
       </View>
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  welcomeCard: {
-    backgroundColor: colors.primary,
-    padding: spacing.lg,
-    borderRadius: 12,
+  searchBarContainer: {
     marginBottom: spacing.lg,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
   },
-  welcomeTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: colors.white,
-    marginBottom: 5,
-  },
-  welcomeText: {
-    fontSize: 16,
-    color: colors.white,
-    opacity: 0.9,
-  },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: colors.text.primary,
-    marginBottom: 8,
-  },
-  cardText: {
-    fontSize: 14,
-    color: colors.text.secondary,
-  },
-  actionButton: {
-    backgroundColor: colors.primary,
-    padding: 12,
-    borderRadius: 8,
+  searchBarWrapper: {
+    flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 8,
+    backgroundColor: colors.background,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.border,
+    paddingHorizontal: 12,
+  },
+  searchIcon: {
+    marginRight: 8,
+  },
+  searchBar: {
+    flex: 1,
+    paddingVertical: 12,
+    fontSize: 16,
+    color: colors.text.primary,
+    backgroundColor: 'transparent',
   },
 });
 

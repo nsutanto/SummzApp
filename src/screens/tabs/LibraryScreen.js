@@ -1,40 +1,85 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { commonStyles, colors, spacing } from '../../styles';
 import { EmptyState } from '../../components';
 
 const LibraryScreen = () => {
+  const [activeTab, setActiveTab] = useState('Saved');
+  const tabs = ['Saved', 'Finished', 'Lists'];
+
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'Saved':
+        return (
+          <EmptyState
+            icon="🔖"
+            title="No saved summaries"
+            description="Save summaries you want to read later"
+            buttonText="Explore Content"
+            onButtonPress={() => {}}
+          />
+        );
+      case 'Finished':
+        return (
+          <EmptyState
+            icon="✅"
+            title="No finished summaries"
+            description="Completed summaries will appear here"
+            buttonText="Start Reading"
+            onButtonPress={() => {}}
+          />
+        );
+      case 'Lists':
+        return (
+          <EmptyState
+            icon="�"
+            title="No lists created"
+            description="Create custom lists to organize your content"
+            buttonText="Create List"
+            onButtonPress={() => {}}
+          />
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <ScrollView style={commonStyles.container}>
       <View style={commonStyles.content}>
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Recent Summaries</Text>
-          <EmptyState
-            icon="📖"
-            title="No summaries yet"
-            description="Start creating summaries to see them here"
-            buttonText="Create Your First Summary"
-            onButtonPress={() => {}}
-          />
+        {/* Header */}
+        <Text style={styles.headerTitle}>My Library</Text>
+        
+        {/* Tab Navigation */}
+        <View style={styles.tabContainer}>
+          {tabs.map((tab, index) => (
+            <TouchableOpacity
+              key={tab}
+              style={styles.tabButton}
+              onPress={() => setActiveTab(tab)}
+            >
+              <Text style={[
+                styles.tabText,
+                activeTab === tab && styles.activeTabText
+              ]}>
+                {tab}
+              </Text>
+            </TouchableOpacity>
+          ))}
         </View>
         
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Collections</Text>
-          <View style={styles.collectionCard}>
-            <Text style={styles.collectionIcon}>📚</Text>
-            <View style={styles.collectionInfo}>
-              <Text style={styles.collectionName}>Favorites</Text>
-              <Text style={styles.collectionCount}>0 summaries</Text>
-            </View>
-          </View>
-          
-          <View style={styles.collectionCard}>
-            <Text style={styles.collectionIcon}>💼</Text>
-            <View style={styles.collectionInfo}>
-              <Text style={styles.collectionName}>Work</Text>
-              <Text style={styles.collectionCount}>0 summaries</Text>
-            </View>
-          </View>
+        {/* Tab Indicator Line */}
+        <View style={styles.tabIndicatorContainer}>
+          <View style={styles.tabIndicatorLine} />
+          <View style={[
+            styles.activeIndicator,
+            { left: `${tabs.indexOf(activeTab) * (100 / tabs.length)}%` }
+          ]} />
+        </View>
+        
+        {/* Tab Content */}
+        <View style={styles.contentContainer}>
+          {renderTabContent()}
         </View>
       </View>
     </ScrollView>
@@ -42,47 +87,50 @@ const LibraryScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  section: {
-    marginBottom: spacing.xl,
-  },
-  sectionTitle: {
-    fontSize: 20,
+  headerTitle: {
+    fontSize: 28,
     fontWeight: 'bold',
     color: colors.text.primary,
-    marginBottom: spacing.md,
+    marginBottom: spacing.lg,
   },
-  collectionCard: {
-    backgroundColor: colors.white,
-    padding: spacing.md,
-    borderRadius: 12,
+  tabContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
+    justifyContent: 'space-between',
+    marginBottom: 8,
   },
-  collectionIcon: {
-    fontSize: 24,
-    marginRight: spacing.md,
-  },
-  collectionInfo: {
+  tabButton: {
     flex: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    alignItems: 'center',
   },
-  collectionName: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.text.primary,
-  },
-  collectionCount: {
+  tabText: {
     fontSize: 14,
+    fontWeight: '500',
     color: colors.text.secondary,
-    marginTop: 2,
+  },
+  activeTabText: {
+    color: colors.text.primary,
+    fontWeight: 'bold',
+  },
+  tabIndicatorContainer: {
+    marginBottom: spacing.lg,
+    position: 'relative',
+  },
+  tabIndicatorLine: {
+    height: 2,
+    backgroundColor: colors.border.default,
+    width: '100%',
+  },
+  activeIndicator: {
+    position: 'absolute',
+    height: 2,
+    width: '33.33%',
+    backgroundColor: colors.primary,
+    top: 0,
+  },
+  contentContainer: {
+    flex: 1,
   },
 });
 

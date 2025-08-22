@@ -59,9 +59,9 @@ const MainScreen = () => {
           backgroundColor: '#fff',
           borderTopWidth: 1,
           borderTopColor: '#e1e1e1',
-          paddingBottom: 5,
-          paddingTop: 5,
-          height: 60,
+          paddingBottom: 16,
+          paddingTop: 8,
+          height: 72,
         },
         tabBarLabelStyle: {
           fontSize: 12,
