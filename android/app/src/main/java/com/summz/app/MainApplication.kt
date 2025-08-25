@@ -1,4 +1,4 @@
-package com.summzapp
+package com.summz.app
 
 import android.app.Application
 import com.facebook.react.PackageList
