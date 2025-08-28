@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../context/AuthContext';
+import { commonStyles, colors, spacing } from '../styles';
 
 const LoginScreen = () => {
   const navigation = useNavigation();
@@ -21,7 +22,10 @@ const LoginScreen = () => {
   const handleGoogleSignIn = async () => {
     try {
       await signInWithGoogle();
-      navigation.navigate('MainScreen');
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'MainScreen' }],
+      });
     } catch (error) {
       Alert.alert('Error', error.message);
     }
@@ -39,7 +43,10 @@ const LoginScreen = () => {
       } else {
         await signInWithEmail(email, password);
       }
-      navigation.navigate('MainScreen');
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'MainScreen' }],
+      });
     } catch (error) {
       Alert.alert('Error', error.message);
     }
