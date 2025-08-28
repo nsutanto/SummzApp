@@ -2193,6 +2193,8 @@ PODS:
     - React-utils (= 0.80.2)
     - SocketRocket
   - RecaptchaInterop (101.0.0)
+  - RNCAsyncStorage (2.2.0):
+    - React-Core
   - RNFBApp (23.1.0):
     - Firebase/CoreOnly (= 12.1.0)
     - React-Core
@@ -2368,6 +2370,7 @@ DEPENDENCIES:
   - ReactAppDependencyProvider (from `build/generated/ios`)
   - ReactCodegen (from `build/generated/ios`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
+  - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBAuth (from `../node_modules/@react-native-firebase/auth`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
@@ -2542,6 +2545,8 @@ EXTERNAL SOURCES:
     :path: build/generated/ios
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
+  RNCAsyncStorage:
+    :path: "../node_modules/@react-native-async-storage/async-storage"
   RNFBApp:
     :path: "../node_modules/@react-native-firebase/app"
   RNFBAuth:
@@ -2645,6 +2650,7 @@ SPEC CHECKSUMS:
   ReactCodegen: f8ae44cfcb65af88f409f4b094b879591232f12c
   ReactCommon: a237545f08f598b8b37dc3a9163c1c4b85817b0b
   RecaptchaInterop: 11e0b637842dfb48308d242afc3f448062325aba
+  RNCAsyncStorage: 23e56519cc41d3bade3c8d4479f7760cb1c11996
   RNFBApp: be72fc5f7093f73016e73cbe9d8d5ae8d136bd92
   RNFBAuth: 149439538eca4955010eaae46d86ead054b3b119
   RNGestureHandler: 532876b292185cac3c17f1271cd7c3fa52196526
@@ -2656,4 +2662,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 50953202290cc82bd15c55e3dd20f1058f7c6ef4
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2
