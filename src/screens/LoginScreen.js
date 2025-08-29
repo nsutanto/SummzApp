@@ -11,6 +11,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../context/AuthContext';
 import { commonStyles, colors, spacing } from '../styles';
+import { insertUserToSupabase } from '../utils/supabaseUsers';
 
 const LoginScreen = () => {
   const navigation = useNavigation();
@@ -21,12 +22,24 @@ const LoginScreen = () => {
 
   const handleGoogleSignIn = async () => {
     try {
-      await signInWithGoogle();
+      const user = await signInWithGoogle();
+      
+      // Insert user data to Supabase
+      if (user) {
+        await insertUserToSupabase({
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+          photoURL: user.photoURL,
+        });
+      }
+      
       navigation.reset({
         index: 0,
         routes: [{ name: 'MainScreen' }],
       });
     } catch (error) {
+      console.error('Login error:', error);
       Alert.alert('Error', error.message);
     }
   };
@@ -38,16 +51,29 @@ const LoginScreen = () => {
     }
 
     try {
+      let user;
       if (isSignUp) {
-        await signUpWithEmail(email, password);
+        user = await signUpWithEmail(email, password);
       } else {
-        await signInWithEmail(email, password);
+        user = await signInWithEmail(email, password);
       }
+      
+      // Insert user data to Supabase
+      if (user) {
+        await insertUserToSupabase({
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName || null,
+          photoURL: user.photoURL || null,
+        });
+      }
+      
       navigation.reset({
         index: 0,
         routes: [{ name: 'MainScreen' }],
       });
     } catch (error) {
+      console.error('Login error:', error);
       Alert.alert('Error', error.message);
     }
   };
