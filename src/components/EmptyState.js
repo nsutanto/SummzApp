@@ -1,8 +1,9 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { colors, spacing, commonStyles } from '../styles';
+import { spacing, shadows } from '../styles';
+import { useTheme } from '../hooks/useTheme';
 
-const EmptyState = ({ 
+const EmptyStateCard = ({ 
   icon, 
   title, 
   description, 
@@ -10,14 +11,19 @@ const EmptyState = ({
   onButtonPress,
   style 
 }) => {
+  const { theme } = useTheme();
+
   return (
-    <View style={[styles.emptyState, style]}>
+    <View style={[styles.emptyState, { backgroundColor: theme.surface }, style]}>
       {icon && <Text style={styles.emptyIcon}>{icon}</Text>}
-      {title && <Text style={styles.emptyTitle}>{title}</Text>}
-      {description && <Text style={styles.emptyDescription}>{description}</Text>}
+      {title && <Text style={[styles.emptyTitle, { color: theme.text.primary }]}>{title}</Text>}
+      {description && <Text style={[styles.emptyDescription, { color: theme.text.secondary }]}>{description}</Text>}
       {buttonText && onButtonPress && (
-        <TouchableOpacity style={styles.emptyButton} onPress={onButtonPress}>
-          <Text style={commonStyles.buttonText}>{buttonText}</Text>
+        <TouchableOpacity 
+          style={[styles.emptyButton, { backgroundColor: theme.primary }]} 
+          onPress={onButtonPress}
+        >
+          <Text style={styles.buttonText}>{buttonText}</Text>
         </TouchableOpacity>
       )}
     </View>
@@ -26,18 +32,11 @@ const EmptyState = ({
 
 const styles = StyleSheet.create({
   emptyState: {
-    backgroundColor: colors.white,
+    // backgroundColor will be set by theme
     padding: spacing.xxl,
     borderRadius: 12,
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
+    ...shadows.small,
   },
   emptyIcon: {
     fontSize: 48,
@@ -46,21 +45,26 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: colors.text.primary,
+    // color will be set by theme
     marginBottom: 8,
   },
   emptyDescription: {
     fontSize: 14,
-    color: colors.text.secondary,
+    // color will be set by theme
     textAlign: 'center',
     marginBottom: spacing.lg,
   },
   emptyButton: {
-    backgroundColor: colors.primary,
+    // backgroundColor will be set by theme
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 8,
   },
+  buttonText: {
+    color: '#ffffff', // White text on colored button
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
 });
 
-export default EmptyState;
+export default EmptyStateCard;
