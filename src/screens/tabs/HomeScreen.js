@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { useAuth } from '../../context/AuthContext';
 import { commonStyles, colors, spacing, typography } from '../../styles';
-import { Card, LoadingIndicator, ErrorState, HorizontalItemList } from '../../components';
+import { LoadingIndicator, ErrorState, HorizontalItemList } from '../../components';
 import { getCategories } from '../../utils/supabaseCategories';
 import { getContentByCategory } from '../../utils/supabaseContentCategories';
 
 const HomeScreen = () => {
-  const { user } = useAuth();
   const [search, setSearch] = useState('');
   const [categories, setCategories] = useState([]);
   const [categoryContent, setCategoryContent] = useState({});
@@ -24,17 +22,14 @@ const HomeScreen = () => {
       setLoading(true);
       setError(null);
       
-      // Fetch categories first
       const categoriesData = await getCategories();
       setCategories(categoriesData || []);
       
-      // Fetch content for each category
       const contentPromises = categoriesData.map(async (category) => {
         try {
           const content = await getContentByCategory(category.id);
           return { categoryId: category.id, content: content || [] };
         } catch (err) {
-          console.error(`Error fetching content for category ${category.name}:`, err);
           return { categoryId: category.id, content: [] };
         }
       });
@@ -47,7 +42,6 @@ const HomeScreen = () => {
       
       setCategoryContent(contentMap);
     } catch (err) {
-      console.error('Error fetching categories and content:', err);
       setError('Failed to load content');
     } finally {
       setLoading(false);
@@ -55,7 +49,6 @@ const HomeScreen = () => {
   };
 
   const handleItemPress = (item) => {
-    console.log('Content item selected:', item.title);
     // TODO: Navigate to item detail screen
   };
 
@@ -81,7 +74,6 @@ const HomeScreen = () => {
   return (
     <ScrollView style={commonStyles.container}>
       <View style={commonStyles.content}>
-        {/* Search Bar */}
         <View style={styles.searchBarContainer}>
           <View style={styles.searchBarWrapper}>
             <Icon name="search" size={24} color={colors.text.secondary} style={styles.searchIcon} />
@@ -96,11 +88,9 @@ const HomeScreen = () => {
           </View>
         </View>
 
-        {/* Categories with Horizontal Lists */}
         {categories.map((category) => {
           const content = categoryContent[category.id] || [];
           
-          // Only show categories that have content
           if (content.length === 0) return null;
           
           return (
@@ -122,7 +112,7 @@ const HomeScreen = () => {
                 onItemPress={handleItemPress}
                 itemWidth={140}
                 itemHeight={190}
-                spacing={20} // Match the content padding (spacing.lg)
+                spacing={spacing.lg}
               />
             </View>
           );
@@ -171,10 +161,10 @@ const styles = StyleSheet.create({
   categoryHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start', // Changed from 'center' to 'flex-start' to align tops when text wraps
+    alignItems: 'flex-start',
     marginBottom: 12,
-    paddingHorizontal: 0, // Remove extra padding to align with content padding
-    width: '100%', // Ensure full width
+    paddingHorizontal: 0,
+    width: '100%',
   },
   categoryTitleContainer: {
     flexDirection: 'row',
@@ -189,19 +179,19 @@ const styles = StyleSheet.create({
   },
   categoryTitle: {
     ...typography.subtitle,
-    lineHeight: 26, // Add consistent line height (1.3x the font size of 20px)
-    flex: 1, // Take up available space
-    textAlign: 'left', // Ensure consistent left alignment for multi-line text
-    includeFontPadding: false, // Remove extra font padding on Android
-    textAlignVertical: 'top', // Align text to top on Android
-    paddingLeft: 0, // Ensure no left padding
-    marginLeft: 0, // Ensure no left margin
+    lineHeight: 26,
+    flex: 1,
+    textAlign: 'left',
+    includeFontPadding: false,
+    textAlignVertical: 'top',
+    paddingLeft: 0,
+    marginLeft: 0,
   },
   seeAllText: {
     ...typography.bodySecondary,
     color: colors.primary,
     fontWeight: '600',
-    flexShrink: 0, // Prevent "See All" from shrinking
+    flexShrink: 0,
   },
   emptyContainer: {
     alignItems: 'center',
