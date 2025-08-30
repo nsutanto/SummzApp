@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../context/AuthContext';
 import { commonStyles, colors, spacing } from '../../styles';
@@ -8,6 +8,7 @@ import { Section, MenuItem } from '../../components';
 const MeScreen = () => {
   const navigation = useNavigation();
   const { user, signOut } = useAuth();
+  const [imageError, setImageError] = useState(false);
 
   const handleLogout = () => {
     Alert.alert(
@@ -40,9 +41,17 @@ const MeScreen = () => {
         {user && (
           <View style={styles.profileCard}>
             <View style={styles.avatarContainer}>
-              <Text style={styles.avatarText}>
-                {(user.displayName || user.email || 'U').charAt(0).toUpperCase()}
-              </Text>
+              {user.photoURL && !imageError ? (
+                <Image 
+                  source={{ uri: user.photoURL }} 
+                  style={styles.avatarImage}
+                  onError={() => setImageError(true)}
+                />
+              ) : (
+                <Text style={styles.avatarText}>
+                  {(user.displayName || user.email || 'U').charAt(0).toUpperCase()}
+                </Text>
+              )}
             </View>
             <Text style={styles.userName}>
               {user.displayName || user.email || 'User'}
@@ -110,6 +119,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: spacing.md,
+    overflow: 'hidden',
+  },
+  avatarImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
   },
   avatarText: {
     fontSize: 32,
