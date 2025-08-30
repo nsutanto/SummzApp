@@ -40,9 +40,6 @@ export const darkTheme = {
   },
 };
 
-// Default to light theme for backward compatibility
-export const colors = lightTheme;
-
 // Common spacing values
 export const spacing = {
   xs: 5,
@@ -54,31 +51,34 @@ export const spacing = {
   xxxl: 60,
 };
 
-// Typography
-export const typography = {
+// Typography - now theme-aware function
+export const getTypography = (theme = lightTheme) => ({
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: colors.text.primary,
+    color: theme.text.primary,
   },
   subtitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: colors.text.primary,
+    color: theme.text.primary,
   },
   body: {
     fontSize: 16,
-    color: colors.text.primary,
+    color: theme.text.primary,
   },
   bodySecondary: {
     fontSize: 14,
-    color: colors.text.secondary,
+    color: theme.text.secondary,
   },
   caption: {
     fontSize: 12,
-    color: colors.text.light,
+    color: theme.text.light,
   },
-};
+});
+
+// Typography export for backward compatibility (light theme only)
+export const typography = getTypography(lightTheme);
 
 // Shadow styles
 export const shadows = {
@@ -104,12 +104,12 @@ export const shadows = {
   },
 };
 
-// Common styles used across screens
-export const commonStyles = StyleSheet.create({
+// Common styles - now theme-aware function
+export const getCommonStyles = (theme = lightTheme) => StyleSheet.create({
   // Container styles
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: theme.background,
   },
   content: {
     padding: spacing.lg,
@@ -121,14 +121,14 @@ export const commonStyles = StyleSheet.create({
 
   // Card styles
   card: {
-    backgroundColor: colors.white,
+    backgroundColor: theme.surface,
     padding: spacing.lg,
     borderRadius: 12,
     marginBottom: spacing.md,
     ...shadows.small,
   },
   cardLarge: {
-    backgroundColor: colors.white,
+    backgroundColor: theme.surface,
     padding: spacing.xl,
     borderRadius: 12,
     marginBottom: spacing.lg,
@@ -137,7 +137,7 @@ export const commonStyles = StyleSheet.create({
 
   // Section styles
   section: {
-    backgroundColor: colors.white,
+    backgroundColor: theme.surface,
     borderRadius: 12,
     marginBottom: spacing.lg,
     ...shadows.small,
@@ -145,11 +145,11 @@ export const commonStyles = StyleSheet.create({
   sectionHeader: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: colors.text.primary,
+    color: theme.text.primary,
     paddingHorizontal: spacing.md,
     paddingTop: spacing.md,
     paddingBottom: 8,
-    backgroundColor: colors.background,
+    backgroundColor: theme.background,
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
   },
@@ -160,7 +160,7 @@ export const commonStyles = StyleSheet.create({
     alignItems: 'center',
     padding: spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border.subtle,
+    borderBottomColor: theme.border.subtle,
   },
   lastMenuItem: {
     borderBottomWidth: 0,
@@ -173,16 +173,16 @@ export const commonStyles = StyleSheet.create({
   menuText: {
     flex: 1,
     fontSize: 16,
-    color: colors.text.primary,
+    color: theme.text.primary,
   },
   menuArrow: {
     fontSize: 20,
-    color: colors.text.light,
+    color: theme.text.light,
   },
 
   // Button styles
   buttonPrimary: {
-    backgroundColor: colors.primary,
+    backgroundColor: theme.primary,
     paddingHorizontal: spacing.xl,
     paddingVertical: spacing.md,
     borderRadius: 25,
@@ -190,7 +190,7 @@ export const commonStyles = StyleSheet.create({
     marginBottom: spacing.lg,
   },
   buttonSecondary: {
-    backgroundColor: colors.secondary,
+    backgroundColor: theme.secondary,
     paddingHorizontal: spacing.xl,
     paddingVertical: spacing.md,
     borderRadius: 25,
@@ -198,14 +198,14 @@ export const commonStyles = StyleSheet.create({
     marginBottom: spacing.lg,
   },
   buttonDanger: {
-    backgroundColor: colors.danger,
+    backgroundColor: theme.danger,
     paddingVertical: spacing.md,
     borderRadius: 12,
     alignItems: 'center',
     marginTop: spacing.lg,
   },
   buttonText: {
-    color: colors.white,
+    color: '#ffffff',
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -213,13 +213,14 @@ export const commonStyles = StyleSheet.create({
   // Text input styles
   input: {
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: theme.border.default,
     borderRadius: 10,
     paddingHorizontal: spacing.md,
     paddingVertical: 12,
     marginBottom: spacing.md,
     fontSize: 16,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: theme.surface,
+    color: theme.text.primary,
   },
 
   // Layout helpers
@@ -235,6 +236,9 @@ export const commonStyles = StyleSheet.create({
     justifyContent: 'space-between',
   },
 });
+
+// Common styles export for backward compatibility (light theme only)
+export const commonStyles = getCommonStyles(lightTheme);
 
 // Function to create theme-aware styles
 export const createThemedStyles = (theme) => StyleSheet.create({

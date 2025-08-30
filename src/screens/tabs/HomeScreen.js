@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { spacing, typography, shadows } from '../../styles';
+import { spacing, shadows, typography } from '../../styles';
 import { LoadingIndicator, ErrorState, HorizontalItemList } from '../../components';
 import { getCategories } from '../../utils/supabaseCategories';
 import { getContentByCategory } from '../../utils/supabaseContentCategories';

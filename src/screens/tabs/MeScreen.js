@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../context/AuthContext';
-import { colors, spacing } from '../../styles';
+import { spacing } from '../../styles';
 import { Section, SettingItem } from '../../components';
 import { useTheme } from '../../hooks/useTheme';
 
 const MeScreen = () => {
   const navigation = useNavigation();
   const { user, signOut } = useAuth();
-  const { theme, styles: themedStyles } = useTheme();
+  const { theme, styles: themedStyles, commonStyles } = useTheme();
   const [imageError, setImageError] = useState(false);
 
   const handleLogout = () => {
@@ -41,8 +41,8 @@ const MeScreen = () => {
     <ScrollView style={[themedStyles.container, { backgroundColor: theme.background }]}>
       <View style={themedStyles.content}>
         {user && (
-          <View style={[styles.profileCard, { backgroundColor: theme.surface }]}>
-            <View style={styles.avatarContainer}>
+          <View style={[commonStyles.cardLarge, { backgroundColor: theme.surface, alignItems: 'center' }]}>
+            <View style={[styles.avatarContainer, { backgroundColor: theme.primary }]}>
               {user.photoURL && !imageError ? (
                 <Image 
                   source={{ uri: user.photoURL }} 
@@ -50,7 +50,7 @@ const MeScreen = () => {
                   onError={() => setImageError(true)}
                 />
               ) : (
-                <Text style={styles.avatarText}>
+                <Text style={[styles.avatarText, { color: theme.white }]}>
                   {(user.displayName || user.email || 'U').charAt(0).toUpperCase()}
                 </Text>
               )}
@@ -91,8 +91,8 @@ const MeScreen = () => {
           />
         </Section>
         
-        <TouchableOpacity style={[themedStyles.buttonDanger]} onPress={handleLogout}>
-          <Text style={themedStyles.buttonText}>Logout</Text>
+        <TouchableOpacity style={commonStyles.buttonDanger} onPress={handleLogout}>
+          <Text style={commonStyles.buttonText}>Logout</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -100,26 +100,10 @@ const MeScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  profileCard: {
-    // backgroundColor will be overridden by theme
-    padding: spacing.xl,
-    borderRadius: 12,
-    alignItems: 'center',
-    marginBottom: spacing.xl,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
   avatarContainer: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: colors.primary, // Keep primary color for avatar
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: spacing.md,
@@ -133,17 +117,14 @@ const styles = StyleSheet.create({
   avatarText: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: colors.white,
   },
   userName: {
     fontSize: 20,
     fontWeight: 'bold',
-    // color will be overridden by theme
     marginBottom: 4,
   },
   userEmail: {
     fontSize: 14,
-    // color will be overridden by theme
   },
 });
 
