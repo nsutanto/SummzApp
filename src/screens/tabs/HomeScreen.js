@@ -1,18 +1,79 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { useAuth } from '../../context/AuthContext';
-import { commonStyles, colors, spacing } from '../../styles';
-import { Card } from '../../components';
+import { commonStyles, colors, spacing, typography } from '../../styles';
+import { LoadingIndicator, ErrorState, HorizontalItemList } from '../../components';
+import { getCategories } from '../../utils/supabaseCategories';
+import { getContentByCategory } from '../../utils/supabaseContentCategories';
 
 const HomeScreen = () => {
-  const { user } = useAuth();
   const [search, setSearch] = useState('');
+  const [categories, setCategories] = useState([]);
+  const [categoryContent, setCategoryContent] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchCategoriesAndContent();
+  }, []);
+
+  const fetchCategoriesAndContent = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const categoriesData = await getCategories();
+      setCategories(categoriesData || []);
+      
+      const contentPromises = categoriesData.map(async (category) => {
+        try {
+          const content = await getContentByCategory(category.id);
+          return { categoryId: category.id, content: content || [] };
+        } catch (err) {
+          return { categoryId: category.id, content: [] };
+        }
+      });
+      
+      const contentResults = await Promise.all(contentPromises);
+      const contentMap = {};
+      contentResults.forEach(({ categoryId, content }) => {
+        contentMap[categoryId] = content;
+      });
+      
+      setCategoryContent(contentMap);
+    } catch (err) {
+      setError('Failed to load content');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleItemPress = (item) => {
+    // TODO: Navigate to item detail screen
+  };
+
+  if (loading) {
+    return (
+      <View style={[commonStyles.container, commonStyles.centered]}>
+        <LoadingIndicator text="Loading home content..." />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={[commonStyles.container, commonStyles.centered]}>
+        <ErrorState
+          message={error}
+          onRetry={fetchCategoriesAndContent}
+        />
+      </View>
+    );
+  }
 
   return (
     <ScrollView style={commonStyles.container}>
       <View style={commonStyles.content}>
-        {/* Search Bar */}
         <View style={styles.searchBarContainer}>
           <View style={styles.searchBarWrapper}>
             <Icon name="search" size={24} color={colors.text.secondary} style={styles.searchIcon} />
@@ -26,6 +87,42 @@ const HomeScreen = () => {
             />
           </View>
         </View>
+
+        {categories.map((category) => {
+          const content = categoryContent[category.id] || [];
+          
+          if (content.length === 0) return null;
+          
+          return (
+            <View key={category.id} style={styles.categorySection}>
+              <View style={styles.categoryHeader}>
+                <View style={styles.categoryTitleContainer}>
+                  <Text style={styles.categoryEmoji}>{category.emoji}</Text>
+                  <Text style={styles.categoryTitle} numberOfLines={2}>
+                    {category.name}
+                  </Text>
+                </View>
+                <TouchableOpacity>
+                  <Text style={styles.seeAllText}>See All</Text>
+                </TouchableOpacity>
+              </View>
+              
+              <HorizontalItemList
+                data={content}
+                onItemPress={handleItemPress}
+                itemWidth={140}
+                itemHeight={190}
+                spacing={spacing.lg}
+              />
+            </View>
+          );
+        })}
+        
+        {categories.length === 0 && (
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>No categories available</Text>
+          </View>
+        )}
       </View>
     </ScrollView>
   );
@@ -33,26 +130,76 @@ const HomeScreen = () => {
 
 const styles = StyleSheet.create({
   searchBarContainer: {
-    marginBottom: spacing.lg,
+    marginTop: Platform.OS === 'ios' ? 0 : 16,
+    marginBottom: 24,
   },
   searchBarWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.background,
+    backgroundColor: colors.white,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: colors.border,
-    paddingHorizontal: 12,
+    borderColor: colors.border.light,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    height: 48,
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   searchIcon: {
-    marginRight: 8,
+    marginRight: 12,
   },
   searchBar: {
     flex: 1,
-    paddingVertical: 12,
-    fontSize: 16,
-    color: colors.text.primary,
-    backgroundColor: 'transparent',
+    ...typography.body,
+  },
+  categorySection: {
+    marginBottom: 24,
+  },
+  categoryHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 12,
+    paddingHorizontal: 0,
+    width: '100%',
+  },
+  categoryTitleContainer: {
+    flexDirection: 'row',
+    flex: 1,
+    marginRight: 12,
+    alignItems: 'flex-start',
+  },
+  categoryEmoji: {
+    fontSize: 20,
+    marginRight: 8,
+    lineHeight: 26,
+  },
+  categoryTitle: {
+    ...typography.subtitle,
+    lineHeight: 26,
+    flex: 1,
+    textAlign: 'left',
+    includeFontPadding: false,
+    textAlignVertical: 'top',
+    paddingLeft: 0,
+    marginLeft: 0,
+  },
+  seeAllText: {
+    ...typography.bodySecondary,
+    color: colors.primary,
+    fontWeight: '600',
+    flexShrink: 0,
+  },
+  emptyContainer: {
+    alignItems: 'center',
+    paddingVertical: 40,
+  },
+  emptyText: {
+    ...typography.body,
+    color: colors.text.secondary,
   },
 });
 

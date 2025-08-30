@@ -1,11 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { commonStyles, colors, spacing } from '../../styles';
-import { CategoryCard } from '../../components';
+import { CategoryCard, LoadingIndicator, ErrorState } from '../../components';
+import { getCategories } from '../../utils/supabaseCategories';
 
 const ExploreScreen = () => {
+  const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState('For you');
+  const [categories, setCategories] = useState([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(false);
+  const [categoriesError, setCategoriesError] = useState(null);
   const tabs = ['For you', 'Trending', 'Categories'];
+
+  const handleCategoryPress = (categoryTitle, categoryId) => {
+    navigation.navigate('ContentByCategoryScreen', { 
+      categoryName: categoryTitle,
+      categoryId: categoryId 
+    });
+  };
+
+  const fetchCategories = async () => {
+    try {
+      setCategoriesLoading(true);
+      setCategoriesError(null);
+      const data = await getCategories();
+      setCategories(data || []);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+      setCategoriesError('Failed to load categories');
+    } finally {
+      setCategoriesLoading(false);
+    }
+  };
+
+  const handleTabPress = (tab) => {
+    setActiveTab(tab);
+    // Fetch categories when Categories tab is selected
+    if (tab === 'Categories' && categories.length === 0) {
+      fetchCategories();
+    }
+  };
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -27,28 +62,32 @@ const ExploreScreen = () => {
         return (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Browse Categories</Text>
-            <View style={styles.categoryGrid}>
-              <CategoryCard 
-                emoji="📚" 
-                title="Education" 
-                onPress={() => {}} 
+            {categoriesLoading ? (
+              <LoadingIndicator 
+                text="Loading categories..." 
+                color={colors.primary}
+                style={styles.loadingContainer}
               />
-              <CategoryCard 
-                emoji="💼" 
-                title="Business" 
-                onPress={() => {}} 
+            ) : categoriesError ? (
+              <ErrorState 
+                message={categoriesError} 
+                onRetry={fetchCategories} 
+                style={styles.errorContainer}
               />
-              <CategoryCard 
-                emoji="🔬" 
-                title="Science" 
-                onPress={() => {}} 
-              />
-              <CategoryCard 
-                emoji="🎨" 
-                title="Arts" 
-                onPress={() => {}} 
-              />
-            </View>
+            ) : categories.length > 0 ? (
+              <View style={styles.categoryGrid}>
+                {categories.map((category) => (
+                  <CategoryCard 
+                    key={category.id}
+                    emoji={category.emoji || "�"} 
+                    title={category.name} 
+                    onPress={() => handleCategoryPress(category.name, category.id)} 
+                  />
+                ))}
+              </View>
+            ) : (
+              <Text style={styles.placeholderText}>No categories available</Text>
+            )}
           </View>
         );
       default:
@@ -65,7 +104,7 @@ const ExploreScreen = () => {
             <TouchableOpacity
               key={tab}
               style={styles.tabButton}
-              onPress={() => setActiveTab(tab)}
+              onPress={() => handleTabPress(tab)}
             >
               <Text style={[
                 styles.tabText,
@@ -149,6 +188,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
+  },
+  loadingContainer: {
+    padding: spacing.xl,
+  },
+  errorContainer: {
+    padding: spacing.xl,
   },
 });
 

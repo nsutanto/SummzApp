@@ -1,7 +1,14 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { AuthService } from '../services/AuthService';
 
-const AuthContext = createContext({});
+const AuthContext = createContext({
+  user: null,
+  loading: true,
+  signInWithGoogle: () => {},
+  signInWithEmail: () => {},
+  signUpWithEmail: () => {},
+  signOut: () => {},
+});
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -27,7 +34,8 @@ export const AuthProvider = ({ children }) => {
   const signInWithGoogle = async () => {
     try {
       setLoading(true);
-      await AuthService.signInWithGoogle();
+      const result = await AuthService.signInWithGoogle();
+      return result.user; // Return the user object
     } catch (error) {
       console.error('Google sign-in error:', error);
       throw error;
@@ -39,7 +47,8 @@ export const AuthProvider = ({ children }) => {
   const signInWithEmail = async (email, password) => {
     try {
       setLoading(true);
-      await AuthService.signInWithEmail(email, password);
+      const result = await AuthService.signInWithEmail(email, password);
+      return result.user; // Return the user object
     } catch (error) {
       console.error('Email sign-in error:', error);
       throw error;
@@ -51,7 +60,8 @@ export const AuthProvider = ({ children }) => {
   const signUpWithEmail = async (email, password) => {
     try {
       setLoading(true);
-      await AuthService.signUpWithEmail(email, password);
+      const result = await AuthService.signUpWithEmail(email, password);
+      return result.user; // Return the user object
     } catch (error) {
       console.error('Email sign-up error:', error);
       throw error;
