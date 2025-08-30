@@ -1,7 +1,14 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { AuthService } from '../services/AuthService';
 
-const AuthContext = createContext({});
+const AuthContext = createContext({
+  user: null,
+  loading: true,
+  signInWithGoogle: () => {},
+  signInWithEmail: () => {},
+  signUpWithEmail: () => {},
+  signOut: () => {},
+});
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
