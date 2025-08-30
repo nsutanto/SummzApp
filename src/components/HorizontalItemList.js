@@ -19,8 +19,8 @@ const HorizontalItemList = ({
     <View style={[
       styles.itemContainer, 
       { 
-        marginLeft: index === 0 ? spacing : spacing / 2,
-        marginRight: index === data.length - 1 ? spacing : spacing / 2,
+        marginLeft: index === 0 ? 0 : spacing / 2, // First item has no left margin to align with content
+        marginRight: index === data.length - 1 ? 0 : spacing / 2, // Last item has no right margin
       }
     ]}>
       <ContentItem
@@ -49,7 +49,10 @@ const HorizontalItemList = ({
       keyExtractor={(item, index) => item.id?.toString() || index.toString()}
       horizontal={true}
       showsHorizontalScrollIndicator={false}
-      contentContainerStyle={contentContainerStyle}
+      contentContainerStyle={[
+        { paddingRight: spacing }, // Add padding at the end for proper spacing
+        contentContainerStyle
+      ]}
       style={[styles.list, style]}
       // Performance optimizations for horizontal scrolling
       removeClippedSubviews={true}

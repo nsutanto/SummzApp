@@ -119,7 +119,7 @@ const HomeScreen = () => {
                 onItemPress={handleItemPress}
                 itemWidth={140}
                 itemHeight={190}
-                spacing={12}
+                spacing={20} // Match the content padding (spacing.lg)
               />
             </View>
           );
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 12,
-    paddingHorizontal: 4,
+    paddingHorizontal: 0, // Remove extra padding to align with content padding
   },
   categoryTitle: {
     ...typography.subtitle,
