@@ -27,7 +27,8 @@ const HorizontalItemList = ({
         item={item}
         onPress={onItemPress}
         width={itemWidth}
-        imageHeight={itemHeight * 0.75} // Make image 75% of total height
+        height={itemHeight}
+        imageHeight={itemHeight * 0.55} // Make image 55% of total height, leaving more room for 5-line title
         {...itemProps}
       />
     </View>

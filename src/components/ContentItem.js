@@ -7,6 +7,7 @@ const ContentItem = ({
   item, 
   onPress, 
   width, 
+  height,
   imageHeight = 180,
   showTitle = true,
   placeholderImage = DEFAULT_PLACEHOLDER,
@@ -20,9 +21,12 @@ const ContentItem = ({
     }
   };
 
+  // Calculate total height if provided, otherwise use auto
+  const containerStyle = height ? { width, height } : { width };
+
   return (
     <TouchableOpacity
-      style={[styles.contentCard, { width }, style]}
+      style={[styles.contentCard, containerStyle, style]}
       onPress={handlePress}
     >
       <Image 
@@ -30,7 +34,7 @@ const ContentItem = ({
         style={[styles.contentImage, { height: imageHeight }, imageStyle]} 
       />
       {showTitle && (
-        <Text style={[styles.contentTitle, titleStyle]}>
+        <Text style={[styles.contentTitle, titleStyle]} numberOfLines={5} ellipsizeMode="tail">
           {item.title}
         </Text>
       )}
@@ -62,7 +66,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
     textAlign: 'center',
-    numberOfLines: 2,
+    height: 100, // Increased height for up to 5 lines (5 * 20 line height)
+    lineHeight: 20, // Consistent line height
   },
 });
 
