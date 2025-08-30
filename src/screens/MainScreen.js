@@ -3,6 +3,7 @@ import { BackHandler } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useFocusEffect } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useTheme } from '../hooks/useTheme';
 
 // Import tab screens
 import HomeScreen from './tabs/HomeScreen';
@@ -13,6 +14,8 @@ import MeScreen from './tabs/MeScreen';
 const Tab = createBottomTabNavigator();
 
 const MainScreen = () => {
+  const { theme } = useTheme();
+  
   // Prevent back button from going to LoginScreen
   useFocusEffect(
     React.useCallback(() => {
@@ -53,12 +56,12 @@ const MainScreen = () => {
 
           return <Icon name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: '#4285F4',
-        tabBarInactiveTintColor: '#8e8e93',
+        tabBarActiveTintColor: theme.primary,
+        tabBarInactiveTintColor: theme.text.light,
         tabBarStyle: {
-          backgroundColor: '#fff',
+          backgroundColor: theme.surface,
           borderTopWidth: 1,
-          borderTopColor: '#e1e1e1',
+          borderTopColor: theme.border.default,
           paddingBottom: 16,
           paddingTop: 8,
           height: 72,

@@ -10,12 +10,14 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../context/AuthContext';
-import { commonStyles, colors, spacing } from '../styles';
+import { spacing } from '../styles';
 import { insertUserToSupabase } from '../utils/supabaseUsers';
+import { useTheme } from '../hooks/useTheme';
 
 const LoginScreen = () => {
   const navigation = useNavigation();
   const { signInWithGoogle, signInWithEmail, signUpWithEmail, loading } = useAuth();
+  const { theme } = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
@@ -80,28 +82,39 @@ const LoginScreen = () => {
 
   if (loading) {
     return (
-      <View style={[styles.container, styles.loadingContainer]}>
-        <ActivityIndicator size="large" color="#4285F4" />
-        <Text style={styles.loadingText}>Loading...</Text>
+      <View style={[styles.container, styles.loadingContainer, { backgroundColor: theme.background }]}>
+        <ActivityIndicator size="large" color={theme.primary} />
+        <Text style={[styles.loadingText, { color: theme.text.secondary }]}>Loading...</Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Welcome to SummzApp</Text>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <Text style={[styles.title, { color: theme.text.primary }]}>Welcome to SummzApp</Text>
       
       {/* Google Sign-In Button */}
-      <TouchableOpacity style={styles.googleButton} onPress={handleGoogleSignIn}>
+      <TouchableOpacity 
+        style={[styles.googleButton, { backgroundColor: theme.primary }]} 
+        onPress={handleGoogleSignIn}
+      >
         <Text style={styles.googleButtonText}>Sign in with Google</Text>
       </TouchableOpacity>
       
-      <Text style={styles.orText}>OR</Text>
+      <Text style={[styles.orText, { color: theme.text.secondary }]}>OR</Text>
       
       {/* Email/Password Form */}
       <TextInput
-        style={styles.input}
+        style={[
+          styles.input, 
+          { 
+            borderColor: theme.border.default,
+            backgroundColor: theme.surface,
+            color: theme.text.primary
+          }
+        ]}
         placeholder="Email"
+        placeholderTextColor={theme.text.secondary}
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
@@ -109,14 +122,25 @@ const LoginScreen = () => {
       />
       
       <TextInput
-        style={styles.input}
+        style={[
+          styles.input, 
+          { 
+            borderColor: theme.border.default,
+            backgroundColor: theme.surface,
+            color: theme.text.primary
+          }
+        ]}
         placeholder="Password"
+        placeholderTextColor={theme.text.secondary}
         value={password}
         onChangeText={setPassword}
         secureTextEntry
       />
       
-      <TouchableOpacity style={styles.emailButton} onPress={handleEmailAuth}>
+      <TouchableOpacity 
+        style={[styles.emailButton, { backgroundColor: theme.secondary }]} 
+        onPress={handleEmailAuth}
+      >
         <Text style={styles.emailButtonText}>
           {isSignUp ? 'Sign Up' : 'Sign In'}
         </Text>
@@ -126,7 +150,7 @@ const LoginScreen = () => {
         style={styles.switchButton}
         onPress={() => setIsSignUp(!isSignUp)}
       >
-        <Text style={styles.switchButtonText}>
+        <Text style={[styles.switchButtonText, { color: theme.primary }]}>
           {isSignUp 
             ? 'Already have an account? Sign In' 
             : "Don't have an account? Sign Up"

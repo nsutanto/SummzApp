@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 import ContentItem from './ContentItem';
+import { useTheme } from '../hooks/useTheme';
 
 const HorizontalItemList = ({
   data = [],
@@ -15,6 +16,7 @@ const HorizontalItemList = ({
   contentContainerStyle,
   ...flatListProps
 }) => {
+  const { theme } = useTheme();
   const renderItem = ({ item, index }) => (
     <View style={[
       styles.itemContainer, 
@@ -37,7 +39,7 @@ const HorizontalItemList = ({
   if (data.length === 0 && showEmptyState) {
     return (
       <View style={styles.emptyContainer}>
-        <Text style={styles.emptyText}>{emptyMessage}</Text>
+        <Text style={[styles.emptyText, { color: theme.text.secondary }]}>{emptyMessage}</Text>
       </View>
     );
   }
@@ -86,7 +88,6 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: '#666',
     textAlign: 'center',
   },
 });
