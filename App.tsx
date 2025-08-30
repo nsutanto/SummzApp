@@ -52,10 +52,10 @@ function AppNavigator() {
             <Stack.Screen 
               name="ContentByCategoryScreen" 
               component={ContentByCategoryScreen}
-              options={{
+              options={({ route }) => ({
                 headerShown: true,
-                title: 'Content by Category'
-              }}
+                title: (route.params as any)?.categoryName || 'Content'
+              })}
             />
           </>
         ) : (
