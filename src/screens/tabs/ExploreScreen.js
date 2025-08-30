@@ -1,18 +1,45 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { commonStyles, colors, spacing } from '../../styles';
 import { CategoryCard } from '../../components';
+import { getCategories } from '../../utils/supabaseCategories';
 
 const ExploreScreen = () => {
   const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState('For you');
+  const [categories, setCategories] = useState([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(false);
+  const [categoriesError, setCategoriesError] = useState(null);
   const tabs = ['For you', 'Trending', 'Categories'];
 
-  const handleCategoryPress = (categoryTitle) => {
+  const handleCategoryPress = (categoryTitle, categoryId) => {
     navigation.navigate('ContentByCategoryScreen', { 
-      categoryName: categoryTitle 
+      categoryName: categoryTitle,
+      categoryId: categoryId 
     });
+  };
+
+  const fetchCategories = async () => {
+    try {
+      setCategoriesLoading(true);
+      setCategoriesError(null);
+      const data = await getCategories();
+      setCategories(data || []);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+      setCategoriesError('Failed to load categories');
+    } finally {
+      setCategoriesLoading(false);
+    }
+  };
+
+  const handleTabPress = (tab) => {
+    setActiveTab(tab);
+    // Fetch categories when Categories tab is selected
+    if (tab === 'Categories' && categories.length === 0) {
+      fetchCategories();
+    }
   };
 
   const renderTabContent = () => {
@@ -35,28 +62,32 @@ const ExploreScreen = () => {
         return (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Browse Categories</Text>
-            <View style={styles.categoryGrid}>
-              <CategoryCard 
-                emoji="📚" 
-                title="Education" 
-                onPress={() => handleCategoryPress('Education')} 
-              />
-              <CategoryCard 
-                emoji="💼" 
-                title="Business" 
-                onPress={() => handleCategoryPress('Business')} 
-              />
-              <CategoryCard 
-                emoji="🔬" 
-                title="Science" 
-                onPress={() => handleCategoryPress('Science')} 
-              />
-              <CategoryCard 
-                emoji="🎨" 
-                title="Arts" 
-                onPress={() => handleCategoryPress('Arts')} 
-              />
-            </View>
+            {categoriesLoading ? (
+              <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color={colors.primary} />
+                <Text style={styles.loadingText}>Loading categories...</Text>
+              </View>
+            ) : categoriesError ? (
+              <View style={styles.errorContainer}>
+                <Text style={styles.errorText}>{categoriesError}</Text>
+                <TouchableOpacity style={styles.retryButton} onPress={fetchCategories}>
+                  <Text style={styles.retryText}>Retry</Text>
+                </TouchableOpacity>
+              </View>
+            ) : categories.length > 0 ? (
+              <View style={styles.categoryGrid}>
+                {categories.map((category) => (
+                  <CategoryCard 
+                    key={category.id}
+                    emoji={category.emoji || "�"} 
+                    title={category.name} 
+                    onPress={() => handleCategoryPress(category.name, category.id)} 
+                  />
+                ))}
+              </View>
+            ) : (
+              <Text style={styles.placeholderText}>No categories available</Text>
+            )}
           </View>
         );
       default:
@@ -73,7 +104,7 @@ const ExploreScreen = () => {
             <TouchableOpacity
               key={tab}
               style={styles.tabButton}
-              onPress={() => setActiveTab(tab)}
+              onPress={() => handleTabPress(tab)}
             >
               <Text style={[
                 styles.tabText,
@@ -157,6 +188,36 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
+  },
+  loadingContainer: {
+    alignItems: 'center',
+    padding: spacing.xl,
+  },
+  loadingText: {
+    marginTop: spacing.md,
+    fontSize: 16,
+    color: colors.text.secondary,
+  },
+  errorContainer: {
+    alignItems: 'center',
+    padding: spacing.xl,
+  },
+  errorText: {
+    fontSize: 16,
+    color: colors.text.secondary,
+    textAlign: 'center',
+    marginBottom: spacing.md,
+  },
+  retryButton: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
+    borderRadius: 8,
+  },
+  retryText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
 
