@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Dimensions } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { getContentByCategory } from '../utils/supabaseContentCategories';
-import { LoadingIndicator } from '../components';
+import { LoadingIndicator, ErrorState } from '../components';
 
 const { width } = Dimensions.get('window');
 
@@ -83,12 +83,10 @@ const ContentByCategoryScreen = () => {
   if (error) {
     return (
       <View style={styles.container}>
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>{error}</Text>
-          <TouchableOpacity style={styles.retryButton} onPress={fetchContentItems}>
-            <Text style={styles.retryText}>Retry</Text>
-          </TouchableOpacity>
-        </View>
+        <ErrorState 
+          message={error} 
+          onRetry={fetchContentItems} 
+        />
       </View>
     );
   }
@@ -157,29 +155,6 @@ const styles = StyleSheet.create({
     color: '#333',
     textAlign: 'center',
     numberOfLines: 2,
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 24,
-  },
-  errorText: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 16,
-    textAlign: 'center',
-  },
-  retryButton: {
-    backgroundColor: '#007AFF',
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 8,
-  },
-  retryText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
   },
   emptyContainer: {
     flex: 1,

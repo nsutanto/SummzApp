@@ -4,3 +4,4 @@ export { default as Section } from './Section';
 export { default as EmptyState } from './EmptyState';
 export { default as CategoryCard } from './CategoryCard';
 export { default as LoadingIndicator } from './LoadingIndicator';
+export { default as ErrorState } from './ErrorState';

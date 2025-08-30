@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { commonStyles, colors, spacing } from '../../styles';
-import { CategoryCard, LoadingIndicator } from '../../components';
+import { CategoryCard, LoadingIndicator, ErrorState } from '../../components';
 import { getCategories } from '../../utils/supabaseCategories';
 
 const ExploreScreen = () => {
@@ -69,12 +69,11 @@ const ExploreScreen = () => {
                 style={styles.loadingContainer}
               />
             ) : categoriesError ? (
-              <View style={styles.errorContainer}>
-                <Text style={styles.errorText}>{categoriesError}</Text>
-                <TouchableOpacity style={styles.retryButton} onPress={fetchCategories}>
-                  <Text style={styles.retryText}>Retry</Text>
-                </TouchableOpacity>
-              </View>
+              <ErrorState 
+                message={categoriesError} 
+                onRetry={fetchCategories} 
+                style={styles.errorContainer}
+              />
             ) : categories.length > 0 ? (
               <View style={styles.categoryGrid}>
                 {categories.map((category) => (
@@ -194,25 +193,7 @@ const styles = StyleSheet.create({
     padding: spacing.xl,
   },
   errorContainer: {
-    alignItems: 'center',
     padding: spacing.xl,
-  },
-  errorText: {
-    fontSize: 16,
-    color: colors.text.secondary,
-    textAlign: 'center',
-    marginBottom: spacing.md,
-  },
-  retryButton: {
-    backgroundColor: colors.primary,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
-    borderRadius: 8,
-  },
-  retryText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
   },
 });
 
