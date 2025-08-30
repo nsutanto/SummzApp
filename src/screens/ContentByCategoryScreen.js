@@ -5,6 +5,12 @@ import { getContentByCategory } from '../utils/supabaseContentCategories';
 
 const { width } = Dimensions.get('window');
 
+// Constants
+const ITEMS_PER_ROW = 2;
+const PADDING = 16;
+const CARD_WIDTH = (width - (PADDING * 3)) / ITEMS_PER_ROW;
+const PLACEHOLDER_IMAGE = 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=200&h=300&fit=crop';
+
 const ContentByCategoryScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
@@ -34,20 +40,10 @@ const ContentByCategoryScreen = () => {
     }
   };
 
-  const renderContentItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.contentCard}
-      onPress={() => {
-        console.log('Content item selected:', item.title);
-      }}
-    >
-      <Image 
-        source={{ uri: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=200&h=300&fit=crop' }} 
-        style={styles.contentImage} 
-      />
-      <Text style={styles.contentTitle}>{item.title}</Text>
-    </TouchableOpacity>
-  );
+  const handleItemPress = (item) => {
+    console.log('Content item selected:', item.title);
+    // TODO: Navigate to item detail screen
+  };
 
   const renderRow = ({ item }) => (
     <View style={styles.row}>
@@ -55,12 +51,10 @@ const ContentByCategoryScreen = () => {
         <TouchableOpacity
           key={contentItem.id}
           style={styles.contentCard}
-          onPress={() => {
-            console.log('Content item selected:', contentItem.title);
-          }}
+          onPress={() => handleItemPress(contentItem)}
         >
           <Image 
-            source={{ uri: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=200&h=300&fit=crop' }} 
+            source={{ uri: PLACEHOLDER_IMAGE }} 
             style={styles.contentImage} 
           />
           <Text style={styles.contentTitle}>{contentItem.title}</Text>
@@ -105,7 +99,7 @@ const ContentByCategoryScreen = () => {
     <View style={styles.container}>
       {contentItems.length > 0 ? (
         <FlatList
-          data={chunkArray(contentItems, 2)}
+          data={chunkArray(contentItems, ITEMS_PER_ROW)}
           renderItem={renderRow}
           keyExtractor={(item, index) => `row-${index}`}
           showsVerticalScrollIndicator={false}
@@ -132,18 +126,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
   },
   listContainer: {
-    padding: 16,
+    padding: PADDING,
   },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 16,
+    marginBottom: PADDING,
   },
   contentCard: {
     backgroundColor: '#fff',
     borderRadius: 8,
     padding: 12,
-    width: (width - 48) / 2, // Screen width minus padding, divided by 2
+    width: CARD_WIDTH,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
