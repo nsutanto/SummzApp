@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity, Image, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Dimensions } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { getContentByCategory } from '../utils/supabaseContentCategories';
+import { LoadingIndicator } from '../components';
 
 const { width } = Dimensions.get('window');
 
@@ -74,10 +75,7 @@ const ContentByCategoryScreen = () => {
   if (loading) {
     return (
       <View style={styles.container}>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#007AFF" />
-          <Text style={styles.loadingText}>Loading content...</Text>
-        </View>
+        <LoadingIndicator text="Loading content..." />
       </View>
     );
   }
@@ -159,16 +157,6 @@ const styles = StyleSheet.create({
     color: '#333',
     textAlign: 'center',
     numberOfLines: 2,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginTop: 16,
-    fontSize: 16,
-    color: '#666',
   },
   errorContainer: {
     flex: 1,

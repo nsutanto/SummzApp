@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { commonStyles, colors, spacing } from '../../styles';
-import { CategoryCard } from '../../components';
+import { CategoryCard, LoadingIndicator } from '../../components';
 import { getCategories } from '../../utils/supabaseCategories';
 
 const ExploreScreen = () => {
@@ -63,10 +63,11 @@ const ExploreScreen = () => {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Browse Categories</Text>
             {categoriesLoading ? (
-              <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color={colors.primary} />
-                <Text style={styles.loadingText}>Loading categories...</Text>
-              </View>
+              <LoadingIndicator 
+                text="Loading categories..." 
+                color={colors.primary}
+                style={styles.loadingContainer}
+              />
             ) : categoriesError ? (
               <View style={styles.errorContainer}>
                 <Text style={styles.errorText}>{categoriesError}</Text>
@@ -190,13 +191,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   loadingContainer: {
-    alignItems: 'center',
     padding: spacing.xl,
-  },
-  loadingText: {
-    marginTop: spacing.md,
-    fontSize: 16,
-    color: colors.text.secondary,
   },
   errorContainer: {
     alignItems: 'center',
