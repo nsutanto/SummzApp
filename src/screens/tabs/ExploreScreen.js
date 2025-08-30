@@ -205,6 +205,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   centerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: 200,
     padding: spacing.xl,
   },
 });

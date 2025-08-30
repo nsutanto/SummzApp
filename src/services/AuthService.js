@@ -54,10 +54,18 @@ export const AuthService = {
   // Sign Out
   async signOut() {
     try {
-      await GoogleSignin.revokeAccess();
-      await GoogleSignin.signOut();
+      // Try to sign out from Google services, but don't fail if it errors
+      try {
+        await GoogleSignin.revokeAccess();
+        await GoogleSignin.signOut();
+      } catch (googleError) {
+        console.warn('Google sign-out error (ignored):', googleError);
+      }
+      
+      // Always try to sign out from Firebase
       return auth().signOut();
     } catch (error) {
+      console.error('Firebase sign-out error:', error);
       throw error;
     }
   },

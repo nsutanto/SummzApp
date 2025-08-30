@@ -8,14 +8,12 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../context/AuthContext';
 import { spacing } from '../styles';
 import { insertUserToSupabase } from '../utils/supabaseUsers';
 import { useTheme } from '../hooks/useTheme';
 
 const LoginScreen = () => {
-  const navigation = useNavigation();
   const { signInWithGoogle, signInWithEmail, signUpWithEmail, loading } = useAuth();
   const { theme } = useTheme();
   const [email, setEmail] = useState('');
@@ -36,10 +34,8 @@ const LoginScreen = () => {
         });
       }
       
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'MainScreen' }],
-      });
+      // No need to manually navigate - AuthContext will handle the state change
+      // and automatically switch to MainScreen
     } catch (error) {
       console.error('Login error:', error);
       Alert.alert('Error', error.message);
@@ -70,10 +66,8 @@ const LoginScreen = () => {
         });
       }
       
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'MainScreen' }],
-      });
+      // No need to manually navigate - AuthContext will handle the state change
+      // and automatically switch to MainScreen
     } catch (error) {
       console.error('Login error:', error);
       Alert.alert('Error', error.message);

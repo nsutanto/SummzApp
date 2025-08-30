@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Image } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../context/AuthContext';
 import { spacing } from '../../styles';
 import { Section, SettingItem } from '../../components';
 import { useTheme } from '../../hooks/useTheme';
 
 const MeScreen = () => {
-  const navigation = useNavigation();
   const { user, signOut } = useAuth();
   const { theme, styles: themedStyles, commonStyles } = useTheme();
   const [imageError, setImageError] = useState(false);
@@ -24,10 +22,8 @@ const MeScreen = () => {
           onPress: async () => {
             try {
               await signOut();
-              navigation.reset({
-                index: 0,
-                routes: [{ name: 'LoginScreen' }],
-              });
+              // No need to manually navigate - AuthContext will handle the state change
+              // and automatically switch to LoginScreen
             } catch (error) {
               Alert.alert('Error', 'Failed to logout');
             }
