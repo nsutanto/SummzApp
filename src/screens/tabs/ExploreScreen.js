@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { commonStyles, colors, spacing } from '../../styles';
+import { spacing } from '../../styles';
 import { CategoryCard, LoadingIndicator, ErrorState } from '../../components';
 import { getCategories } from '../../utils/supabaseCategories';
+import { useTheme } from '../../hooks/useTheme';
 
 const ExploreScreen = () => {
   const navigation = useNavigation();
+  const { theme, styles: themedStyles } = useTheme();
   const [activeTab, setActiveTab] = useState('For you');
   const [categories, setCategories] = useState([]);
   const [categoriesLoading, setCategoriesLoading] = useState(false);
@@ -47,25 +49,25 @@ const ExploreScreen = () => {
       case 'For you':
         return (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Recommended for You</Text>
-            <Text style={styles.placeholderText}>Personalized content will appear here</Text>
+            <Text style={[styles.sectionTitle, { color: theme.text.primary }]}>Recommended for You</Text>
+            <Text style={[styles.placeholderText, { color: theme.text.secondary }]}>Personalized content will appear here</Text>
           </View>
         );
       case 'Trending':
         return (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Trending Now</Text>
-            <Text style={styles.placeholderText}>Trending summaries will appear here</Text>
+            <Text style={[styles.sectionTitle, { color: theme.text.primary }]}>Trending Now</Text>
+            <Text style={[styles.placeholderText, { color: theme.text.secondary }]}>Trending summaries will appear here</Text>
           </View>
         );
       case 'Categories':
         return (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Browse Categories</Text>
+            <Text style={[styles.sectionTitle, { color: theme.text.primary }]}>Browse Categories</Text>
             {categoriesLoading ? (
               <LoadingIndicator 
                 text="Loading categories..." 
-                color={colors.primary}
+                color={theme.primary}
                 style={styles.loadingContainer}
               />
             ) : categoriesError ? (
@@ -79,14 +81,14 @@ const ExploreScreen = () => {
                 {categories.map((category) => (
                   <CategoryCard 
                     key={category.id}
-                    emoji={category.emoji || "�"} 
+                    emoji={category.emoji || "📁"} 
                     title={category.name} 
                     onPress={() => handleCategoryPress(category.name, category.id)} 
                   />
                 ))}
               </View>
             ) : (
-              <Text style={styles.placeholderText}>No categories available</Text>
+              <Text style={[styles.placeholderText, { color: theme.text.secondary }]}>No categories available</Text>
             )}
           </View>
         );
@@ -96,8 +98,8 @@ const ExploreScreen = () => {
   };
 
   return (
-    <ScrollView style={commonStyles.container}>
-      <View style={commonStyles.content}>
+    <ScrollView style={[themedStyles.container, { backgroundColor: theme.background }]}>
+      <View style={themedStyles.content}>
         {/* Horizontal Tabs */}
         <View style={styles.tabContainer}>
           {tabs.map((tab, index) => (
@@ -108,7 +110,8 @@ const ExploreScreen = () => {
             >
               <Text style={[
                 styles.tabText,
-                activeTab === tab && styles.activeTabText
+                { color: theme.text.secondary },
+                activeTab === tab && [styles.activeTabText, { color: theme.text.primary }]
               ]}>
                 {tab}
               </Text>
@@ -118,10 +121,13 @@ const ExploreScreen = () => {
         
         {/* Tab Indicator Line */}
         <View style={styles.tabIndicatorContainer}>
-          <View style={styles.tabIndicatorLine} />
+          <View style={[styles.tabIndicatorLine, { backgroundColor: theme.border.default }]} />
           <View style={[
             styles.activeIndicator,
-            { left: `${tabs.indexOf(activeTab) * (100 / tabs.length)}%` }
+            { 
+              left: `${tabs.indexOf(activeTab) * (100 / tabs.length)}%`,
+              backgroundColor: theme.primary
+            }
           ]} />
         </View>
         
@@ -147,10 +153,10 @@ const styles = StyleSheet.create({
   tabText: {
     fontSize: 14,
     fontWeight: '500',
-    color: colors.text.secondary,
+    // color will be set by theme
   },
   activeTabText: {
-    color: colors.text.primary,
+    // color will be set by theme
     fontWeight: 'bold',
   },
   tabIndicatorContainer: {
@@ -159,14 +165,14 @@ const styles = StyleSheet.create({
   },
   tabIndicatorLine: {
     height: 2,
-    backgroundColor: colors.border.default,
+    // backgroundColor will be set by theme
     width: '100%',
   },
   activeIndicator: {
     position: 'absolute',
     height: 2,
     width: '33.33%',
-    backgroundColor: colors.primary,
+    // backgroundColor will be set by theme
     top: 0,
   },
   section: {
@@ -175,12 +181,12 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: colors.text.primary,
+    // color will be set by theme
     marginBottom: spacing.md,
   },
   placeholderText: {
     fontSize: 16,
-    color: colors.text.secondary,
+    // color will be set by theme
     textAlign: 'center',
     marginTop: spacing.lg,
   },

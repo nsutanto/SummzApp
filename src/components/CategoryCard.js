@@ -1,32 +1,35 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { colors, spacing } from '../styles';
+import { spacing, shadows } from '../styles';
+import { useTheme } from '../hooks/useTheme';
 
 const CategoryCard = ({ emoji, title, onPress, style }) => {
+  const { theme } = useTheme();
+
   return (
-    <TouchableOpacity style={[styles.categoryCard, style]} onPress={onPress}>
+    <TouchableOpacity 
+      style={[
+        styles.categoryCard, 
+        { backgroundColor: theme.surface },
+        style
+      ]} 
+      onPress={onPress}
+    >
       <Text style={styles.categoryEmoji}>{emoji}</Text>
-      <Text style={styles.categoryText}>{title}</Text>
+      <Text style={[styles.categoryText, { color: theme.text.primary }]}>{title}</Text>
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   categoryCard: {
-    backgroundColor: colors.white,
+    // backgroundColor will be set by theme
     width: '48%',
     padding: spacing.lg,
     borderRadius: 12,
     alignItems: 'center',
     marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
+    ...shadows.small,
   },
   categoryEmoji: {
     fontSize: 32,
@@ -35,7 +38,7 @@ const styles = StyleSheet.create({
   categoryText: {
     fontSize: 14,
     fontWeight: '600',
-    color: colors.text.primary,
+    // color will be set by theme
   },
 });
 
