@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, Dimensions } from 'react-native';
 import ContentItem from './ContentItem';
+import { useTheme } from '../hooks/useTheme';
 
 const { width } = Dimensions.get('window');
 
@@ -16,6 +17,8 @@ const VerticalItemList = ({
   contentContainerStyle,
   ...flatListProps
 }) => {
+  const { theme } = useTheme();
+  
   // Calculate card width based on screen width and padding
   const CARD_WIDTH = (width - (padding * (itemsPerRow + 1))) / itemsPerRow;
 
@@ -44,7 +47,7 @@ const VerticalItemList = ({
   if (data.length === 0 && showEmptyState) {
     return (
       <View style={styles.emptyContainer}>
-        <Text style={styles.emptyText}>{emptyMessage}</Text>
+        <Text style={[styles.emptyText, { color: theme.text.secondary }]}>{emptyMessage}</Text>
       </View>
     );
   }
@@ -84,7 +87,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: '#666',
+    // color will be set by theme
     textAlign: 'center',
   },
 });

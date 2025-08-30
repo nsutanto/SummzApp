@@ -3,10 +3,12 @@ import { View, StyleSheet } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { getContentByCategory } from '../utils/supabaseContentCategories';
 import { LoadingIndicator, ErrorState, VerticalItemList } from '../components';
+import { useTheme } from '../hooks/useTheme';
 
 const ContentByCategoryScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
+  const { theme } = useTheme();
   const { categoryName, categoryId } = route.params || {};
   
   const [contentItems, setContentItems] = useState([]);
@@ -40,7 +42,7 @@ const ContentByCategoryScreen = () => {
 
   if (loading) {
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor: theme.background }]}>
         <LoadingIndicator text="Loading content..." />
       </View>
     );
@@ -48,7 +50,7 @@ const ContentByCategoryScreen = () => {
 
   if (error) {
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor: theme.background }]}>
         <ErrorState 
           message={error} 
           onRetry={fetchContentByCategory} 
@@ -58,7 +60,7 @@ const ContentByCategoryScreen = () => {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       <VerticalItemList
         data={contentItems}
         onItemPress={handleItemPress}
@@ -71,7 +73,7 @@ const ContentByCategoryScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    // backgroundColor will be set by theme
   },
 });
 
