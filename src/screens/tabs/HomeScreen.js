@@ -32,18 +32,20 @@ const HomeScreen = () => {
           const content = await getContentByCategory(category.id);
           return { categoryId: category.id, content: content || [] };
         } catch (err) {
+          console.warn(`Failed to load content for category ${category.id}:`, err);
           return { categoryId: category.id, content: [] };
         }
       });
       
       const contentResults = await Promise.all(contentPromises);
-      const contentMap = {};
-      contentResults.forEach(({ categoryId, content }) => {
-        contentMap[categoryId] = content;
-      });
+      const contentMap = contentResults.reduce((acc, { categoryId, content }) => {
+        acc[categoryId] = content;
+        return acc;
+      }, {});
       
       setCategoryContent(contentMap);
     } catch (err) {
+      console.error('Error fetching categories and content:', err);
       setError('Failed to load content');
     } finally {
       setLoading(false);
@@ -51,6 +53,7 @@ const HomeScreen = () => {
   };
 
   const handleItemPress = (item) => {
+    console.log('Item pressed:', item);
     // TODO: Navigate to item detail screen
   };
 
@@ -76,6 +79,7 @@ const HomeScreen = () => {
   return (
     <ScrollView style={[themedStyles.container, { backgroundColor: theme.background }]}>
       <View style={themedStyles.content}>
+        {/* Search Bar */}
         <View style={styles.searchBarContainer}>
           <View style={[
             styles.searchBarWrapper, 
@@ -84,7 +88,12 @@ const HomeScreen = () => {
               borderColor: theme.border.light 
             }
           ]}>
-            <Icon name="search" size={24} color={theme.text.secondary} style={styles.searchIcon} />
+            <Icon 
+              name="search" 
+              size={24} 
+              color={theme.text.secondary} 
+              style={styles.searchIcon} 
+            />
             <TextInput
               style={[styles.searchBar, { color: theme.text.primary }]}
               placeholder="Search for books"
@@ -96,6 +105,7 @@ const HomeScreen = () => {
           </View>
         </View>
 
+        {/* Category Sections */}
         {categories.map((category) => {
           const content = categoryContent[category.id] || [];
           
@@ -106,12 +116,17 @@ const HomeScreen = () => {
               <View style={styles.categoryHeader}>
                 <View style={styles.categoryTitleContainer}>
                   <Text style={styles.categoryEmoji}>{category.emoji}</Text>
-                  <Text style={[styles.categoryTitle, { color: theme.text.primary }]} numberOfLines={2}>
+                  <Text 
+                    style={[styles.categoryTitle, { color: theme.text.primary }]} 
+                    numberOfLines={2}
+                  >
                     {category.name}
                   </Text>
                 </View>
                 <TouchableOpacity>
-                  <Text style={[styles.seeAllText, { color: theme.primary }]}>See All</Text>
+                  <Text style={[styles.seeAllText, { color: theme.primary }]}>
+                    See All
+                  </Text>
                 </TouchableOpacity>
               </View>
               
@@ -126,9 +141,12 @@ const HomeScreen = () => {
           );
         })}
         
+        {/* Empty State */}
         {categories.length === 0 && (
           <View style={styles.emptyContainer}>
-            <Text style={[styles.emptyText, { color: theme.text.secondary }]}>No categories available</Text>
+            <Text style={[styles.emptyText, { color: theme.text.secondary }]}>
+              No categories available
+            </Text>
           </View>
         )}
       </View>
@@ -142,7 +160,6 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   searchBarWrapper: {
-    // backgroundColor and borderColor will be set by theme
     borderRadius: 12,
     borderWidth: 1,
     flexDirection: 'row',
@@ -157,7 +174,6 @@ const styles = StyleSheet.create({
   searchBar: {
     flex: 1,
     ...typography.body,
-    // color will be set by theme
   },
   categorySection: {
     marginBottom: 24,
@@ -183,18 +199,14 @@ const styles = StyleSheet.create({
   },
   categoryTitle: {
     ...typography.subtitle,
-    // color will be set by theme
     lineHeight: 26,
     flex: 1,
     textAlign: 'left',
     includeFontPadding: false,
     textAlignVertical: 'top',
-    paddingLeft: 0,
-    marginLeft: 0,
   },
   seeAllText: {
     ...typography.bodySecondary,
-    // color will be set by theme
     fontWeight: '600',
     flexShrink: 0,
   },
@@ -204,7 +216,6 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     ...typography.body,
-    // color will be set by theme
   },
 });
 

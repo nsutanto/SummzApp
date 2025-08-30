@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { spacing } from '../../styles';
+import { spacing, typography } from '../../styles';
 import { CategoryCard, LoadingIndicator, ErrorState } from '../../components';
 import { getCategories } from '../../utils/supabaseCategories';
 import { useTheme } from '../../hooks/useTheme';
@@ -13,6 +13,7 @@ const ExploreScreen = () => {
   const [categories, setCategories] = useState([]);
   const [categoriesLoading, setCategoriesLoading] = useState(false);
   const [categoriesError, setCategoriesError] = useState(null);
+  
   const tabs = ['For you', 'Trending', 'Categories'];
 
   const handleCategoryPress = (categoryTitle, categoryId) => {
@@ -49,34 +50,48 @@ const ExploreScreen = () => {
       case 'For you':
         return (
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: theme.text.primary }]}>Recommended for You</Text>
-            <Text style={[styles.placeholderText, { color: theme.text.secondary }]}>Personalized content will appear here</Text>
+            <Text style={[styles.sectionTitle, { color: theme.text.primary }]}>
+              Recommended for You
+            </Text>
+            <Text style={[styles.placeholderText, { color: theme.text.secondary }]}>
+              Personalized content will appear here
+            </Text>
           </View>
         );
+        
       case 'Trending':
         return (
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: theme.text.primary }]}>Trending Now</Text>
-            <Text style={[styles.placeholderText, { color: theme.text.secondary }]}>Trending summaries will appear here</Text>
+            <Text style={[styles.sectionTitle, { color: theme.text.primary }]}>
+              Trending Now
+            </Text>
+            <Text style={[styles.placeholderText, { color: theme.text.secondary }]}>
+              Trending summaries will appear here
+            </Text>
           </View>
         );
+        
       case 'Categories':
         return (
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: theme.text.primary }]}>Browse Categories</Text>
-            {categoriesLoading ? (
+            <Text style={[styles.sectionTitle, { color: theme.text.primary }]}>
+              Browse Categories
+            </Text>
+            {categoriesLoading && (
               <LoadingIndicator 
                 text="Loading categories..." 
                 color={theme.primary}
-                style={styles.loadingContainer}
+                style={styles.centerContainer}
               />
-            ) : categoriesError ? (
+            )}
+            {categoriesError && (
               <ErrorState 
                 message={categoriesError} 
                 onRetry={fetchCategories} 
-                style={styles.errorContainer}
+                style={styles.centerContainer}
               />
-            ) : categories.length > 0 ? (
+            )}
+            {!categoriesLoading && !categoriesError && categories.length > 0 && (
               <View style={styles.categoryGrid}>
                 {categories.map((category) => (
                   <CategoryCard 
@@ -87,11 +102,15 @@ const ExploreScreen = () => {
                   />
                 ))}
               </View>
-            ) : (
-              <Text style={[styles.placeholderText, { color: theme.text.secondary }]}>No categories available</Text>
+            )}
+            {!categoriesLoading && !categoriesError && categories.length === 0 && (
+              <Text style={[styles.placeholderText, { color: theme.text.secondary }]}>
+                No categories available
+              </Text>
             )}
           </View>
         );
+        
       default:
         return null;
     }
@@ -100,9 +119,9 @@ const ExploreScreen = () => {
   return (
     <ScrollView style={[themedStyles.container, { backgroundColor: theme.background }]}>
       <View style={themedStyles.content}>
-        {/* Horizontal Tabs */}
+        {/* Tab Navigation */}
         <View style={styles.tabContainer}>
-          {tabs.map((tab, index) => (
+          {tabs.map((tab) => (
             <TouchableOpacity
               key={tab}
               style={styles.tabButton}
@@ -111,7 +130,7 @@ const ExploreScreen = () => {
               <Text style={[
                 styles.tabText,
                 { color: theme.text.secondary },
-                activeTab === tab && [styles.activeTabText, { color: theme.text.primary }]
+                activeTab === tab && { color: theme.text.primary, fontWeight: 'bold' }
               ]}>
                 {tab}
               </Text>
@@ -119,7 +138,7 @@ const ExploreScreen = () => {
           ))}
         </View>
         
-        {/* Tab Indicator Line */}
+        {/* Tab Indicator */}
         <View style={styles.tabIndicatorContainer}>
           <View style={[styles.tabIndicatorLine, { backgroundColor: theme.border.default }]} />
           <View style={[
@@ -131,7 +150,7 @@ const ExploreScreen = () => {
           ]} />
         </View>
         
-        {/* Tab Content */}
+        {/* Content */}
         {renderTabContent()}
       </View>
     </ScrollView>
@@ -151,13 +170,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   tabText: {
-    fontSize: 14,
+    ...typography.body,
     fontWeight: '500',
-    // color will be set by theme
-  },
-  activeTabText: {
-    // color will be set by theme
-    fontWeight: 'bold',
   },
   tabIndicatorContainer: {
     marginBottom: spacing.lg,
@@ -165,28 +179,23 @@ const styles = StyleSheet.create({
   },
   tabIndicatorLine: {
     height: 2,
-    // backgroundColor will be set by theme
     width: '100%',
   },
   activeIndicator: {
     position: 'absolute',
     height: 2,
     width: '33.33%',
-    // backgroundColor will be set by theme
     top: 0,
   },
   section: {
     marginBottom: spacing.xl,
   },
   sectionTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    // color will be set by theme
+    ...typography.subtitle,
     marginBottom: spacing.md,
   },
   placeholderText: {
-    fontSize: 16,
-    // color will be set by theme
+    ...typography.body,
     textAlign: 'center',
     marginTop: spacing.lg,
   },
@@ -195,10 +204,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'space-between',
   },
-  loadingContainer: {
-    padding: spacing.xl,
-  },
-  errorContainer: {
+  centerContainer: {
     padding: spacing.xl,
   },
 });
