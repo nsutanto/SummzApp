@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../context/AuthContext';
-import { commonStyles, colors, spacing } from '../../styles';
-import { Section, MenuItem } from '../../components';
+import { colors, spacing } from '../../styles';
+import { Section, SettingItem } from '../../components';
 import { useTheme } from '../../hooks/useTheme';
 
 const MeScreen = () => {
   const navigation = useNavigation();
   const { user, signOut } = useAuth();
-  const { theme, styles: themedStyles, isDark } = useTheme();
+  const { theme, styles: themedStyles } = useTheme();
   const [imageError, setImageError] = useState(false);
 
   const handleLogout = () => {
@@ -66,14 +66,14 @@ const MeScreen = () => {
           </View>
         )}
         
-        {/* Account Section */}
+                {/* Account Section */}
         <Section title="Account">
-          <MenuItem 
+          <SettingItem 
             icon="👤" 
             text="View Profile" 
             onPress={() => {}} 
           />
-          <MenuItem 
+          <SettingItem 
             icon="💳" 
             text="Subscription" 
             onPress={() => {}} 
@@ -83,10 +83,11 @@ const MeScreen = () => {
         
         {/* App Settings Section */}
         <Section title="App Settings">
-          <MenuItem 
+          <SettingItem 
             icon="🔤" 
             text="Text Size" 
             onPress={() => {}} 
+            isLast={true}
           />
         </Section>
         
