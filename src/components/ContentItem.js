@@ -25,8 +25,8 @@ const ContentItem = ({
     }
   };
 
-  // Calculate total height if provided, otherwise use auto
-  const containerStyle = height ? { width, height } : { width };
+  // Calculate container style - if height is provided, use it; otherwise let it size dynamically
+  const containerStyle = height ? { width, height } : { width, minHeight: imageHeight + (showTitle ? 80 : 0) };
 
   return (
     <TouchableOpacity
@@ -49,7 +49,7 @@ const ContentItem = ({
             { color: theme.text.primary }, 
             titleStyle
           ]} 
-          numberOfLines={5} 
+          numberOfLines={3} 
           ellipsizeMode="tail"
         >
           {item.title}
@@ -76,8 +76,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     // color will be set by theme
     textAlign: 'center',
-    height: 100, // Increased height for up to 5 lines (5 * 20 line height)
     lineHeight: 20, // Consistent line height
+    paddingTop: 4, // Small padding for better spacing
+    flexShrink: 1, // Allow text to shrink if needed
   },
 });
 
