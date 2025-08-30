@@ -1,24 +1,29 @@
 import React from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, ActivityIndicator } from 'react-native';
+import { useTheme } from '../hooks/useTheme';
 
 const LoadingIndicator = ({ 
   size = 'large', 
-  color = '#007AFF', 
+  color, 
   text = 'Loading...', 
   showText = true,
   style 
 }) => {
+  const { theme } = useTheme();
+  
+  const indicatorColor = color || theme.primary;
+  
   return (
     <View style={[styles.container, style]}>
-      <ActivityIndicator size={size} color={color} />
+      <ActivityIndicator size={size} color={indicatorColor} />
       {showText && (
-        <Text style={[styles.text, { color }]}>{text}</Text>
+        <Text style={[styles.text, { color: theme.text.primary }]}>{text}</Text>
       )}
     </View>
   );
 };
 
-const styles = StyleSheet.create({
+const styles = {
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -30,6 +35,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
   },
-});
+};
 
 export default LoadingIndicator;

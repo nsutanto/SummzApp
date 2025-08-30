@@ -205,7 +205,7 @@ export const getCommonStyles = (theme = lightTheme) => StyleSheet.create({
     marginTop: spacing.lg,
   },
   buttonText: {
-    color: '#ffffff',
+    color: theme.white,
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -341,7 +341,7 @@ export const createThemedStyles = (theme) => StyleSheet.create({
     marginTop: spacing.lg,
   },
   buttonText: {
-    color: '#ffffff',
+    color: theme.white,
     fontSize: 16,
     fontWeight: 'bold',
   },
