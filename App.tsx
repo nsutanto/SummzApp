@@ -13,6 +13,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { enableScreens } from 'react-native-screens';
 import LoginScreen from './src/screens/LoginScreen';
 import MainScreen from './src/screens/MainScreen';
+import ContentByCategoryScreen from './src/screens/ContentByCategoryScreen';
 import { AuthProvider, useAuth } from './src/context/AuthContext';
 
 // Enable screens for iOS
@@ -43,10 +44,20 @@ function AppNavigator() {
       >
         {user ? (
           // User is authenticated - show main app
-          <Stack.Screen 
-            name="MainScreen" 
-            component={MainScreen}
-          />
+          <>
+            <Stack.Screen 
+              name="MainScreen" 
+              component={MainScreen}
+            />
+            <Stack.Screen 
+              name="ContentByCategoryScreen" 
+              component={ContentByCategoryScreen}
+              options={{
+                headerShown: true,
+                title: 'Content by Category'
+              }}
+            />
+          </>
         ) : (
           // User is not authenticated - show login
           <Stack.Screen 

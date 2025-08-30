@@ -1,11 +1,19 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { commonStyles, colors, spacing } from '../../styles';
 import { CategoryCard } from '../../components';
 
 const ExploreScreen = () => {
+  const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState('For you');
   const tabs = ['For you', 'Trending', 'Categories'];
+
+  const handleCategoryPress = (categoryTitle) => {
+    navigation.navigate('ContentByCategoryScreen', { 
+      categoryName: categoryTitle 
+    });
+  };
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -31,22 +39,22 @@ const ExploreScreen = () => {
               <CategoryCard 
                 emoji="📚" 
                 title="Education" 
-                onPress={() => {}} 
+                onPress={() => handleCategoryPress('Education')} 
               />
               <CategoryCard 
                 emoji="💼" 
                 title="Business" 
-                onPress={() => {}} 
+                onPress={() => handleCategoryPress('Business')} 
               />
               <CategoryCard 
                 emoji="🔬" 
                 title="Science" 
-                onPress={() => {}} 
+                onPress={() => handleCategoryPress('Science')} 
               />
               <CategoryCard 
                 emoji="🎨" 
                 title="Arts" 
-                onPress={() => {}} 
+                onPress={() => handleCategoryPress('Arts')} 
               />
             </View>
           </View>
