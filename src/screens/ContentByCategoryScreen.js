@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity, Image, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity, Image, Dimensions } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { getContentByCategory } from '../utils/supabaseContentCategories';
 
@@ -34,9 +34,8 @@ const ContentByCategoryScreen = () => {
     }
   };
 
-  const renderContentItem = (item) => (
+  const renderContentItem = ({ item }) => (
     <TouchableOpacity
-      key={item.id}
       style={styles.contentCard}
       onPress={() => {
         console.log('Content item selected:', item.title);
@@ -50,9 +49,23 @@ const ContentByCategoryScreen = () => {
     </TouchableOpacity>
   );
 
-  const renderRow = (items, rowIndex) => (
-    <View key={rowIndex} style={styles.row}>
-      {items.map(renderContentItem)}
+  const renderRow = ({ item }) => (
+    <View style={styles.row}>
+      {item.map((contentItem) => (
+        <TouchableOpacity
+          key={contentItem.id}
+          style={styles.contentCard}
+          onPress={() => {
+            console.log('Content item selected:', contentItem.title);
+          }}
+        >
+          <Image 
+            source={{ uri: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=200&h=300&fit=crop' }} 
+            style={styles.contentImage} 
+          />
+          <Text style={styles.contentTitle}>{contentItem.title}</Text>
+        </TouchableOpacity>
+      ))}
     </View>
   );
 
@@ -90,15 +103,25 @@ const ContentByCategoryScreen = () => {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {contentItems.length > 0 ? (
-          chunkArray(contentItems, 2).map((chunk, index) => renderRow(chunk, index))
-        ) : (
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>No content found in this category</Text>
-          </View>
-        )}
-      </ScrollView>
+      {contentItems.length > 0 ? (
+        <FlatList
+          data={chunkArray(contentItems, 2)}
+          renderItem={renderRow}
+          keyExtractor={(item, index) => `row-${index}`}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.listContainer}
+          // Performance optimizations
+          removeClippedSubviews={true}
+          maxToRenderPerBatch={10}
+          windowSize={10}
+          initialNumToRender={10}
+          updateCellsBatchingPeriod={50}
+        />
+      ) : (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>No content found in this category</Text>
+        </View>
+      )}
     </View>
   );
 };
@@ -108,8 +131,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f5f5f5',
   },
-  scrollView: {
-    flex: 1,
+  listContainer: {
     padding: 16,
   },
   row: {
