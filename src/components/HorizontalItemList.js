@@ -1,0 +1,90 @@
+import React from 'react';
+import { View, Text, StyleSheet, FlatList } from 'react-native';
+import ContentItem from './ContentItem';
+
+const HorizontalItemList = ({
+  data = [],
+  itemWidth = 150,
+  itemHeight = 200,
+  spacing = 16,
+  onItemPress,
+  emptyMessage = 'No items found',
+  showEmptyState = true,
+  itemProps = {},
+  style,
+  contentContainerStyle,
+  ...flatListProps
+}) => {
+  const renderItem = ({ item, index }) => (
+    <View style={[
+      styles.itemContainer, 
+      { 
+        marginLeft: index === 0 ? spacing : spacing / 2,
+        marginRight: index === data.length - 1 ? spacing : spacing / 2,
+      }
+    ]}>
+      <ContentItem
+        item={item}
+        onPress={onItemPress}
+        width={itemWidth}
+        imageHeight={itemHeight * 0.75} // Make image 75% of total height
+        {...itemProps}
+      />
+    </View>
+  );
+
+  if (data.length === 0 && showEmptyState) {
+    return (
+      <View style={styles.emptyContainer}>
+        <Text style={styles.emptyText}>{emptyMessage}</Text>
+      </View>
+    );
+  }
+
+  return (
+    <FlatList
+      data={data}
+      renderItem={renderItem}
+      keyExtractor={(item, index) => item.id?.toString() || index.toString()}
+      horizontal={true}
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={contentContainerStyle}
+      style={[styles.list, style]}
+      // Performance optimizations for horizontal scrolling
+      removeClippedSubviews={true}
+      maxToRenderPerBatch={5}
+      windowSize={5}
+      initialNumToRender={5}
+      updateCellsBatchingPeriod={50}
+      getItemLayout={(data, index) => ({
+        length: itemWidth + spacing,
+        offset: (itemWidth + spacing) * index,
+        index,
+      })}
+      {...flatListProps}
+    />
+  );
+};
+
+const styles = StyleSheet.create({
+  list: {
+    flexGrow: 0, // Prevents the list from taking up more vertical space than needed
+  },
+  itemContainer: {
+    // Container for each item with proper spacing
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+    minHeight: 100,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+  },
+});
+
+export default HorizontalItemList;
