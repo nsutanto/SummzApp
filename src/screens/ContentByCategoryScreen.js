@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Dimensions } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { getContentByCategory } from '../utils/supabaseContentCategories';
-import { LoadingIndicator, ErrorState } from '../components';
+import { LoadingIndicator, ErrorState, ContentItem } from '../components';
 
 const { width } = Dimensions.get('window');
 
@@ -10,7 +10,6 @@ const { width } = Dimensions.get('window');
 const ITEMS_PER_ROW = 2;
 const PADDING = 16;
 const CARD_WIDTH = (width - (PADDING * 3)) / ITEMS_PER_ROW;
-const PLACEHOLDER_IMAGE = 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=200&h=300&fit=crop';
 
 const ContentByCategoryScreen = () => {
   const route = useRoute();
@@ -23,11 +22,11 @@ const ContentByCategoryScreen = () => {
 
   useEffect(() => {
     if (categoryId) {
-      fetchContentItems();
+      fetchContentByCategory();
     }
   }, [categoryId]);
 
-  const fetchContentItems = async () => {
+  const fetchContentByCategory = async () => {
     try {
       setLoading(true);
       setError(null);
@@ -49,17 +48,12 @@ const ContentByCategoryScreen = () => {
   const renderRow = ({ item }) => (
     <View style={styles.row}>
       {item.map((contentItem) => (
-        <TouchableOpacity
+        <ContentItem
           key={contentItem.id}
-          style={styles.contentCard}
-          onPress={() => handleItemPress(contentItem)}
-        >
-          <Image 
-            source={{ uri: PLACEHOLDER_IMAGE }} 
-            style={styles.contentImage} 
-          />
-          <Text style={styles.contentTitle}>{contentItem.title}</Text>
-        </TouchableOpacity>
+          item={contentItem}
+          onPress={handleItemPress}
+          width={CARD_WIDTH}
+        />
       ))}
     </View>
   );
@@ -85,7 +79,7 @@ const ContentByCategoryScreen = () => {
       <View style={styles.container}>
         <ErrorState 
           message={error} 
-          onRetry={fetchContentItems} 
+          onRetry={fetchContentByCategory} 
         />
       </View>
     );
@@ -128,33 +122,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: PADDING,
-  },
-  contentCard: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 12,
-    width: CARD_WIDTH,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  contentImage: {
-    width: '100%',
-    height: 180,
-    borderRadius: 4,
-    marginBottom: 8,
-  },
-  contentTitle: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#333',
-    textAlign: 'center',
-    numberOfLines: 2,
   },
   emptyContainer: {
     flex: 1,
