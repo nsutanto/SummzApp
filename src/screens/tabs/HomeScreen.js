@@ -106,9 +106,12 @@ const HomeScreen = () => {
           return (
             <View key={category.id} style={styles.categorySection}>
               <View style={styles.categoryHeader}>
-                <Text style={styles.categoryTitle}>
-                  {category.emoji} {category.name}
-                </Text>
+                <View style={styles.categoryTitleContainer}>
+                  <Text style={styles.categoryEmoji}>{category.emoji}</Text>
+                  <Text style={styles.categoryTitle} numberOfLines={2}>
+                    {category.name}
+                  </Text>
+                </View>
                 <TouchableOpacity>
                   <Text style={styles.seeAllText}>See All</Text>
                 </TouchableOpacity>
@@ -168,17 +171,37 @@ const styles = StyleSheet.create({
   categoryHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start', // Changed from 'center' to 'flex-start' to align tops when text wraps
     marginBottom: 12,
     paddingHorizontal: 0, // Remove extra padding to align with content padding
+    width: '100%', // Ensure full width
+  },
+  categoryTitleContainer: {
+    flexDirection: 'row',
+    flex: 1,
+    marginRight: 12,
+    alignItems: 'flex-start',
+  },
+  categoryEmoji: {
+    fontSize: 20,
+    marginRight: 8,
+    lineHeight: 26,
   },
   categoryTitle: {
     ...typography.subtitle,
+    lineHeight: 26, // Add consistent line height (1.3x the font size of 20px)
+    flex: 1, // Take up available space
+    textAlign: 'left', // Ensure consistent left alignment for multi-line text
+    includeFontPadding: false, // Remove extra font padding on Android
+    textAlignVertical: 'top', // Align text to top on Android
+    paddingLeft: 0, // Ensure no left padding
+    marginLeft: 0, // Ensure no left margin
   },
   seeAllText: {
     ...typography.bodySecondary,
     color: colors.primary,
     fontWeight: '600',
+    flexShrink: 0, // Prevent "See All" from shrinking
   },
   emptyContainer: {
     alignItems: 'center',
