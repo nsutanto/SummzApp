@@ -2,6 +2,9 @@
 #
 .DS_Store
 
+# Android Release Keystore
+android/app/release.keystore
+
 # Xcode
 #
 build/
