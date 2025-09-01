@@ -14,13 +14,11 @@ jobs:
       uses: actions/checkout@v4
 
     # Setup Node.js
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
-
-    # Setup Java
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'    # Setup Java
     - name: Setup Java
       uses: actions/setup-java@v4
       with:
@@ -32,10 +30,8 @@ jobs:
       uses: android-actions/setup-android@v3
 
     # Install dependencies
-    - name: Install dependencies
-      run: npm install
-
-    # Create keystore from secret
+      - name: Install dependencies
+        run: npm install    # Create keystore from secret
     - name: Create keystore file
       run: |
         echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/release.keystore
