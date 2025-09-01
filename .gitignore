@@ -38,6 +38,9 @@ local.properties
 !debug.keystore
 .kotlin/
 
+# React Native autolinking (contains absolute paths, should be regenerated)
+android/app/build/generated/autolinking/
+
 # node.js
 #
 node_modules/

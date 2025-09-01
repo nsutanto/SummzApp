@@ -37,47 +37,36 @@ jobs:
       run: npm install
 
     # Run React Native Codegen and create missing directories
-    - name: Run React Native Codegen
-      run: |
-        # Run codegen - ignore exit code 1 as it's a known React Native CLI issue but artifacts are still generated
-        npx @react-native-community/cli codegen || true
-        
-        # Create directories and CMakeLists.txt files for each library
-        echo "Creating codegen directories..."
-        for lib in "@react-native-async-storage/async-storage" "@react-native-google-signin/google-signin" "react-native-gesture-handler" "react-native-vector-icons" "react-native-safe-area-context" "react-native-screens"; do
-          echo "Creating directory for: $lib"
-          mkdir -p "node_modules/$lib/android/build/generated/source/codegen/jni/"
-          echo "Created directory: node_modules/$lib/android/build/generated/source/codegen/jni/"
+      - name: Run React Native Codegen
+        run: |
+          # Clean any existing autolinking configuration that might have absolute paths
+          echo "Cleaning autolinking configuration..."
+          rm -rf android/app/build/generated/autolinking
           
-          # Create CMakeLists.txt file
-          echo "# Minimal CMakeLists.txt for autolinking compatibility" > "node_modules/$lib/android/build/generated/source/codegen/jni/CMakeLists.txt"
-          echo "cmake_minimum_required(VERSION 3.13)" >> "node_modules/$lib/android/build/generated/source/codegen/jni/CMakeLists.txt"
-          echo "# This file exists to satisfy autolinking requirements" >> "node_modules/$lib/android/build/generated/source/codegen/jni/CMakeLists.txt"
-          echo "# Actual codegen is handled centrally in android/app/build/generated/source/codegen" >> "node_modules/$lib/android/build/generated/source/codegen/jni/CMakeLists.txt"
-          echo "Created CMakeLists.txt for: $lib"
-        done
-        
-        # Verify that directories were created
-        echo "=== Verification ==="
-        for lib in "@react-native-async-storage/async-storage" "@react-native-google-signin/google-signin" "react-native-gesture-handler" "react-native-vector-icons" "react-native-safe-area-context" "react-native-screens"; do
-          if [ -d "node_modules/$lib/android/build/generated/source/codegen/jni/" ]; then
-            echo "✓ Directory exists: node_modules/$lib/android/build/generated/source/codegen/jni/"
-            if [ -f "node_modules/$lib/android/build/generated/source/codegen/jni/CMakeLists.txt" ]; then
-              echo "✓ CMakeLists.txt exists: node_modules/$lib/android/build/generated/source/codegen/jni/CMakeLists.txt"
-            else
-              echo "✗ CMakeLists.txt missing: node_modules/$lib/android/build/generated/source/codegen/jni/CMakeLists.txt"
-            fi
-          else
-            echo "✗ Directory missing: node_modules/$lib/android/build/generated/source/codegen/jni/"
-          fi
-        done
-        
-        # Also check main codegen artifacts
-        echo "=== Main codegen artifacts ==="
-        ls -la android/app/build/generated/source/codegen/ || echo "Main codegen directory not found"
-        echo "Codegen setup completed successfully"
+          # Run codegen - ignore exit code 1 as it's a known React Native CLI issue but artifacts are still generated
+          echo "Running React Native codegen..."
+          npx @react-native-community/cli codegen || true
+          
+          # Verify that main codegen artifacts were created
+          echo "=== Main codegen artifacts ==="
+          ls -la android/app/build/generated/source/codegen/ || echo "Main codegen directory not found"
+          
+          echo "Codegen setup completed successfully"
 
-    # Create keystore from secret
+      - name: Regenerate Android autolinking
+        run: |
+          cd android
+          echo "Regenerating autolinking configuration..."
+          ./gradlew generateCodegenArtifactsFromSchema
+          
+          # Check the generated autolinking file
+          echo "=== Generated autolinking file ==="
+          if [ -f "app/build/generated/autolinking/src/main/jni/Android-autolinking.cmake" ]; then
+            echo "✓ Autolinking file generated"
+            head -20 app/build/generated/autolinking/src/main/jni/Android-autolinking.cmake
+          else
+            echo "✗ Autolinking file not found"
+          fi    # Create keystore from secret
     - name: Create keystore file
       run: |
         echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/release.keystore
