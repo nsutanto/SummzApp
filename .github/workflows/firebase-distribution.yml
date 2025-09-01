@@ -38,20 +38,10 @@ jobs:
     # Run React Native Codegen and create missing directories
     - name: Run React Native Codegen
       run: |
-        # Define library list to avoid duplication
-        LIBRARIES=(
-          "@react-native-async-storage/async-storage"
-          "@react-native-google-signin/google-signin"
-          "react-native-gesture-handler"
-          "react-native-vector-icons"
-          "react-native-safe-area-context"
-          "react-native-screens"
-        )
-        
         npx @react-native-community/cli codegen
         
         # Create directories and CMakeLists.txt files for each library
-        for lib in "${LIBRARIES[@]}"; do
+        for lib in "@react-native-async-storage/async-storage" "@react-native-google-signin/google-signin" "react-native-gesture-handler" "react-native-vector-icons" "react-native-safe-area-context" "react-native-screens"; do
           mkdir -p "node_modules/$lib/android/build/generated/source/codegen/jni/"
           cat > "node_modules/$lib/android/build/generated/source/codegen/jni/CMakeLists.txt" << 'EOF'
         # Minimal CMakeLists.txt for autolinking compatibility
