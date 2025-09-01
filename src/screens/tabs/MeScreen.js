@@ -39,24 +39,24 @@ const MeScreen = () => {
       <View style={themedStyles.content}>
         {user && (
           <View style={[styles.cardLarge, { backgroundColor: theme.surface, alignItems: 'center' }]}>
-            <View style={[styles.avatarContainer, { backgroundColor: theme.primary }]}>
+            <View style={[localStyles.avatarContainer, { backgroundColor: theme.primary }]}>
               {user.photoURL && !imageError ? (
                 <Image 
                   source={{ uri: user.photoURL }} 
-                  style={styles.avatarImage}
+                  style={localStyles.avatarImage}
                   onError={() => setImageError(true)}
                 />
               ) : (
-                <Text style={[styles.avatarText, { color: theme.white }]}>
+                <Text style={[localStyles.avatarText, { color: theme.white }]}>
                   {(user.displayName || user.email || 'U').charAt(0).toUpperCase()}
                 </Text>
               )}
             </View>
-            <Text style={[styles.userName, { color: theme.text.primary }]}>
+            <Text style={[localStyles.userName, { color: theme.text.primary }]}>
               {user.displayName || user.email || 'User'}
             </Text>
             {user.email && (
-              <Text style={[styles.userEmail, { color: theme.text.secondary }]}>
+              <Text style={[localStyles.userEmail, { color: theme.text.secondary }]}>
                 {user.email}
               </Text>
             )}
@@ -96,7 +96,7 @@ const MeScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   avatarContainer: {
     width: 80,
     height: 80,

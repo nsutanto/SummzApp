@@ -5,7 +5,6 @@ import { createThemedStyles, darkTheme, getTypography } from '../styles/globalSt
 export const useTheme = () => {
   const theme = useThemeContext();
   const scheme = useColorScheme();
-  const isDark = theme === darkTheme;
   const styles = createThemedStyles(theme);
   const typography = getTypography(theme);
   
@@ -13,7 +12,6 @@ export const useTheme = () => {
     theme,
     styles,
     typography,
-    isDark,
     scheme,
   };
 };
