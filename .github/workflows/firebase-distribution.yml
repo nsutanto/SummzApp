@@ -35,9 +35,25 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    # Run React Native Codegen and ensure all directories exist
+    # Run React Native Codegen and create missing directories
     - name: Run React Native Codegen
-      run: npm run codegen
+      run: |
+        npx @react-native-community/cli codegen
+        mkdir -p node_modules/@react-native-async-storage/async-storage/android/build/generated/source/codegen/jni/
+        mkdir -p node_modules/@react-native-google-signin/google-signin/android/build/generated/source/codegen/jni/
+        mkdir -p node_modules/react-native-gesture-handler/android/build/generated/source/codegen/jni/
+        mkdir -p node_modules/react-native-vector-icons/android/build/generated/source/codegen/jni/
+        mkdir -p node_modules/react-native-safe-area-context/android/build/generated/source/codegen/jni/
+        mkdir -p node_modules/react-native-screens/android/build/generated/source/codegen/jni/
+        # Create minimal CMakeLists.txt files to satisfy autolinking
+        for lib in "@react-native-async-storage/async-storage" "@react-native-google-signin/google-signin" "react-native-gesture-handler" "react-native-vector-icons" "react-native-safe-area-context" "react-native-screens"; do
+          cat > "node_modules/$lib/android/build/generated/source/codegen/jni/CMakeLists.txt" << 'EOF'
+        # Minimal CMakeLists.txt for autolinking compatibility
+        cmake_minimum_required(VERSION 3.13)
+        # This file exists to satisfy autolinking requirements
+        # Actual codegen is handled centrally in android/app/build/generated/source/codegen
+        EOF
+        done
 
     # Create keystore from secret
     - name: Create keystore file
