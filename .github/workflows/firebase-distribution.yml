@@ -35,13 +35,17 @@ jobs:
     - name: Install dependencies
       run: npm install
 
+    # Run React Native Codegen and ensure all directories exist
+    - name: Run React Native Codegen
+      run: npm run codegen
+
     # Create keystore from secret
     - name: Create keystore file
       run: |
         echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/release.keystore
 
-    # Build Android APK
-    - name: Build Android APK
+    # Clean and Build Android APK
+    - name: Clean and Build Android APK
       env:
         ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
         ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
@@ -50,6 +54,7 @@ jobs:
       run: |
         cd android
         chmod +x gradlew
+        ./gradlew clean
         ./gradlew assembleRelease
 
     # Distribute to Firebase
