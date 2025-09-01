@@ -49,7 +49,7 @@ jobs:
           mkdir -p "node_modules/$lib/android/build/generated/source/codegen/jni/"
           echo "Created directory: node_modules/$lib/android/build/generated/source/codegen/jni/"
           
-          cat > "node_modules/$lib/android/build/generated/source/codegen/jni/CMakeLists.txt" << 'EOF'
+          cat > "node_modules/$lib/android/build/generated/source/codegen/jni/CMakeLists.txt" << EOF
 # Minimal CMakeLists.txt for autolinking compatibility
 cmake_minimum_required(VERSION 3.13)
 # This file exists to satisfy autolinking requirements
