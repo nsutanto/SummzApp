@@ -4,11 +4,11 @@ import { shadows } from '../styles';
 import { useTheme } from '../hooks/useTheme';
 
 const Card = ({ children, style, padding = 'default' }) => {
-  const { commonStyles } = useTheme();
+  const { styles } = useTheme();
   const paddingStyle = padding === 'large' ? styles.largePadding : styles.defaultPadding;
   
   return (
-    <View style={[commonStyles.card, paddingStyle, style]}>
+    <View style={[styles.card, paddingStyle, style]}>
       {children}
     </View>
   );

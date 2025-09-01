@@ -7,7 +7,8 @@ import { useTheme } from '../../hooks/useTheme';
 
 const MeScreen = () => {
   const { user, signOut } = useAuth();
-  const { theme, styles: themedStyles, commonStyles } = useTheme();
+  const { theme, styles: themedStyles } = useTheme();
+  const styles = themedStyles;
   const [imageError, setImageError] = useState(false);
 
   const handleLogout = () => {
@@ -37,25 +38,25 @@ const MeScreen = () => {
     <ScrollView style={[themedStyles.container, { backgroundColor: theme.background }]}>
       <View style={themedStyles.content}>
         {user && (
-          <View style={[commonStyles.cardLarge, { backgroundColor: theme.surface, alignItems: 'center' }]}>
-            <View style={[styles.avatarContainer, { backgroundColor: theme.primary }]}>
+          <View style={[styles.cardLarge, { backgroundColor: theme.surface, alignItems: 'center' }]}>
+            <View style={[localStyles.avatarContainer, { backgroundColor: theme.primary }]}>
               {user.photoURL && !imageError ? (
                 <Image 
                   source={{ uri: user.photoURL }} 
-                  style={styles.avatarImage}
+                  style={localStyles.avatarImage}
                   onError={() => setImageError(true)}
                 />
               ) : (
-                <Text style={[styles.avatarText, { color: theme.white }]}>
+                <Text style={[localStyles.avatarText, { color: theme.white }]}>
                   {(user.displayName || user.email || 'U').charAt(0).toUpperCase()}
                 </Text>
               )}
             </View>
-            <Text style={[styles.userName, { color: theme.text.primary }]}>
+            <Text style={[localStyles.userName, { color: theme.text.primary }]}>
               {user.displayName || user.email || 'User'}
             </Text>
             {user.email && (
-              <Text style={[styles.userEmail, { color: theme.text.secondary }]}>
+              <Text style={[localStyles.userEmail, { color: theme.text.secondary }]}>
                 {user.email}
               </Text>
             )}
@@ -87,15 +88,15 @@ const MeScreen = () => {
           />
         </Section>
         
-        <TouchableOpacity style={commonStyles.buttonDanger} onPress={handleLogout}>
-          <Text style={commonStyles.buttonText}>Logout</Text>
+        <TouchableOpacity style={styles.buttonDanger} onPress={handleLogout}>
+          <Text style={styles.buttonText}>Logout</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
   );
 };
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   avatarContainer: {
     width: 80,
     height: 80,

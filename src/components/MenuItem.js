@@ -3,16 +3,16 @@ import { TouchableOpacity, Text } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
 
 const MenuItem = ({ icon, text, onPress, isLast = false }) => {
-  const { commonStyles } = useTheme();
+  const { styles } = useTheme();
   
   return (
     <TouchableOpacity 
-      style={[commonStyles.menuItem, isLast && commonStyles.lastMenuItem]}
+      style={[styles.menuItem, isLast && styles.lastMenuItem]}
       onPress={onPress}
     >
-      <Text style={commonStyles.menuIcon}>{icon}</Text>
-      <Text style={commonStyles.menuText}>{text}</Text>
-      <Text style={commonStyles.menuArrow}>›</Text>
+      <Text style={styles.menuIcon}>{icon}</Text>
+      <Text style={styles.menuText}>{text}</Text>
+      <Text style={styles.menuArrow}>›</Text>
     </TouchableOpacity>
   );
 };
