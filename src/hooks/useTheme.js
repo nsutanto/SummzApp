@@ -8,13 +8,11 @@ export const useTheme = () => {
   const isDark = theme === darkTheme;
   const styles = createThemedStyles(theme);
   const typography = getTypography(theme);
-  const commonStyles = createThemedStyles(theme);
   
   return {
     theme,
     styles,
     typography,
-    commonStyles,
     isDark,
     scheme,
   };

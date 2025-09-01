@@ -7,7 +7,8 @@ import { useTheme } from '../../hooks/useTheme';
 
 const MeScreen = () => {
   const { user, signOut } = useAuth();
-  const { theme, styles: themedStyles, commonStyles } = useTheme();
+  const { theme, styles: themedStyles } = useTheme();
+  const styles = themedStyles;
   const [imageError, setImageError] = useState(false);
 
   const handleLogout = () => {
@@ -37,7 +38,7 @@ const MeScreen = () => {
     <ScrollView style={[themedStyles.container, { backgroundColor: theme.background }]}>
       <View style={themedStyles.content}>
         {user && (
-          <View style={[commonStyles.cardLarge, { backgroundColor: theme.surface, alignItems: 'center' }]}>
+          <View style={[styles.cardLarge, { backgroundColor: theme.surface, alignItems: 'center' }]}>
             <View style={[styles.avatarContainer, { backgroundColor: theme.primary }]}>
               {user.photoURL && !imageError ? (
                 <Image 
@@ -87,8 +88,8 @@ const MeScreen = () => {
           />
         </Section>
         
-        <TouchableOpacity style={commonStyles.buttonDanger} onPress={handleLogout}>
-          <Text style={commonStyles.buttonText}>Logout</Text>
+        <TouchableOpacity style={styles.buttonDanger} onPress={handleLogout}>
+          <Text style={styles.buttonText}>Logout</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
