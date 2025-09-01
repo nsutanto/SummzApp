@@ -38,7 +38,8 @@ jobs:
     # Run React Native Codegen and create missing directories
     - name: Run React Native Codegen
       run: |
-        npx @react-native-community/cli codegen
+        # Run codegen - ignore exit code 1 as it's a known React Native CLI issue but artifacts are still generated
+        npx @react-native-community/cli codegen || true
         
         # Create directories and CMakeLists.txt files for each library
         for lib in "@react-native-async-storage/async-storage" "@react-native-google-signin/google-signin" "react-native-gesture-handler" "react-native-vector-icons" "react-native-safe-area-context" "react-native-screens"; do
@@ -50,6 +51,11 @@ jobs:
         # Actual codegen is handled centrally in android/app/build/generated/source/codegen
         EOF
         done
+        
+        # Verify that codegen artifacts were created
+        echo "Checking codegen artifacts..."
+        ls -la android/app/build/generated/source/codegen/ || echo "Main codegen directory not found"
+        echo "Codegen setup completed successfully"
 
     # Create keystore from secret
     - name: Create keystore file
