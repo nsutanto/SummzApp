@@ -38,15 +38,21 @@ jobs:
     # Run React Native Codegen and create missing directories
     - name: Run React Native Codegen
       run: |
+        # Define library list to avoid duplication
+        LIBRARIES=(
+          "@react-native-async-storage/async-storage"
+          "@react-native-google-signin/google-signin"
+          "react-native-gesture-handler"
+          "react-native-vector-icons"
+          "react-native-safe-area-context"
+          "react-native-screens"
+        )
+        
         npx @react-native-community/cli codegen
-        mkdir -p node_modules/@react-native-async-storage/async-storage/android/build/generated/source/codegen/jni/
-        mkdir -p node_modules/@react-native-google-signin/google-signin/android/build/generated/source/codegen/jni/
-        mkdir -p node_modules/react-native-gesture-handler/android/build/generated/source/codegen/jni/
-        mkdir -p node_modules/react-native-vector-icons/android/build/generated/source/codegen/jni/
-        mkdir -p node_modules/react-native-safe-area-context/android/build/generated/source/codegen/jni/
-        mkdir -p node_modules/react-native-screens/android/build/generated/source/codegen/jni/
-        # Create minimal CMakeLists.txt files to satisfy autolinking
-        for lib in "@react-native-async-storage/async-storage" "@react-native-google-signin/google-signin" "react-native-gesture-handler" "react-native-vector-icons" "react-native-safe-area-context" "react-native-screens"; do
+        
+        # Create directories and CMakeLists.txt files for each library
+        for lib in "${LIBRARIES[@]}"; do
+          mkdir -p "node_modules/$lib/android/build/generated/source/codegen/jni/"
           cat > "node_modules/$lib/android/build/generated/source/codegen/jni/CMakeLists.txt" << 'EOF'
         # Minimal CMakeLists.txt for autolinking compatibility
         cmake_minimum_required(VERSION 3.13)
