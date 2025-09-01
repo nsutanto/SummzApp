@@ -76,8 +76,11 @@ export const AuthProvider = ({ children }) => {
       await AuthService.signOut();
     } catch (error) {
       console.error('Sign-out error:', error);
-      throw error;
+      // Ignore the error and just clear the user state
+      // This ensures the user is logged out even if Google sign-out fails
     } finally {
+      // Always clear the user state and redirect to login
+      setUser(null);
       setLoading(false);
     }
   };

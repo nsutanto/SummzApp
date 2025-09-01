@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Image } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../context/AuthContext';
-import { commonStyles, colors, spacing } from '../../styles';
-import { Section, MenuItem } from '../../components';
+import { spacing } from '../../styles';
+import { Section, SettingItem } from '../../components';
+import { useTheme } from '../../hooks/useTheme';
 
 const MeScreen = () => {
-  const navigation = useNavigation();
   const { user, signOut } = useAuth();
+  const { theme, styles: themedStyles, commonStyles } = useTheme();
   const [imageError, setImageError] = useState(false);
 
   const handleLogout = () => {
@@ -22,10 +22,8 @@ const MeScreen = () => {
           onPress: async () => {
             try {
               await signOut();
-              navigation.reset({
-                index: 0,
-                routes: [{ name: 'LoginScreen' }],
-              });
+              // No need to manually navigate - AuthContext will handle the state change
+              // and automatically switch to LoginScreen
             } catch (error) {
               Alert.alert('Error', 'Failed to logout');
             }
@@ -36,11 +34,11 @@ const MeScreen = () => {
   };
 
   return (
-    <ScrollView style={commonStyles.container}>
-      <View style={commonStyles.content}>
+    <ScrollView style={[themedStyles.container, { backgroundColor: theme.background }]}>
+      <View style={themedStyles.content}>
         {user && (
-          <View style={styles.profileCard}>
-            <View style={styles.avatarContainer}>
+          <View style={[commonStyles.cardLarge, { backgroundColor: theme.surface, alignItems: 'center' }]}>
+            <View style={[styles.avatarContainer, { backgroundColor: theme.primary }]}>
               {user.photoURL && !imageError ? (
                 <Image 
                   source={{ uri: user.photoURL }} 
@@ -48,28 +46,30 @@ const MeScreen = () => {
                   onError={() => setImageError(true)}
                 />
               ) : (
-                <Text style={styles.avatarText}>
+                <Text style={[styles.avatarText, { color: theme.white }]}>
                   {(user.displayName || user.email || 'U').charAt(0).toUpperCase()}
                 </Text>
               )}
             </View>
-            <Text style={styles.userName}>
+            <Text style={[styles.userName, { color: theme.text.primary }]}>
               {user.displayName || user.email || 'User'}
             </Text>
             {user.email && (
-              <Text style={styles.userEmail}>{user.email}</Text>
+              <Text style={[styles.userEmail, { color: theme.text.secondary }]}>
+                {user.email}
+              </Text>
             )}
           </View>
         )}
         
-        {/* Account Section */}
+                {/* Account Section */}
         <Section title="Account">
-          <MenuItem 
+          <SettingItem 
             icon="👤" 
             text="View Profile" 
             onPress={() => {}} 
           />
-          <MenuItem 
+          <SettingItem 
             icon="💳" 
             text="Subscription" 
             onPress={() => {}} 
@@ -79,7 +79,7 @@ const MeScreen = () => {
         
         {/* App Settings Section */}
         <Section title="App Settings">
-          <MenuItem 
+          <SettingItem 
             icon="🔤" 
             text="Text Size" 
             onPress={() => {}} 
@@ -96,26 +96,10 @@ const MeScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  profileCard: {
-    backgroundColor: colors.white,
-    padding: spacing.xl,
-    borderRadius: 12,
-    alignItems: 'center',
-    marginBottom: spacing.xl,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
   avatarContainer: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: spacing.md,
@@ -129,17 +113,14 @@ const styles = StyleSheet.create({
   avatarText: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: colors.white,
   },
   userName: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: colors.text.primary,
     marginBottom: 4,
   },
   userEmail: {
     fontSize: 14,
-    color: colors.text.secondary,
   },
 });
 

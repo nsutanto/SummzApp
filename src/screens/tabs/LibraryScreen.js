@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { commonStyles, colors, spacing } from '../../styles';
-import { EmptyState } from '../../components';
+import { spacing } from '../../styles';
+import { EmptyStateCard } from '../../components';
+import { useTheme } from '../../hooks/useTheme';
 
 const LibraryScreen = () => {
+  const { theme, styles: themedStyles } = useTheme();
   const [activeTab, setActiveTab] = useState('Saved');
   const tabs = ['Saved', 'Finished', 'Lists'];
 
@@ -11,7 +13,7 @@ const LibraryScreen = () => {
     switch (activeTab) {
       case 'Saved':
         return (
-          <EmptyState
+          <EmptyStateCard
             icon="🔖"
             title="No saved summaries"
             description="Save summaries you want to read later"
@@ -21,7 +23,7 @@ const LibraryScreen = () => {
         );
       case 'Finished':
         return (
-          <EmptyState
+          <EmptyStateCard
             icon="✅"
             title="No finished summaries"
             description="Completed summaries will appear here"
@@ -31,8 +33,8 @@ const LibraryScreen = () => {
         );
       case 'Lists':
         return (
-          <EmptyState
-            icon="�"
+          <EmptyStateCard
+            icon="📝"
             title="No lists created"
             description="Create custom lists to organize your content"
             buttonText="Create List"
@@ -45,10 +47,10 @@ const LibraryScreen = () => {
   };
 
   return (
-    <ScrollView style={commonStyles.container}>
-      <View style={commonStyles.content}>
+    <ScrollView style={[themedStyles.container, { backgroundColor: theme.background }]}>
+      <View style={themedStyles.content}>
         {/* Header */}
-        <Text style={styles.headerTitle}>My Library</Text>
+        <Text style={[styles.headerTitle, { color: theme.text.primary }]}>My Library</Text>
         
         {/* Tab Navigation */}
         <View style={styles.tabContainer}>
@@ -60,7 +62,8 @@ const LibraryScreen = () => {
             >
               <Text style={[
                 styles.tabText,
-                activeTab === tab && styles.activeTabText
+                { color: theme.text.secondary },
+                activeTab === tab && [styles.activeTabText, { color: theme.text.primary }]
               ]}>
                 {tab}
               </Text>
@@ -70,10 +73,13 @@ const LibraryScreen = () => {
         
         {/* Tab Indicator Line */}
         <View style={styles.tabIndicatorContainer}>
-          <View style={styles.tabIndicatorLine} />
+          <View style={[styles.tabIndicatorLine, { backgroundColor: theme.border.default }]} />
           <View style={[
             styles.activeIndicator,
-            { left: `${tabs.indexOf(activeTab) * (100 / tabs.length)}%` }
+            { 
+              left: `${tabs.indexOf(activeTab) * (100 / tabs.length)}%`,
+              backgroundColor: theme.primary
+            }
           ]} />
         </View>
         
@@ -90,7 +96,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: colors.text.primary,
+    // color will be set by theme
     marginBottom: spacing.lg,
   },
   tabContainer: {
@@ -107,10 +113,10 @@ const styles = StyleSheet.create({
   tabText: {
     fontSize: 14,
     fontWeight: '500',
-    color: colors.text.secondary,
+    // color will be set by theme
   },
   activeTabText: {
-    color: colors.text.primary,
+    // color will be set by theme
     fontWeight: 'bold',
   },
   tabIndicatorContainer: {
@@ -119,14 +125,14 @@ const styles = StyleSheet.create({
   },
   tabIndicatorLine: {
     height: 2,
-    backgroundColor: colors.border.default,
+    // backgroundColor will be set by theme
     width: '100%',
   },
   activeIndicator: {
     position: 'absolute',
     height: 2,
     width: '33.33%',
-    backgroundColor: colors.primary,
+    // backgroundColor will be set by theme
     top: 0,
   },
   contentContainer: {

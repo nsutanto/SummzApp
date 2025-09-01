@@ -15,6 +15,7 @@ import LoginScreen from './src/screens/LoginScreen';
 import MainScreen from './src/screens/MainScreen';
 import ContentByCategoryScreen from './src/screens/ContentByCategoryScreen';
 import { AuthProvider, useAuth } from './src/context/AuthContext';
+import { ThemeProvider } from './src/context/ThemeProvider';
 
 // Enable screens for iOS
 enableScreens();
@@ -72,11 +73,13 @@ function AppNavigator() {
 
 function App() {
   return (
-    <AuthProvider>
-      <SafeAreaProvider>
-        <AppNavigator />
-      </SafeAreaProvider>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <SafeAreaProvider>
+          <AppNavigator />
+        </SafeAreaProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

@@ -1,11 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 import ContentItem from './ContentItem';
+import { useTheme } from '../hooks/useTheme';
 
 const HorizontalItemList = ({
   data = [],
   itemWidth = 150,
-  itemHeight = 200,
+  itemHeight, // Made optional - if not provided, items will size dynamically
   spacing = 16,
   onItemPress,
   emptyMessage = 'No items found',
@@ -15,6 +16,7 @@ const HorizontalItemList = ({
   contentContainerStyle,
   ...flatListProps
 }) => {
+  const { theme } = useTheme();
   const renderItem = ({ item, index }) => (
     <View style={[
       styles.itemContainer, 
@@ -27,8 +29,8 @@ const HorizontalItemList = ({
         item={item}
         onPress={onItemPress}
         width={itemWidth}
-        height={itemHeight}
-        imageHeight={itemHeight * 0.55} // Make image 55% of total height, leaving more room for 5-line title
+        height={itemHeight} // Only pass height if specified, otherwise let it be dynamic
+        imageHeight={itemHeight ? itemHeight * 0.55 : itemWidth * 0.75} // Leave even more space for 3 lines of text
         {...itemProps}
       />
     </View>
@@ -37,7 +39,7 @@ const HorizontalItemList = ({
   if (data.length === 0 && showEmptyState) {
     return (
       <View style={styles.emptyContainer}>
-        <Text style={styles.emptyText}>{emptyMessage}</Text>
+        <Text style={[styles.emptyText, { color: theme.text.secondary }]}>{emptyMessage}</Text>
       </View>
     );
   }
@@ -60,10 +62,13 @@ const HorizontalItemList = ({
       windowSize={5}
       initialNumToRender={5}
       updateCellsBatchingPeriod={50}
-      getItemLayout={(data, index) => ({
-        length: itemWidth + spacing,
-        offset: (itemWidth + spacing) * index,
-        index,
+      // Only use getItemLayout if we have a fixed itemHeight
+      {...(itemHeight && {
+        getItemLayout: (data, index) => ({
+          length: itemWidth + spacing,
+          offset: (itemWidth + spacing) * index,
+          index,
+        })
       })}
       {...flatListProps}
     />
@@ -86,7 +91,6 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: '#666',
     textAlign: 'center',
   },
 });
