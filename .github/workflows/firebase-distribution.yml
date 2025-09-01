@@ -37,36 +37,38 @@ jobs:
       run: npm install
 
     # Run React Native Codegen and create missing directories
-      - name: Run React Native Codegen
-        run: |
-          # Clean any existing autolinking configuration that might have absolute paths
-          echo "Cleaning autolinking configuration..."
-          rm -rf android/app/build/generated/autolinking
-          
-          # Run codegen - ignore exit code 1 as it's a known React Native CLI issue but artifacts are still generated
-          echo "Running React Native codegen..."
-          npx @react-native-community/cli codegen || true
-          
-          # Verify that main codegen artifacts were created
-          echo "=== Main codegen artifacts ==="
-          ls -la android/app/build/generated/source/codegen/ || echo "Main codegen directory not found"
-          
-          echo "Codegen setup completed successfully"
+    - name: Run React Native Codegen
+      run: |
+        # Clean any existing autolinking configuration that might have absolute paths
+        echo "Cleaning autolinking configuration..."
+        rm -rf android/app/build/generated/autolinking
+        
+        # Run codegen - ignore exit code 1 as it's a known React Native CLI issue but artifacts are still generated
+        echo "Running React Native codegen..."
+        npx @react-native-community/cli codegen || true
+        
+        # Verify that main codegen artifacts were created
+        echo "=== Main codegen artifacts ==="
+        ls -la android/app/build/generated/source/codegen/ || echo "Main codegen directory not found"
+        
+        echo "Codegen setup completed successfully"
 
-      - name: Regenerate Android autolinking
-        run: |
-          cd android
-          echo "Regenerating autolinking configuration..."
-          ./gradlew generateCodegenArtifactsFromSchema
-          
-          # Check the generated autolinking file
-          echo "=== Generated autolinking file ==="
-          if [ -f "app/build/generated/autolinking/src/main/jni/Android-autolinking.cmake" ]; then
-            echo "✓ Autolinking file generated"
-            head -20 app/build/generated/autolinking/src/main/jni/Android-autolinking.cmake
-          else
-            echo "✗ Autolinking file not found"
-          fi    # Create keystore from secret
+    - name: Regenerate Android autolinking
+      run: |
+        cd android
+        echo "Regenerating autolinking configuration..."
+        ./gradlew generateCodegenArtifactsFromSchema
+        
+        # Check the generated autolinking file
+        echo "=== Generated autolinking file ==="
+        if [ -f "app/build/generated/autolinking/src/main/jni/Android-autolinking.cmake" ]; then
+          echo "✓ Autolinking file generated"
+          head -20 app/build/generated/autolinking/src/main/jni/Android-autolinking.cmake
+        else
+          echo "✗ Autolinking file not found"
+        fi
+
+    # Create keystore from secret
     - name: Create keystore file
       run: |
         echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/release.keystore
