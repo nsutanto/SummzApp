@@ -8,8 +8,7 @@
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest",
-    "codegen": "./scripts/setup-codegen.sh",
-    "postinstall": "npm run codegen"
+    "codegen": "npx @react-native-community/cli codegen"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.24.0",
