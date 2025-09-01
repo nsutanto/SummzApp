@@ -49,12 +49,11 @@ jobs:
           mkdir -p "node_modules/$lib/android/build/generated/source/codegen/jni/"
           echo "Created directory: node_modules/$lib/android/build/generated/source/codegen/jni/"
           
-          cat > "node_modules/$lib/android/build/generated/source/codegen/jni/CMakeLists.txt" << EOF
-# Minimal CMakeLists.txt for autolinking compatibility
-cmake_minimum_required(VERSION 3.13)
-# This file exists to satisfy autolinking requirements
-# Actual codegen is handled centrally in android/app/build/generated/source/codegen
-EOF
+          # Create CMakeLists.txt file
+          echo "# Minimal CMakeLists.txt for autolinking compatibility" > "node_modules/$lib/android/build/generated/source/codegen/jni/CMakeLists.txt"
+          echo "cmake_minimum_required(VERSION 3.13)" >> "node_modules/$lib/android/build/generated/source/codegen/jni/CMakeLists.txt"
+          echo "# This file exists to satisfy autolinking requirements" >> "node_modules/$lib/android/build/generated/source/codegen/jni/CMakeLists.txt"
+          echo "# Actual codegen is handled centrally in android/app/build/generated/source/codegen" >> "node_modules/$lib/android/build/generated/source/codegen/jni/CMakeLists.txt"
           echo "Created CMakeLists.txt for: $lib"
         done
         
