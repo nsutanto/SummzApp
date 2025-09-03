@@ -13,10 +13,6 @@ const ContentDetailScreen = () => {
   // Get the book/content data from navigation parameters
   const { content } = route.params || {};
   
-  // Add state to track image loading
-  const [imageLoaded, setImageLoaded] = React.useState(false);
-  const [imageError, setImageError] = React.useState(false);
-  
   if (!content) {
     return (
       <View style={[themedStyles.container, themedStyles.centered]}>
@@ -42,18 +38,6 @@ const ContentDetailScreen = () => {
     // TODO: Implement forward functionality
   };
 
-  const handleImageError = () => {
-    console.log('Image failed to load');
-    setImageError(true);
-    setImageLoaded(false);
-  };
-
-  const handleImageLoad = () => {
-    console.log('Image loaded successfully');
-    setImageLoaded(true);
-    setImageError(false);
-  };
-
   return (
     <View style={[themedStyles.container, themedStyles.centered]}>
       {/* Book Cover */}
@@ -62,27 +46,15 @@ const ContentDetailScreen = () => {
           source={{ uri: 'https://picsum.photos/200/300' }}
           style={styles.bookCover}
           resizeMode="cover"
-          onError={handleImageError}
-          onLoad={handleImageLoad}
         />
-        {/* Fallback placeholder - only show if image fails to load */}
-        {(!imageLoaded || imageError) && (
-          <View style={[styles.bookCover, styles.placeholder, { backgroundColor: theme.border.light, position: 'absolute', top: 0, left: 0 }]}>
-            <AppIcon 
-              name={ICONS.BOOK}
-              size={64}
-              color={theme.text.light}
-            />
-          </View>
-        )}
       </View>
 
       {/* Book Title */}
-      <Text style={[themedStyles.text?.primary || { color: theme.text.primary }, styles.title]}>
+      <Text style={[{ color: theme.text.primary }, styles.title]}>
         {content.title}
       </Text>
       {content.author && (
-        <Text style={[themedStyles.text?.secondary || { color: theme.text.secondary }, styles.author]}>
+        <Text style={[{ color: theme.text.secondary }, styles.author]}>
           {content.author}
         </Text>
       )}
@@ -127,19 +99,11 @@ const ContentDetailScreen = () => {
 const styles = StyleSheet.create({
   bookContainer: {
     marginBottom: spacing.xl,
-    position: 'relative',
   },
   bookCover: {
     width: 200,
     height: 300,
     borderRadius: 8,
-  },
-  placeholder: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#ddd',
-    borderStyle: 'dashed',
   },
   title: {
     fontSize: 24,
