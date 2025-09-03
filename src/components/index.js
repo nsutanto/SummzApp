@@ -9,3 +9,6 @@ export { default as ErrorState } from './ErrorState';
 export { default as ContentItem } from './ContentItem';
 export { default as VerticalItemList } from './VerticalItemList';
 export { default as HorizontalItemList } from './HorizontalItemList';
+
+// Common Components
+export { AppIcon, IconButton } from './common';

@@ -1,9 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useRoute } from '@react-navigation/native';
 import { useTheme } from '../hooks/useTheme';
 import { spacing, shadows } from '../styles';
+import { AppIcon, IconButton } from '../components';
+import { ICONS, ICON_LIBRARIES } from '../constants/icons';
 
 const ContentDetailScreen = () => {
   const route = useRoute();
@@ -11,6 +12,10 @@ const ContentDetailScreen = () => {
   
   // Get the book/content data from navigation parameters
   const { content } = route.params || {};
+  
+  // Add state to track image loading
+  const [imageLoaded, setImageLoaded] = React.useState(false);
+  const [imageError, setImageError] = React.useState(false);
   
   if (!content) {
     return (
@@ -37,15 +42,39 @@ const ContentDetailScreen = () => {
     // TODO: Implement forward functionality
   };
 
+  const handleImageError = () => {
+    console.log('Image failed to load');
+    setImageError(true);
+    setImageLoaded(false);
+  };
+
+  const handleImageLoad = () => {
+    console.log('Image loaded successfully');
+    setImageLoaded(true);
+    setImageError(false);
+  };
+
   return (
     <View style={[themedStyles.container, themedStyles.centered]}>
       {/* Book Cover */}
       <View style={[styles.bookContainer, shadows.medium]}>
         <Image 
-          source={{ uri: content.cover_image_url }}
+          source={{ uri: 'https://picsum.photos/200/300' }}
           style={styles.bookCover}
           resizeMode="cover"
+          onError={handleImageError}
+          onLoad={handleImageLoad}
         />
+        {/* Fallback placeholder - only show if image fails to load */}
+        {(!imageLoaded || imageError) && (
+          <View style={[styles.bookCover, styles.placeholder, { backgroundColor: theme.border.light, position: 'absolute', top: 0, left: 0 }]}>
+            <AppIcon 
+              name={ICONS.BOOK}
+              size={64}
+              color={theme.text.light}
+            />
+          </View>
+        )}
       </View>
 
       {/* Book Title */}
@@ -60,29 +89,36 @@ const ContentDetailScreen = () => {
 
       {/* Play Controls */}
       <View style={styles.controlsContainer}>
-        <TouchableOpacity 
-          style={styles.controlButton}
+        <IconButton
+          iconName={ICONS.REWIND}
+          iconLibrary={ICON_LIBRARIES.MATERIAL}
+          iconSize={32}
+          iconColor={theme.text.primary}
           onPress={handleRewind}
-          activeOpacity={0.7}
-        >
-          <Icon name="replay-10" size={32} color={theme.text.primary} />
-        </TouchableOpacity>
+          buttonStyle={styles.controlButton}
+        />
 
         <TouchableOpacity 
           style={[styles.playButton, { backgroundColor: theme.primary }, shadows.medium]}
           onPress={handlePlayPause}
           activeOpacity={0.7}
         >
-          <Icon name="play-arrow" size={48} color={theme.surface} />
+          <AppIcon 
+            library={ICON_LIBRARIES.MATERIAL}
+            name={ICONS.PLAY} 
+            size={48} 
+            color={theme.surface} 
+          />
         </TouchableOpacity>
 
-        <TouchableOpacity 
-          style={styles.controlButton}
+        <IconButton
+          iconName={ICONS.FORWARD}
+          iconLibrary={ICON_LIBRARIES.MATERIAL}
+          iconSize={32}
+          iconColor={theme.text.primary}
           onPress={handleForward}
-          activeOpacity={0.7}
-        >
-          <Icon name="forward-10" size={32} color={theme.text.primary} />
-        </TouchableOpacity>
+          buttonStyle={styles.controlButton}
+        />
       </View>
     </View>
   );
@@ -91,11 +127,19 @@ const ContentDetailScreen = () => {
 const styles = StyleSheet.create({
   bookContainer: {
     marginBottom: spacing.xl,
+    position: 'relative',
   },
   bookCover: {
     width: 200,
     height: 300,
     borderRadius: 8,
+  },
+  placeholder: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#ddd',
+    borderStyle: 'dashed',
   },
   title: {
     fontSize: 24,
