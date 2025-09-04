@@ -34,7 +34,7 @@ jobs:
 
     # Install dependencies
     - name: Install dependencies
-      run: npm install
+      run: npm install --legacy-peer-deps
 
     # Clean and run React Native Codegen for Android
     - name: Clean and run React Native Codegen for Android
@@ -42,13 +42,13 @@ jobs:
         # Clean node_modules and reinstall to ensure fresh state
         echo "Cleaning node_modules..."
         rm -rf node_modules
-        npm install
-        
+        npm install --legacy-peer-deps
+
         # Clean any existing build artifacts
         echo "Cleaning Android build artifacts..."
         rm -rf android/app/build
         rm -rf android/build
-        
+
         # Create the required codegen directories for problematic libraries
         echo "Creating required codegen directories..."
         mkdir -p "node_modules/@react-native-async-storage/async-storage/android/build/generated/source/codegen/jni"
@@ -57,7 +57,7 @@ jobs:
         mkdir -p "node_modules/react-native-vector-icons/android/build/generated/source/codegen/jni"
         mkdir -p "node_modules/react-native-safe-area-context/android/build/generated/source/codegen/jni"
         mkdir -p "node_modules/react-native-screens/android/build/generated/source/codegen/jni"
-        
+
         # Create minimal CMakeLists.txt files for each library
         echo "Creating CMakeLists.txt files..."
         for lib in "@react-native-async-storage/async-storage" "@react-native-google-signin/google-signin" "react-native-gesture-handler" "react-native-vector-icons" "react-native-safe-area-context" "react-native-screens"; do
@@ -67,13 +67,13 @@ jobs:
           echo "# Actual native code is handled by the library's own build system" >> "node_modules/$lib/android/build/generated/source/codegen/jni/CMakeLists.txt"
           echo "Created CMakeLists.txt for: $lib"
         done
-        
+
         # Now run codegen for main app artifacts
         echo "Running React Native codegen for main app..."
         npx @react-native-community/cli codegen || {
           echo "Codegen command failed, but continuing with created directories..."
         }
-        
+
         # Verify directory structure
         echo "=== Directory verification ==="
         for lib in "@react-native-async-storage/async-storage" "@react-native-google-signin/google-signin" "react-native-gesture-handler" "react-native-vector-icons"; do
@@ -83,7 +83,7 @@ jobs:
             echo "✗ $lib codegen directory missing"
           fi
         done
-        
+
         echo "Android codegen preparation completed"
 
     # Create keystore from secret
@@ -101,11 +101,11 @@ jobs:
       run: |
         cd android
         chmod +x gradlew
-        
+
         # Clean and build Android release APK
         echo "Building Android release APK..."
         ./gradlew clean assembleRelease
-        
+
         # Verify APK was created
         echo "=== Build verification ==="
         if [ -f "app/build/outputs/apk/release/app-release.apk" ]; then
@@ -126,7 +126,7 @@ jobs:
         file: android/app/build/outputs/apk/release/app-release.apk
         releaseNotes: |
           🚀 New build available!
-          
+
           📝 Changes: ${{ github.event.head_commit.message }}
           🔗 Commit: ${{ github.sha }}
           👤 Author: ${{ github.actor }}

@@ -42,13 +42,17 @@ jobs:
           ${{ runner.os }}-gradle-
 
     - name: Install npm dependencies
-      run: npm ci
+      run: |
+        # Use legacy peer deps to resolve @rneui conflicts with react-native-safe-area-context
+        echo "Installing npm dependencies with --legacy-peer-deps..."
+        npm install --legacy-peer-deps
+        echo "✅ npm dependencies installed successfully"
 
     - name: Prepare Android Codegen
       run: |
         echo "Cleaning Android build artifacts..."
         rm -rf android/app/build android/build
-        
+
         echo "Creating required codegen directories..."
         mkdir -p "node_modules/@react-native-async-storage/async-storage/android/build/generated/source/codegen/jni"
         mkdir -p "node_modules/@react-native-google-signin/google-signin/android/build/generated/source/codegen/jni"
@@ -56,7 +60,7 @@ jobs:
         mkdir -p "node_modules/react-native-vector-icons/android/build/generated/source/codegen/jni"
         mkdir -p "node_modules/react-native-safe-area-context/android/build/generated/source/codegen/jni"
         mkdir -p "node_modules/react-native-screens/android/build/generated/source/codegen/jni"
-        
+
         echo "Creating CMakeLists.txt files..."
         for lib in "@react-native-async-storage/async-storage" "@react-native-google-signin/google-signin" "react-native-gesture-handler" "react-native-vector-icons" "react-native-safe-area-context" "react-native-screens"; do
           echo "# Minimal CMakeLists.txt for autolinking compatibility" > "node_modules/$lib/android/build/generated/source/codegen/jni/CMakeLists.txt"
@@ -83,9 +87,9 @@ jobs:
           --entry-file index.js \
           --bundle-output android.bundle \
           --sourcemap-output android.bundle.map
-        
+
         echo "Android bundle size: $(du -h android.bundle | cut -f1)"
-        
+
         if [ -f android.bundle ]; then
           echo "✅ Android bundle generated successfully"
         else
@@ -117,14 +121,14 @@ jobs:
         else
           echo "❌ APK Build: Failed"
         fi
-        
+
         if [ -f "android.bundle" ]; then
           BUNDLE_SIZE=$(du -h android.bundle | cut -f1)
           echo "✅ Bundle Generation: Success (${BUNDLE_SIZE})"
         else
           echo "❌ Bundle Generation: Failed"
         fi
-        
+
         echo "📱 Platform: Android"
         echo "🏗️  Build Type: Debug"
         echo "⚡ Node.js: $(node --version)"

@@ -1,7 +1,17 @@
 # 🛡️ CI/CD Pipeline for React Native
 
 ## Overview
-This project uses GitHub Actions to ensure code quality and build reliability across both Android and iOS platforms before merging to main branch.
+This project uses GitHub Actions to ensure code quality a### 🔧 Local Development Tips
+
+1. **Always run pre-commit checks** before pushing
+2. **Test on both platforms** if making native changes
+3. **Update tests** when adding new features
+4. **Check bundle size** for large dependency additions
+5. **Use --legacy-peer-deps** for npm commands due to @rneui dependency conflicts
+
+### 📝 Important Notes
+
+⚠️ **npm install**: This project requires `--legacy-peer-deps` flag due to peer dependency conflicts between `@rneui/base` and `react-native-safe-area-context`. The CI workflows are configured to handle this automatically.d reliability across both Android and iOS platforms before merging to main branch.
 
 ## 🚀 Quick Start for Developers
 

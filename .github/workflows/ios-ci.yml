@@ -38,7 +38,11 @@ jobs:
           ${{ runner.os }}-pods-
 
     - name: Install npm dependencies
-      run: npm ci
+      run: |
+        # Use legacy peer deps to resolve @rneui conflicts with react-native-safe-area-context
+        echo "Installing npm dependencies with --legacy-peer-deps..."
+        npm install --legacy-peer-deps
+        echo "✅ npm dependencies installed successfully"
 
     - name: Install CocoaPods
       run: |
@@ -69,9 +73,9 @@ jobs:
           --entry-file index.js \
           --bundle-output ios.bundle \
           --sourcemap-output ios.bundle.map
-        
+
         echo "iOS bundle size: $(du -h ios.bundle | cut -f1)"
-        
+
         if [ -f ios.bundle ]; then
           echo "✅ iOS bundle generated successfully"
         else
@@ -123,20 +127,20 @@ jobs:
         else
           echo "❌ iOS App Build: Failed"
         fi
-        
+
         if [ -f "ios.bundle" ]; then
           BUNDLE_SIZE=$(du -h ios.bundle | cut -f1)
           echo "✅ Bundle Generation: Success (${BUNDLE_SIZE})"
         else
           echo "❌ Bundle Generation: Failed"
         fi
-        
+
         echo "📱 Platform: iOS"
         echo "🏗️  Build Type: Debug (Simulator)"
         echo "⚡ Node.js: $(node --version)"
         echo "🍎 Xcode: $(xcodebuild -version | head -n 1)"
         echo "🤖 React Native: $(npx react-native --version | head -n 1)"
-        
+
         # CocoaPods info
         cd ios
         if [ -f "Podfile.lock" ]; then
