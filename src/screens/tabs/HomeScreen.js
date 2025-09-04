@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Platform } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { spacing, shadows, typography } from '../../styles';
 import { LoadingIndicator, ErrorState, HorizontalItemList } from '../../components';
@@ -8,6 +9,7 @@ import { getContentByCategory } from '../../utils/supabaseContentCategories';
 import { useTheme } from '../../hooks/useTheme';
 
 const HomeScreen = () => {
+  const navigation = useNavigation();
   const { theme, styles: themedStyles } = useTheme();
   const [search, setSearch] = useState('');
   const [categories, setCategories] = useState([]);
@@ -54,7 +56,18 @@ const HomeScreen = () => {
 
   const handleItemPress = (item) => {
     console.log('Item pressed:', item);
-    // TODO: Navigate to item detail screen
+    // Navigate to ContentDetailScreen with the selected content item
+    navigation.navigate('ContentDetailScreen', { 
+      content: item,
+      contentId: item.id 
+    });
+  };
+
+  const handleSeeAllPress = (category) => {
+    navigation.navigate('ContentByCategoryScreen', {
+      categoryName: category.name,
+      categoryId: category.id
+    });
   };
 
   if (loading) {
@@ -123,7 +136,7 @@ const HomeScreen = () => {
                     {category.name}
                   </Text>
                 </View>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => handleSeeAllPress(category)}>
                   <Text style={[styles.seeAllText, { color: theme.primary }]}>
                     See All
                   </Text>

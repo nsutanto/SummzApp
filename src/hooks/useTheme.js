@@ -1,6 +1,6 @@
 import { useColorScheme } from 'react-native';
 import { useTheme as useThemeContext } from '../context/ThemeProvider';
-import { createThemedStyles, darkTheme, getTypography } from '../styles/globalStyles';
+import { createThemedStyles, getTypography } from '../styles/globalStyles';
 
 export const useTheme = () => {
   const theme = useThemeContext();

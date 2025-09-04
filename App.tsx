@@ -14,6 +14,7 @@ import { enableScreens } from 'react-native-screens';
 import LoginScreen from './src/screens/LoginScreen';
 import MainScreen from './src/screens/MainScreen';
 import ContentByCategoryScreen from './src/screens/ContentByCategoryScreen';
+import ContentDetailScreen from './src/screens/ContentDetailScreen';
 import { AuthProvider, useAuth } from './src/context/AuthContext';
 import { ThemeProvider } from './src/context/ThemeProvider';
 
@@ -57,6 +58,13 @@ function AppNavigator() {
                 headerShown: true,
                 title: (route.params as any)?.categoryName || 'Content'
               })}
+            />
+            <Stack.Screen 
+              name="ContentDetailScreen" 
+              component={ContentDetailScreen}
+              options={{
+                headerShown: false // Let the screen manage its own header
+              }}
             />
           </>
         ) : (

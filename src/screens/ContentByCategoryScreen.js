@@ -60,8 +60,11 @@ const ContentByCategoryScreen = () => {
 
   const handleItemPress = (item) => {
     console.log('Content item selected:', item.title);
-    // TODO: Navigate to content detail screen
-    // navigation.navigate('ContentDetailScreen', { contentId: item.id });
+    // Navigate to content detail screen
+    navigation.navigate('ContentDetailScreen', { 
+      content: item,
+      contentId: item.id 
+    });
   };
 
   // Loading State
