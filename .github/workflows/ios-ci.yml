@@ -47,7 +47,9 @@ jobs:
     - name: Install CocoaPods
       run: |
         cd ios
-        pod install
+        # Clean pods to ensure fresh installation with updated Firebase versions
+        rm -rf Pods Podfile.lock
+        pod install --repo-update
 
     - name: Build iOS for Simulator
       run: |
