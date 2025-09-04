@@ -169,6 +169,7 @@ jobs:
 
     - name: Build Summary
       if: always()
+      continue-on-error: true
       run: |
         echo "=== iOS Build Summary ==="
         if [ -f "ios-build-products.tar.gz" ]; then
@@ -188,12 +189,12 @@ jobs:
         echo "📱 Platform: iOS"
         echo "🏗️  Build Type: Debug (Simulator)"
         echo "⚡ Node.js: $(node --version)"
-        echo "🍎 Xcode: $(xcodebuild -version | head -n 1)"
-        echo "🤖 React Native: $(npx react-native --version | head -n 1)"
+        echo "🍎 Xcode: $(xcodebuild -version 2>/dev/null | head -n 1 || echo 'Xcode version unavailable')"
+        echo "🤖 React Native: $(npx react-native --version 2>/dev/null | head -n 1 || echo 'RN version unavailable')"
 
         # CocoaPods info
         cd ios
         if [ -f "Podfile.lock" ]; then
-          POD_COUNT=$(grep -c "SPEC CHECKSUMS:" -A 1000 Podfile.lock | grep -c ":")
+          POD_COUNT=$(grep -c "SPEC CHECKSUMS:" Podfile.lock 2>/dev/null || echo "0")
           echo "📦 CocoaPods: ${POD_COUNT} dependencies installed"
         fi
