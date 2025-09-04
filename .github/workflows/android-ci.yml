@@ -1,0 +1,132 @@
+name: Android CI
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+  push:
+    branches: [ main, develop ]
+
+jobs:
+  android-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+
+    - name: Cache Android dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+          ~/.android/build-cache
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+
+    - name: Install npm dependencies
+      run: npm ci
+
+    - name: Prepare Android Codegen
+      run: |
+        echo "Cleaning Android build artifacts..."
+        rm -rf android/app/build android/build
+        
+        echo "Creating required codegen directories..."
+        mkdir -p "node_modules/@react-native-async-storage/async-storage/android/build/generated/source/codegen/jni"
+        mkdir -p "node_modules/@react-native-google-signin/google-signin/android/build/generated/source/codegen/jni"
+        mkdir -p "node_modules/react-native-gesture-handler/android/build/generated/source/codegen/jni"
+        mkdir -p "node_modules/react-native-vector-icons/android/build/generated/source/codegen/jni"
+        mkdir -p "node_modules/react-native-safe-area-context/android/build/generated/source/codegen/jni"
+        mkdir -p "node_modules/react-native-screens/android/build/generated/source/codegen/jni"
+        
+        echo "Creating CMakeLists.txt files..."
+        for lib in "@react-native-async-storage/async-storage" "@react-native-google-signin/google-signin" "react-native-gesture-handler" "react-native-vector-icons" "react-native-safe-area-context" "react-native-screens"; do
+          echo "# Minimal CMakeLists.txt for autolinking compatibility" > "node_modules/$lib/android/build/generated/source/codegen/jni/CMakeLists.txt"
+          echo "cmake_minimum_required(VERSION 3.13)" >> "node_modules/$lib/android/build/generated/source/codegen/jni/CMakeLists.txt"
+        done
+
+    - name: Create dummy keystore for CI
+      run: |
+        # Create a dummy keystore for CI builds (not for production)
+        keytool -genkey -v -keystore android/app/debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "C=US, O=Android, CN=Android Debug"
+
+    - name: Build Android Debug APK
+      run: |
+        cd android
+        chmod +x gradlew
+        ./gradlew assembleDebug --stacktrace
+
+    - name: Generate Android Bundle
+      run: |
+        echo "=== Android Bundle Generation ==="
+        npx react-native bundle \
+          --platform android \
+          --dev false \
+          --entry-file index.js \
+          --bundle-output android.bundle \
+          --sourcemap-output android.bundle.map
+        
+        echo "Android bundle size: $(du -h android.bundle | cut -f1)"
+        
+        if [ -f android.bundle ]; then
+          echo "✅ Android bundle generated successfully"
+        else
+          echo "❌ Android bundle generation failed"
+          exit 1
+        fi
+
+    - name: Upload Android APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: android-debug-apk
+        path: android/app/build/outputs/apk/debug/app-debug.apk
+        retention-days: 7
+
+    - name: Upload Android Bundle
+      uses: actions/upload-artifact@v4
+      with:
+        name: android-bundle
+        path: android.bundle
+        retention-days: 7
+
+    - name: Build Summary
+      if: always()
+      run: |
+        echo "=== Android Build Summary ==="
+        if [ -f "android/app/build/outputs/apk/debug/app-debug.apk" ]; then
+          APK_SIZE=$(du -h android/app/build/outputs/apk/debug/app-debug.apk | cut -f1)
+          echo "✅ APK Build: Success (${APK_SIZE})"
+        else
+          echo "❌ APK Build: Failed"
+        fi
+        
+        if [ -f "android.bundle" ]; then
+          BUNDLE_SIZE=$(du -h android.bundle | cut -f1)
+          echo "✅ Bundle Generation: Success (${BUNDLE_SIZE})"
+        else
+          echo "❌ Bundle Generation: Failed"
+        fi
+        
+        echo "📱 Platform: Android"
+        echo "🏗️  Build Type: Debug"
+        echo "⚡ Node.js: $(node --version)"
+        echo "☕ Java: $(java -version 2>&1 | head -n 1)"
+        echo "🤖 React Native: $(npx react-native --version | head -n 1)"
