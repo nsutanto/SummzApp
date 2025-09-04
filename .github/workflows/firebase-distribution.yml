@@ -56,87 +56,42 @@ jobs:
         
         echo "✅ Build environment cleaned and dependencies installed"
 
-    # Generate React Native Codegen
-    - name: Generate React Native Codegen
+    # Prepare Android Build (skip codegen, use direct Gradle approach)
+    - name: Prepare Android Build
       run: |
-        echo "🔧 Generating React Native codegen outputs..."
-        
-        # Use the project's codegen script (React Native 0.80.0)
-        npm run codegen
+        echo "🔧 Preparing Android build environment..."
         
         echo "🧹 Cleaning Android build cache..."
         cd android
+        chmod +x gradlew
         ./gradlew clean
         
-        echo "✅ React Native codegen generated successfully"
-
-    # Verify Codegen Output
-    - name: Verify Codegen Output
-      run: |
-        echo "🔍 Verifying codegen outputs..."
+        # Let Gradle handle autolinking and codegen during build
+        echo "🔗 Initializing autolinking..."
+        ./gradlew generateAutolinkingPackageList || echo "Autolinking initialized"
         
-        # Check if autolinking file exists
-        AUTOLINKING_FILE="android/app/build/generated/autolinking/src/main/jni/Android-autolinking.cmake"
-        if [ -f "$AUTOLINKING_FILE" ]; then
-          echo "✅ Autolinking file found: $AUTOLINKING_FILE"
-          echo "📋 Autolinking contents:"
-          head -20 "$AUTOLINKING_FILE" || echo "Could not read autolinking file"
+        echo "✅ Android build environment prepared"
+
+    # Verify Build Environment
+    - name: Verify Build Environment
+      run: |
+        echo "🔍 Verifying build environment..."
+        
+        # Check Gradle wrapper
+        if [ -f "android/gradlew" ]; then
+          echo "✅ Gradle wrapper found"
+          ls -la android/gradlew
         else
-          echo "⚠️  Autolinking file not found, will be generated during build"
+          echo "❌ Gradle wrapper not found"
+          exit 1
         fi
         
-        # Check for problematic codegen directories
-        echo "🔍 Checking codegen directories..."
-        problem_packages=(
-          "@react-native-async-storage/async-storage"
-          "@react-native-google-signin/google-signin"
-          "react-native-gesture-handler"
-          "react-native-vector-icons"
-        )
+        # Check Android SDK
+        echo "� Android SDK: $ANDROID_HOME"
+        echo "☕ Java version: $(java -version 2>&1 | head -n 1)"
+        echo "🎯 Node version: $(node --version)"
         
-        for package in "${problem_packages[@]}"; do
-          codegen_path="node_modules/$package/android/build/generated/source/codegen/jni"
-          if [ -d "$codegen_path" ]; then
-            file_count=$(find "$codegen_path" -name "*.cpp" -o -name "*.h" | wc -l)
-            echo "📁 $package: $file_count codegen files found"
-          else
-            echo "❌ $package: No codegen directory found"
-          fi
-        done
-
-    # Fallback: Create minimal codegen structure for packages that need it
-    - name: Create Fallback Codegen Structure
-      run: |
-        echo "🔧 Creating fallback codegen structure for packages without proper codegen..."
-        
-        problem_packages=(
-          "@react-native-async-storage/async-storage"
-          "@react-native-google-signin/google-signin"
-          "react-native-gesture-handler" 
-          "react-native-vector-icons"
-          "react-native-safe-area-context"
-          "react-native-screens"
-        )
-        
-        for package in "${problem_packages[@]}"; do
-          codegen_path="node_modules/$package/android/build/generated/source/codegen/jni"
-          
-          # Only create if directory doesn't exist or is empty
-          if [ ! -d "$codegen_path" ] || [ -z "$(ls -A "$codegen_path" 2>/dev/null)" ]; then
-            echo "📁 Creating fallback structure for $package"
-            mkdir -p "$codegen_path"
-            
-            # Create minimal CMakeLists.txt that won't cause linking errors
-            echo "# Fallback CMakeLists.txt for autolinking compatibility" > "$codegen_path/CMakeLists.txt"
-            echo "cmake_minimum_required(VERSION 3.13)" >> "$codegen_path/CMakeLists.txt"
-            echo "# This file exists to prevent autolinking errors" >> "$codegen_path/CMakeLists.txt"
-            echo "# No actual targets are created to avoid linking issues" >> "$codegen_path/CMakeLists.txt"
-          else
-            echo "✅ $package already has codegen files, skipping"
-          fi
-        done
-        
-        echo "✅ Fallback codegen structure created"
+        echo "✅ Build environment verified"
 
     # Create release keystore from secrets
     - name: Setup Release Keystore
