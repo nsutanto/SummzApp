@@ -53,6 +53,16 @@ jobs:
       run: |
         cd ios
         echo "=== Building iOS for Simulator ==="
+        
+        # Clean any previous build artifacts
+        rm -rf DerivedData
+        
+        # List available simulators for debugging
+        echo "Available iOS Simulators:"
+        xcrun simctl list devices ios --json | jq -r '.devices | to_entries[] | select(.key | contains("iOS")) | .value[] | select(.isAvailable == true) | "\(.name) (\(.udid))"' | head -5
+        
+        # Build for simulator with verbose output for better debugging
+        set -o pipefail
         xcodebuild -workspace SummzApp.xcworkspace \
           -scheme SummzApp \
           -configuration Debug \
@@ -62,7 +72,21 @@ jobs:
           CODE_SIGNING_ALLOWED=NO \
           CODE_SIGNING_REQUIRED=NO \
           CODE_SIGN_IDENTITY="" \
-          PROVISIONING_PROFILE=""
+          PROVISIONING_PROFILE="" \
+          -quiet | tee build.log
+        
+        # Verify build products were created
+        echo "=== Build Verification ==="
+        if [ -d "DerivedData/Build/Products/Debug-iphonesimulator/SummzApp.app" ]; then
+          echo "✅ iOS App built successfully"
+          echo "App size: $(du -sh DerivedData/Build/Products/Debug-iphonesimulator/SummzApp.app | cut -f1)"
+          echo "App bundle identifier: $(defaults read "$(pwd)/DerivedData/Build/Products/Debug-iphonesimulator/SummzApp.app/Info.plist" CFBundleIdentifier 2>/dev/null || echo "Could not read bundle ID")"
+        else
+          echo "❌ iOS App build failed - app not found"
+          echo "Build directory contents:"
+          find DerivedData -name "*.app" 2>/dev/null || echo "No .app files found"
+          exit 1
+        fi
 
     - name: Generate iOS Bundle
       run: |
@@ -86,12 +110,36 @@ jobs:
     - name: Archive iOS Build Products
       run: |
         cd ios
-        if [ -d "DerivedData/Build/Products/Debug-iphonesimulator" ]; then
-          echo "Creating iOS build archive..."
-          tar -czf ../ios-build-products.tar.gz DerivedData/Build/Products/Debug-iphonesimulator/SummzApp.app
-          echo "✅ iOS build products archived"
+        echo "=== Archiving iOS Build Products ==="
+        
+        # Check if the expected build products exist
+        BUILD_PATH="DerivedData/Build/Products/Debug-iphonesimulator"
+        APP_PATH="$BUILD_PATH/SummzApp.app"
+        
+        if [ -d "$APP_PATH" ]; then
+          echo "📦 Creating iOS build archive..."
+          
+          # Create archive with detailed info
+          tar -czf ../ios-build-products.tar.gz -C "$BUILD_PATH" SummzApp.app
+          
+          # Verify archive was created successfully
+          if [ -f "../ios-build-products.tar.gz" ]; then
+            ARCHIVE_SIZE=$(du -h ../ios-build-products.tar.gz | cut -f1)
+            echo "✅ iOS build products archived successfully (${ARCHIVE_SIZE})"
+            
+            # List contents for verification
+            echo "Archive contents:"
+            tar -tzf ../ios-build-products.tar.gz | head -10
+          else
+            echo "❌ Failed to create archive"
+            exit 1
+          fi
         else
-          echo "❌ iOS build products not found"
+          echo "❌ iOS build products not found at: $APP_PATH"
+          echo "Available build products:"
+          find DerivedData -name "*.app" 2>/dev/null || echo "No .app files found"
+          echo "Build directory structure:"
+          ls -la DerivedData/Build/Products/ 2>/dev/null || echo "Build Products directory not found"
           exit 1
         fi
 
