@@ -127,12 +127,10 @@ jobs:
             mkdir -p "$codegen_path"
             
             # Create minimal CMakeLists.txt that won't cause linking errors
-            cat > "$codegen_path/CMakeLists.txt" << 'EOF'
-# Fallback CMakeLists.txt for autolinking compatibility
-cmake_minimum_required(VERSION 3.13)
-# This file exists to prevent autolinking errors
-# No actual targets are created to avoid linking issues
-EOF
+            echo "# Fallback CMakeLists.txt for autolinking compatibility" > "$codegen_path/CMakeLists.txt"
+            echo "cmake_minimum_required(VERSION 3.13)" >> "$codegen_path/CMakeLists.txt"
+            echo "# This file exists to prevent autolinking errors" >> "$codegen_path/CMakeLists.txt"
+            echo "# No actual targets are created to avoid linking issues" >> "$codegen_path/CMakeLists.txt"
           else
             echo "✅ $package already has codegen files, skipping"
           fi
