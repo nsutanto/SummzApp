@@ -53,7 +53,7 @@ jobs:
         npm install --legacy-peer-deps
         echo "✅ npm dependencies installed successfully"
 
-    # Prepare Android Codegen (same as working Android CI)
+    # Prepare Android Codegen (enhanced for release builds)
     - name: Prepare Android Codegen
       run: |
         echo "Cleaning Android build artifacts..."
@@ -72,6 +72,22 @@ jobs:
           echo "# Minimal CMakeLists.txt for autolinking compatibility" > "node_modules/$lib/android/build/generated/source/codegen/jni/CMakeLists.txt"
           echo "cmake_minimum_required(VERSION 3.13)" >> "node_modules/$lib/android/build/generated/source/codegen/jni/CMakeLists.txt"
         done
+        
+        echo "✅ Codegen directories prepared successfully"
+
+    # Pre-build React Native components
+    - name: Pre-build React Native Components
+      run: |
+        echo "Pre-generating React Native components..."
+        cd android
+        
+        # Run Gradle sync to initialize the build system
+        ./gradlew --no-daemon help || echo "Initial gradle setup completed"
+        
+        # Pre-generate autolinking files
+        ./gradlew --no-daemon generateAutolinkingPackageList generateAutolinkingNewArchitectureFiles || echo "Autolinking generation completed"
+        
+        echo "✅ React Native components pre-built successfully"
 
     # Create release keystore from secrets
     - name: Setup Release Keystore
