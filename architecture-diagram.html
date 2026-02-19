@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Blinkist Clone — System Architecture</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0B0E1A;
+    --surface: #111627;
+    --surface2: #161D32;
+    --border: #1E2A45;
+    --accent: #4F8EF7;
+    --accent2: #F7A24F;
+    --accent3: #4FF7A2;
+    --accent4: #F74F8E;
+    --text: #E8EBF4;
+    --muted: #6B7A9E;
+    --mono: 'Space Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    padding: 40px 24px 80px;
+  }
+
+  /* noise overlay */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+
+  .wrapper { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; }
+
+  header { margin-bottom: 56px; }
+  .tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  h1 {
+    font-family: var(--mono);
+    font-size: clamp(24px, 4vw, 40px);
+    font-weight: 700;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  h1 span { color: var(--accent); }
+  .subtitle {
+    color: var(--muted);
+    font-size: 15px;
+    font-weight: 300;
+    max-width: 500px;
+    line-height: 1.6;
+  }
+
+  /* LEGEND */
+  .legend {
+    display: flex; gap: 24px; flex-wrap: wrap;
+    margin-bottom: 48px;
+    padding: 16px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    width: fit-content;
+  }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+  /* ARCH GRID */
+  .arch { display: flex; flex-direction: column; gap: 16px; }
+
+  /* LAYER */
+  .layer {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--surface);
+    overflow: hidden;
+    transition: border-color .2s;
+  }
+  .layer:hover { border-color: #2A3A60; }
+
+  .layer-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+    cursor: pointer;
+    user-select: none;
+  }
+  .layer-icon { font-size: 18px; }
+  .layer-label {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .layer-sub { font-size: 13px; color: var(--muted); margin-left: auto; }
+
+  .layer-body { padding: 20px; }
+
+  /* REPO CARDS */
+  .repos { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+
+  .repo-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    background: var(--bg);
+    position: relative;
+    overflow: hidden;
+    transition: transform .15s, border-color .15s, box-shadow .15s;
+    cursor: default;
+  }
+  .repo-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0,0,0,.4);
+  }
+  .repo-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .repo-card.blue::before { background: var(--accent); }
+  .repo-card.blue:hover { border-color: var(--accent); box-shadow: 0 8px 32px rgba(79,142,247,.15); }
+  .repo-card.orange::before { background: var(--accent2); }
+  .repo-card.orange:hover { border-color: var(--accent2); box-shadow: 0 8px 32px rgba(247,162,79,.15); }
+  .repo-card.green::before { background: var(--accent3); }
+  .repo-card.green:hover { border-color: var(--accent3); box-shadow: 0 8px 32px rgba(79,247,162,.15); }
+  .repo-card.pink::before { background: var(--accent4); }
+  .repo-card.pink:hover { border-color: var(--accent4); box-shadow: 0 8px 32px rgba(247,79,142,.15); }
+
+  .repo-name {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .repo-card.blue .repo-name { color: var(--accent); }
+  .repo-card.orange .repo-name { color: var(--accent2); }
+  .repo-card.green .repo-name { color: var(--accent3); }
+  .repo-card.pink .repo-name { color: var(--accent4); }
+
+  .repo-desc { font-size: 13px; color: var(--muted); line-height: 1.5; margin-bottom: 12px; }
+
+  .tech-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+  .pill {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    background: var(--surface2);
+  }
+
+  /* SERVICES ROW */
+  .services { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+
+  .svc-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    background: var(--bg);
+    text-align: center;
+    transition: transform .15s, box-shadow .15s;
+  }
+  .svc-card:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(0,0,0,.4); }
+  .svc-emoji { font-size: 24px; margin-bottom: 8px; }
+  .svc-name { font-family: var(--mono); font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+  .svc-role { font-size: 12px; color: var(--muted); line-height: 1.4; }
+
+  /* FLOW DIAGRAM */
+  .flow {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0;
+    padding: 8px 0;
+  }
+  .flow-node {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-family: var(--mono);
+    white-space: nowrap;
+  }
+  .flow-arrow {
+    color: var(--muted);
+    font-size: 18px;
+    padding: 0 8px;
+    flex-shrink: 0;
+  }
+  .flow-label {
+    font-size: 11px;
+    color: var(--muted);
+    display: block;
+    text-align: center;
+    margin-top: 4px;
+    font-family: var(--mono);
+  }
+  .flow-group { display: flex; flex-direction: column; align-items: center; }
+
+  /* DATA FLOW SECTION */
+  .flow-section { margin-top: 24px; }
+  .flow-section h3 {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  /* CONNECTOR between layers */
+  .connector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 6px 0;
+    color: var(--muted);
+    font-size: 11px;
+    font-family: var(--mono);
+    letter-spacing: 1px;
+  }
+  .connector-line {
+    height: 1px;
+    width: 40px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+  }
+
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <header>
+    <div class="tag">System Design // v1.0 MVP</div>
+    <h1>Blinkist Clone<br/><span>Architecture Overview</span></h1>
+    <p class="subtitle">4-repo monorepo structure — React Native app, Node.js backend, Next.js web, and scripts pipeline.</p>
+  </header>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div> Mobile App</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent2)"></div> Backend API</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent3)"></div> Web App</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent4)"></div> Scripts / Data</div>
+  </div>
+
+  <div class="arch">
+
+    <!-- LAYER 1: CLIENT LAYER -->
+    <div class="layer">
+      <div class="layer-header">
+        <span class="layer-icon">📱</span>
+        <span class="layer-label">Client Layer</span>
+        <span class="layer-sub">User-facing applications</span>
+      </div>
+      <div class="layer-body">
+        <div class="repos">
+
+          <div class="repo-card blue">
+            <div class="repo-name">repo-1 / mobile-app</div>
+            <div class="repo-desc">React Native CLI app. Core reading & listening experience for iOS and Android. Full native control — no Expo.</div>
+            <div class="tech-pills">
+              <span class="pill">React Native CLI</span>
+              <span class="pill">TypeScript</span>
+              <span class="pill">React Navigation</span>
+              <span class="pill">Zustand</span>
+              <span class="pill">RN Track Player</span>
+              <span class="pill">CocoaPods</span>
+              <span class="pill">Gradle</span>
+            </div>
+          </div>
+
+          <div class="repo-card green">
+            <div class="repo-name">repo-3 / web-app</div>
+            <div class="repo-desc">Next.js web experience. Browse library, read summaries, manage account.</div>
+            <div class="tech-pills">
+              <span class="pill">Next.js 14</span>
+              <span class="pill">TypeScript</span>
+              <span class="pill">Tailwind CSS</span>
+              <span class="pill">React Query</span>
+              <span class="pill">Vercel</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="connector">
+      <div class="connector-line"></div>
+      REST / HTTPS
+      <div class="connector-line"></div>
+    </div>
+
+    <!-- LAYER 2: AUTH -->
+    <div class="layer">
+      <div class="layer-header">
+        <span class="layer-icon">🔐</span>
+        <span class="layer-label">Auth Layer</span>
+        <span class="layer-sub">Firebase Authentication</span>
+      </div>
+      <div class="layer-body">
+        <div class="services">
+          <div class="svc-card">
+            <div class="svc-emoji">📧</div>
+            <div class="svc-name" style="color:var(--accent)">Email / Password</div>
+            <div class="svc-role">Standard login & registration</div>
+          </div>
+          <div class="svc-card">
+            <div class="svc-emoji">🍎</div>
+            <div class="svc-name" style="color:var(--accent)">Sign in with Apple</div>
+            <div class="svc-role">Required for iOS App Store</div>
+          </div>
+          <div class="svc-card">
+            <div class="svc-emoji">🔵</div>
+            <div class="svc-name" style="color:var(--accent)">Sign in with Google</div>
+            <div class="svc-role">OAuth 2.0 via Firebase</div>
+          </div>
+          <div class="svc-card">
+            <div class="svc-emoji">🎟️</div>
+            <div class="svc-name" style="color:var(--accent)">JWT / ID Token</div>
+            <div class="svc-role">Passed to backend on each request</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="connector">
+      <div class="connector-line"></div>
+      Verified JWT → Backend
+      <div class="connector-line"></div>
+    </div>
+
+    <!-- LAYER 3: BACKEND -->
+    <div class="layer">
+      <div class="layer-header">
+        <span class="layer-icon">⚙️</span>
+        <span class="layer-label">Backend Layer</span>
+        <span class="layer-sub">repo-2 / backend-api</span>
+      </div>
+      <div class="layer-body">
+        <div class="repos" style="margin-bottom: 20px;">
+          <div class="repo-card orange">
+            <div class="repo-name">repo-2 / backend-api</div>
+            <div class="repo-desc">Node.js REST API. Validates Firebase tokens, queries Supabase, orchestrates content pipeline.</div>
+            <div class="tech-pills">
+              <span class="pill">Node.js</span>
+              <span class="pill">Express</span>
+              <span class="pill">TypeScript</span>
+              <span class="pill">Firebase Admin SDK</span>
+              <span class="pill">Railway / Render</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flow-section">
+          <h3>Key Endpoints</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px;">
+            <div class="flow-node" style="font-size:11px;">GET /books</div>
+            <div class="flow-node" style="font-size:11px;">GET /books/:id</div>
+            <div class="flow-node" style="font-size:11px;">GET /books/:id/summaries</div>
+            <div class="flow-node" style="font-size:11px;">POST /user/library</div>
+            <div class="flow-node" style="font-size:11px;">POST /user/progress</div>
+            <div class="flow-node" style="font-size:11px;">GET /categories</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="connector">
+      <div class="connector-line"></div>
+      Supabase JS Client
+      <div class="connector-line"></div>
+    </div>
+
+    <!-- LAYER 4: DATA -->
+    <div class="layer">
+      <div class="layer-header">
+        <span class="layer-icon">🗄️</span>
+        <span class="layer-label">Data Layer</span>
+        <span class="layer-sub">Supabase (PostgreSQL)</span>
+      </div>
+      <div class="layer-body">
+        <div class="services">
+          <div class="svc-card">
+            <div class="svc-emoji">📚</div>
+            <div class="svc-name" style="color:var(--accent3)">books</div>
+            <div class="svc-role">Title, author, cover, category, metadata</div>
+          </div>
+          <div class="svc-card">
+            <div class="svc-emoji">📝</div>
+            <div class="svc-name" style="color:var(--accent3)">summaries</div>
+            <div class="svc-role">Chapter-by-chapter content & audio URLs</div>
+          </div>
+          <div class="svc-card">
+            <div class="svc-emoji">🔖</div>
+            <div class="svc-name" style="color:var(--accent3)">user_library</div>
+            <div class="svc-role">Saved books per user (firebase_uid)</div>
+          </div>
+          <div class="svc-card">
+            <div class="svc-emoji">📊</div>
+            <div class="svc-name" style="color:var(--accent3)">progress</div>
+            <div class="svc-role">Reading/listening progress per book</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="connector">
+      <div class="connector-line"></div>
+      Script Pipeline
+      <div class="connector-line"></div>
+    </div>
+
+    <!-- LAYER 5: SCRIPTS -->
+    <div class="layer">
+      <div class="layer-header">
+        <span class="layer-icon">🤖</span>
+        <span class="layer-label">Scripts / Pipeline Layer</span>
+        <span class="layer-sub">repo-4 / scripts</span>
+      </div>
+      <div class="layer-body">
+        <div class="repos" style="margin-bottom: 20px;">
+          <div class="repo-card pink">
+            <div class="repo-name">repo-4 / scripts</div>
+            <div class="repo-desc">Automated content pipeline. Fetch book metadata → generate AI summaries → TTS audio → store in Supabase + S3.</div>
+            <div class="tech-pills">
+              <span class="pill">Node.js</span>
+              <span class="pill">OpenAI API</span>
+              <span class="pill">ElevenLabs API</span>
+              <span class="pill">Google Books API</span>
+              <span class="pill">Supabase Client</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flow-section">
+          <h3>Content Pipeline Flow</h3>
+          <div class="flow">
+            <div class="flow-group">
+              <div class="flow-node">Google Books API</div>
+              <span class="flow-label">metadata + covers</span>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-group">
+              <div class="flow-node">OpenAI GPT-4o</div>
+              <span class="flow-label">generate summary</span>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-group">
+              <div class="flow-node">ElevenLabs TTS</div>
+              <span class="flow-label">audio generation</span>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-group">
+              <div class="flow-node">Supabase Storage</div>
+              <span class="flow-label">store audio + data</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LAYER 6: EXTERNAL -->
+    <div class="layer">
+      <div class="layer-header">
+        <span class="layer-icon">🌐</span>
+        <span class="layer-label">External Services</span>
+        <span class="layer-sub">Third-party APIs</span>
+      </div>
+      <div class="layer-body">
+        <div class="services">
+          <div class="svc-card">
+            <div class="svc-emoji">🔥</div>
+            <div class="svc-name">Firebase</div>
+            <div class="svc-role">Auth — email, Apple, Google login. JWT issuance.</div>
+          </div>
+          <div class="svc-card">
+            <div class="svc-emoji">⚡</div>
+            <div class="svc-name">Supabase</div>
+            <div class="svc-role">PostgreSQL DB + file storage + RLS policies</div>
+          </div>
+          <div class="svc-card">
+            <div class="svc-emoji">🧠</div>
+            <div class="svc-name">OpenAI</div>
+            <div class="svc-role">GPT-4o for summary generation</div>
+          </div>
+          <div class="svc-card">
+            <div class="svc-emoji">🔊</div>
+            <div class="svc-name">ElevenLabs</div>
+            <div class="svc-role">Text-to-speech for audio summaries</div>
+          </div>
+          <div class="svc-card">
+            <div class="svc-emoji">📖</div>
+            <div class="svc-name">Google Books</div>
+            <div class="svc-role">Book metadata, ISBNs, cover images</div>
+          </div>
+          <div class="svc-card">
+            <div class="svc-emoji">🚀</div>
+            <div class="svc-name">Fastlane</div>
+            <div class="svc-role">Automate builds, signing & App Store / Play Store deploys</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /arch -->
+
+  <!-- AUTH FLOW -->
+  <div style="margin-top: 40px;">
+    <div class="layer">
+      <div class="layer-header">
+        <span class="layer-icon">🔄</span>
+        <span class="layer-label">Auth Flow</span>
+        <span class="layer-sub">Firebase → Backend → Supabase</span>
+      </div>
+      <div class="layer-body">
+        <div class="flow" style="flex-wrap:wrap; gap: 4px;">
+          <div class="flow-group">
+            <div class="flow-node" style="border-color: var(--accent);">Mobile / Web</div>
+            <span class="flow-label">user signs in</span>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-group">
+            <div class="flow-node" style="border-color: #FF8C00;">Firebase Auth</div>
+            <span class="flow-label">returns ID token</span>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-group">
+            <div class="flow-node" style="border-color: var(--accent2);">Backend API</div>
+            <span class="flow-label">verifies token</span>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-group">
+            <div class="flow-node" style="border-color: var(--accent3);">Supabase DB</div>
+            <span class="flow-label">queries with firebase_uid</span>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-group">
+            <div class="flow-node" style="border-color: var(--accent);">Client</div>
+            <span class="flow-label">receives data</span>
+          </div>
+        </div>
+        <p style="margin-top: 16px; font-size: 13px; color: var(--muted); line-height: 1.6;">
+          <strong style="color: var(--text);">Key design decision:</strong> Firebase handles authentication only. The backend verifies the Firebase ID token on every request using the Firebase Admin SDK. Supabase stores all application data — user rows reference the <code style="font-family: var(--mono); font-size: 12px; background: var(--surface2); padding: 2px 6px; border-radius: 4px;">firebase_uid</code> field instead of Supabase's native auth UUID.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top: 32px; padding: 16px 20px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface);">
+    <div style="font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px;">Repository Summary</div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+      <div style="font-size: 13px;"><span style="color: var(--accent); font-family: var(--mono);">repo-1</span> &nbsp;mobile-app &nbsp;<span style="color: var(--muted); font-size: 11px;">(React Native CLI)</span></div>
+      <div style="font-size: 13px;"><span style="color: var(--accent2); font-family: var(--mono);">repo-2</span> &nbsp;backend-api</div>
+      <div style="font-size: 13px;"><span style="color: var(--accent3); font-family: var(--mono);">repo-3</span> &nbsp;web-app</div>
+      <div style="font-size: 13px;"><span style="color: var(--accent4); font-family: var(--mono);">repo-4</span> &nbsp;scripts</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

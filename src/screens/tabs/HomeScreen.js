@@ -1,58 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { spacing, shadows, typography } from '../../styles';
-import { LoadingIndicator, ErrorState, HorizontalItemList } from '../../components';
-import { getCategories } from '../../utils/supabaseCategories';
-import { getContentByCategory } from '../../utils/supabaseContentCategories';
+import { HorizontalItemList } from '../../components';
 import { useTheme } from '../../hooks/useTheme';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
   const { theme, styles: themedStyles } = useTheme();
   const [search, setSearch] = useState('');
-  const [categories, setCategories] = useState([]);
-  const [categoryContent, setCategoryContent] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    fetchCategoriesAndContent();
-  }, []);
-
-  const fetchCategoriesAndContent = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const categoriesData = await getCategories();
-      setCategories(categoriesData || []);
-      
-      const contentPromises = categoriesData.map(async (category) => {
-        try {
-          const content = await getContentByCategory(category.id);
-          return { categoryId: category.id, content: content || [] };
-        } catch (err) {
-          console.warn(`Failed to load content for category ${category.id}:`, err);
-          return { categoryId: category.id, content: [] };
-        }
-      });
-      
-      const contentResults = await Promise.all(contentPromises);
-      const contentMap = contentResults.reduce((acc, { categoryId, content }) => {
-        acc[categoryId] = content;
-        return acc;
-      }, {});
-      
-      setCategoryContent(contentMap);
-    } catch (err) {
-      console.error('Error fetching categories and content:', err);
-      setError('Failed to load content');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const categories = [];
+  const categoryContent = {};
 
   const handleItemPress = (item) => {
     console.log('Item pressed:', item);
@@ -69,25 +28,6 @@ const HomeScreen = () => {
       categoryId: category.id
     });
   };
-
-  if (loading) {
-    return (
-      <View style={[themedStyles.container, themedStyles.centered, { backgroundColor: theme.background }]}>
-        <LoadingIndicator text="Loading home content..." />
-      </View>
-    );
-  }
-
-  if (error) {
-    return (
-      <View style={[themedStyles.container, themedStyles.centered, { backgroundColor: theme.background }]}>
-        <ErrorState
-          message={error}
-          onRetry={fetchCategoriesAndContent}
-        />
-      </View>
-    );
-  }
 
   return (
     <ScrollView style={[themedStyles.container, { backgroundColor: theme.background }]}>
