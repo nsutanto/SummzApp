@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Blink — Mobile UI Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+:root {
+  --bg-page: #0F0F0F;
+  --phone-bg: #111111;
+  --surface: #1A1A1A;
+  --surface2: #222222;
+  --surface3: #2A2A2A;
+  --border: #2E2E2E;
+  --gold: #C9A84C;
+  --gold-light: #E8C97A;
+  --gold-dim: #3D3018;
+  --cream: #F0EAD6;
+  --cream-dim: #9A907A;
+  --red: #C0392B;
+  --teal: #2E8B7A;
+  --text: #F0EAD6;
+  --muted: #6B6358;
+  --serif: 'Playfair Display', Georgia, serif;
+  --sans: 'DM Sans', sans-serif;
+  --mono: 'DM Mono', monospace;
+}
+
+body {
+  background: var(--bg-page);
+  font-family: var(--sans);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px 60px;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Subtle radial glow */
+body::before {
+  content: '';
+  position: fixed;
+  top: -200px; left: 50%;
+  transform: translateX(-50%);
+  width: 800px; height: 600px;
+  background: radial-gradient(ellipse, rgba(201,168,76,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ── HEADER ── */
+.page-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+.page-tag {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--gold);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.page-title {
+  font-family: var(--serif);
+  font-size: 38px;
+  color: var(--cream);
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+.page-title em { color: var(--gold); font-style: italic; }
+.page-sub {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 300;
+}
+
+/* ── SCREEN NAV ── */
+.screen-nav {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 40px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.screen-btn {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 18px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  background: transparent;
+  color: var(--muted);
+  transition: all .2s;
+}
+.screen-btn:hover { color: var(--cream); }
+.screen-btn.active {
+  background: var(--gold);
+  color: #1A1200;
+  font-weight: 600;
+}
+
+/* ── PHONE FRAME ── */
+.phone-stage {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.phone-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.phone-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.phone {
+  width: 320px;
+  height: 640px;
+  background: var(--phone-bg);
+  border-radius: 44px;
+  border: 2px solid #333;
+  box-shadow:
+    0 0 0 1px #1a1a1a,
+    0 40px 80px rgba(0,0,0,0.7),
+    0 0 60px rgba(201,168,76,0.04),
+    inset 0 1px 0 rgba(255,255,255,0.05);
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* notch */
+.phone::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 110px; height: 30px;
+  background: #000;
+  border-radius: 0 0 18px 18px;
+  z-index: 100;
+}
+
+/* side buttons */
+.phone::after {
+  content: '';
+  position: absolute;
+  right: -3px; top: 120px;
+  width: 3px; height: 60px;
+  background: #2a2a2a;
+  border-radius: 0 2px 2px 0;
+  box-shadow: 0 70px 0 #2a2a2a;
+}
+
+.screen {
+  position: absolute;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  background: var(--phone-bg);
+  overflow: hidden;
+  animation: fadeIn .25s ease;
+}
+.screen.active { display: flex; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ── STATUS BAR ── */
+.status-bar {
+  height: 44px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 0 24px 6px;
+  flex-shrink: 0;
+  padding-top: 10px;
+}
+.status-time { font-family: var(--mono); font-size: 12px; font-weight: 500; color: var(--cream); }
+.status-icons { display: flex; gap: 5px; align-items: center; }
+.status-icons svg { fill: var(--cream); }
+
+/* ── TAB BAR ── */
+.tab-bar {
+  height: 72px;
+  background: rgba(17,17,17,0.95);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 10px 12px;
+  flex-shrink: 0;
+}
+.tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+  padding: 6px 14px;
+  border-radius: 10px;
+  transition: background .15s;
+}
+.tab svg { width: 22px; height: 22px; }
+.tab span { font-size: 10px; font-weight: 500; letter-spacing: 0.3px; }
+.tab.active svg { stroke: var(--gold); }
+.tab.active span { color: var(--gold); }
+.tab:not(.active) svg { stroke: var(--muted); }
+.tab:not(.active) span { color: var(--muted); }
+
+/* ── SCROLLABLE CONTENT ── */
+.scroll-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+}
+.scroll-content::-webkit-scrollbar { display: none; }
+
+
+/* ══════════════════════════════════════════
+   SCREEN 1 — DISCOVER
+══════════════════════════════════════════ */
+
+.discover-hero {
+  height: 180px;
+  background: linear-gradient(160deg, #1C1500 0%, #2A1F00 50%, #111 100%);
+  padding: 0 20px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.discover-hero::before {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(201,168,76,0.15) 0%, transparent 60%);
+}
+.discover-greeting {
+  font-size: 12px;
+  color: var(--gold-light);
+  font-weight: 300;
+  opacity: 0.7;
+  margin-bottom: 4px;
+}
+.discover-title {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--cream);
+  line-height: 1.15;
+}
+
+.search-bar {
+  margin: 14px 16px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.search-bar svg { stroke: var(--muted); flex-shrink: 0; width: 16px; height: 16px; }
+.search-placeholder { font-size: 13px; color: var(--muted); }
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 4px 16px 10px;
+}
+.section-title { font-family: var(--serif); font-size: 16px; font-weight: 600; color: var(--cream); }
+.section-link { font-size: 11px; color: var(--gold); font-weight: 500; }
+
+/* Category pills */
+.category-pills {
+  display: flex;
+  gap: 8px;
+  padding: 0 16px 14px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  flex-shrink: 0;
+}
+.category-pills::-webkit-scrollbar { display: none; }
+.cat-pill {
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  cursor: pointer;
+}
+.cat-pill.active { background: var(--gold-dim); border-color: var(--gold); color: var(--gold-light); }
+
+/* Book cards horizontal */
+.book-row {
+  display: flex;
+  gap: 12px;
+  padding: 0 16px 16px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.book-row::-webkit-scrollbar { display: none; }
+
+.book-card {
+  flex-shrink: 0;
+  width: 110px;
+  cursor: pointer;
+}
+.book-cover {
+  width: 110px;
+  height: 150px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+}
+.book-cover-inner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 10px;
+}
+.book-cover-title {
+  font-family: var(--serif);
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.2;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+}
+.book-cover-author { font-size: 10px; color: rgba(255,255,255,0.65); margin-top: 2px; }
+.book-meta-title { font-size: 12px; font-weight: 500; color: var(--cream); line-height: 1.3; }
+.book-meta-time { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+/* Featured card */
+.featured-card {
+  margin: 4px 16px 16px;
+  border-radius: 14px;
+  overflow: hidden;
+  height: 160px;
+  position: relative;
+  cursor: pointer;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+}
+.featured-bg {
+  position: absolute;
+  inset: 0;
+}
+.featured-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.2) 100%);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.featured-label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.featured-title {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.2;
+  margin-bottom: 4px;
+}
+.featured-author { font-size: 11px; color: rgba(255,255,255,0.65); }
+.featured-cta {
+  position: absolute;
+  bottom: 14px; right: 14px;
+  background: var(--gold);
+  color: #1A1200;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 20px;
+}
+
+
+/* ══════════════════════════════════════════
+   SCREEN 2 — BOOK DETAIL
+══════════════════════════════════════════ */
+
+.detail-header {
+  height: 260px;
+  position: relative;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.detail-bg {
+  position: absolute;
+  inset: 0;
+}
+.detail-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(17,17,17,1) 100%);
+}
+.detail-back {
+  position: absolute;
+  top: 52px; left: 16px;
+  width: 32px; height: 32px;
+  background: rgba(0,0,0,0.5);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+}
+.detail-back svg { stroke: #fff; width: 16px; height: 16px; }
+
+.detail-cover {
+  position: absolute;
+  bottom: -20px;
+  left: 20px;
+  width: 88px;
+  height: 120px;
+  border-radius: 8px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.6);
+  overflow: hidden;
+}
+
+.detail-info {
+  padding: 32px 20px 16px 124px;
+  flex-shrink: 0;
+}
+.detail-category {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+.detail-title {
+  font-family: var(--serif);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--cream);
+  line-height: 1.2;
+  margin-bottom: 4px;
+}
+.detail-author { font-size: 12px; color: var(--muted); }
+
+.detail-stats {
+  display: flex;
+  gap: 0;
+  margin: 16px 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.stat-item {
+  flex: 1;
+  text-align: center;
+  padding: 12px 8px;
+  border-right: 1px solid var(--border);
+}
+.stat-item:last-child { border-right: none; }
+.stat-val { font-family: var(--serif); font-size: 16px; font-weight: 600; color: var(--cream); }
+.stat-label { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+.detail-actions {
+  display: flex;
+  gap: 10px;
+  margin: 0 20px 16px;
+  flex-shrink: 0;
+}
+.btn-primary {
+  flex: 1;
+  background: var(--gold);
+  color: #1A1200;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 12px;
+  border-radius: 12px;
+  text-align: center;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.btn-secondary {
+  width: 46px;
+  height: 46px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+}
+.btn-secondary svg { stroke: var(--cream); width: 18px; height: 18px; }
+
+.detail-desc {
+  padding: 0 20px 16px;
+  flex-shrink: 0;
+}
+.detail-desc-title { font-family: var(--serif); font-size: 14px; font-weight: 600; color: var(--cream); margin-bottom: 8px; }
+.detail-desc-text { font-size: 12px; color: var(--muted); line-height: 1.7; }
+
+.chapter-list { padding: 0 20px 16px; }
+.chapter-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+.chapter-num {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  width: 20px;
+  flex-shrink: 0;
+}
+.chapter-info { flex: 1; }
+.chapter-name { font-size: 13px; color: var(--cream); font-weight: 500; margin-bottom: 2px; }
+.chapter-time { font-size: 10px; color: var(--muted); }
+.chapter-check { width: 20px; height: 20px; border-radius: 50%; background: var(--gold-dim); border: 1px solid var(--gold); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.chapter-check svg { stroke: var(--gold); width: 11px; height: 11px; }
+.chapter-lock { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; }
+.chapter-lock svg { stroke: var(--muted); width: 14px; height: 14px; }
+
+
+/* ══════════════════════════════════════════
+   SCREEN 3 — READER
+══════════════════════════════════════════ */
+
+.reader-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 52px 20px 16px;
+  flex-shrink: 0;
+}
+.reader-close svg { stroke: var(--muted); width: 20px; height: 20px; cursor: pointer; }
+.reader-book-label { font-size: 11px; color: var(--muted); text-align: center; flex: 1; }
+.reader-audio {
+  width: 32px; height: 32px;
+  background: var(--gold-dim);
+  border: 1px solid var(--gold);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+}
+.reader-audio svg { stroke: var(--gold); width: 14px; height: 14px; }
+
+.reader-progress-bar {
+  height: 2px;
+  background: var(--surface2);
+  margin: 0 20px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  position: relative;
+}
+.reader-progress-fill {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 35%;
+  background: var(--gold);
+  border-radius: 2px;
+}
+.reader-progress-label {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 20px 0;
+  flex-shrink: 0;
+}
+.reader-progress-label span { font-size: 10px; color: var(--muted); font-family: var(--mono); }
+
+.reader-content {
+  padding: 20px 24px;
+}
+.reader-chapter-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--gold);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.reader-chapter-title {
+  font-family: var(--serif);
+  font-size: 21px;
+  font-weight: 700;
+  color: var(--cream);
+  line-height: 1.25;
+  margin-bottom: 20px;
+}
+.reader-text {
+  font-size: 14px;
+  color: #B8AC96;
+  line-height: 1.85;
+  margin-bottom: 18px;
+}
+.reader-text strong { color: var(--cream); font-weight: 600; }
+.reader-quote {
+  margin: 20px 0;
+  padding: 16px 16px 16px 20px;
+  border-left: 3px solid var(--gold);
+  background: var(--surface);
+  border-radius: 0 8px 8px 0;
+}
+.reader-quote p {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--cream);
+  line-height: 1.6;
+}
+.reader-quote cite { font-size: 11px; color: var(--gold); margin-top: 8px; display: block; font-style: normal; }
+
+.reader-key-idea {
+  background: var(--gold-dim);
+  border: 1px solid rgba(201,168,76,0.3);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin: 16px 0;
+}
+.reader-key-idea-label { font-size: 9px; font-weight: 600; letter-spacing: 2px; color: var(--gold); text-transform: uppercase; margin-bottom: 6px; }
+.reader-key-idea-text { font-size: 13px; color: var(--cream); line-height: 1.6; }
+
+.reader-bottom {
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--border);
+  background: var(--phone-bg);
+  flex-shrink: 0;
+}
+.reader-prev, .reader-next {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.reader-prev { color: var(--muted); }
+.reader-prev svg { stroke: var(--muted); width: 16px; height: 16px; }
+.reader-next { color: var(--gold); }
+.reader-next svg { stroke: var(--gold); width: 16px; height: 16px; }
+.reader-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+}
+
+
+/* ══════════════════════════════════════════
+   SCREEN 4 — AUDIO PLAYER
+══════════════════════════════════════════ */
+
+.player-header {
+  padding: 52px 20px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.player-header-label { font-size: 12px; color: var(--muted); text-align: center; flex: 1; }
+.player-header-btn svg { stroke: var(--muted); width: 20px; height: 20px; cursor: pointer; }
+
+.player-cover-wrap {
+  padding: 10px 36px 20px;
+  flex-shrink: 0;
+}
+.player-cover {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.7), 0 0 40px rgba(201,168,76,0.06);
+  position: relative;
+}
+
+.player-info {
+  padding: 0 24px;
+  flex-shrink: 0;
+}
+.player-chapter { font-size: 11px; color: var(--gold); font-weight: 500; font-family: var(--mono); letter-spacing: 1px; margin-bottom: 6px; }
+.player-title {
+  font-family: var(--serif);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--cream);
+  line-height: 1.2;
+  margin-bottom: 4px;
+}
+.player-author { font-size: 13px; color: var(--muted); }
+
+.player-controls {
+  padding: 20px 24px 10px;
+  flex-shrink: 0;
+}
+.player-seek {
+  position: relative;
+  height: 3px;
+  background: var(--surface3);
+  border-radius: 3px;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+.player-seek-fill {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 42%;
+  background: var(--gold);
+  border-radius: 3px;
+}
+.player-seek-thumb {
+  position: absolute;
+  top: 50%;
+  left: 42%;
+  transform: translate(-50%, -50%);
+  width: 12px; height: 12px;
+  background: var(--gold);
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(201,168,76,0.5);
+}
+.player-time {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.player-time span { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+
+.player-btns {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.ctrl-btn { cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.ctrl-btn svg { stroke: var(--muted); width: 22px; height: 22px; }
+.ctrl-btn.center {
+  width: 60px; height: 60px;
+  background: var(--gold);
+  border-radius: 50%;
+  box-shadow: 0 8px 24px rgba(201,168,76,0.3);
+}
+.ctrl-btn.center svg { stroke: #1A1200; fill: #1A1200; width: 24px; height: 24px; }
+
+.player-extras {
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+}
+.player-extra { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; }
+.player-extra svg { stroke: var(--muted); width: 20px; height: 20px; }
+.player-extra span { font-size: 10px; color: var(--muted); }
+
+.player-chapter-list {
+  padding: 0 20px 16px;
+}
+.player-chapter-item {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 10px;
+  margin-bottom: 4px;
+  cursor: pointer;
+}
+.player-chapter-item.active { background: var(--gold-dim); }
+.player-ch-num { font-family: var(--mono); font-size: 11px; color: var(--muted); width: 16px; }
+.player-ch-info { flex: 1; }
+.player-ch-name { font-size: 12px; color: var(--cream); margin-bottom: 1px; }
+.player-chapter-item.active .player-ch-name { color: var(--gold-light); }
+.player-ch-dur { font-size: 10px; color: var(--muted); }
+.player-ch-playing svg { stroke: var(--gold); width: 14px; height: 14px; animation: pulse 1.5s ease infinite; }
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+
+
+/* ══════════════════════════════════════════
+   SCREEN 5 — MY LIBRARY
+══════════════════════════════════════════ */
+
+.library-header {
+  padding: 52px 20px 16px;
+  flex-shrink: 0;
+}
+.library-title { font-family: var(--serif); font-size: 24px; font-weight: 700; color: var(--cream); margin-bottom: 4px; }
+.library-sub { font-size: 12px; color: var(--muted); }
+
+.library-tabs {
+  display: flex;
+  padding: 0 20px 16px;
+  gap: 0;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 4px;
+}
+.lib-tab {
+  font-size: 13px;
+  font-weight: 500;
+  padding: 6px 16px 10px;
+  color: var(--muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+.lib-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+.continue-card {
+  margin: 12px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  gap: 12px;
+  cursor: pointer;
+}
+.continue-cover {
+  width: 56px;
+  height: 76px;
+  border-radius: 6px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.continue-info { flex: 1; }
+.continue-label { font-size: 9px; font-weight: 600; letter-spacing: 2px; color: var(--gold); text-transform: uppercase; margin-bottom: 4px; }
+.continue-title { font-family: var(--serif); font-size: 14px; font-weight: 600; color: var(--cream); line-height: 1.2; margin-bottom: 4px; }
+.continue-progress-bar { height: 3px; background: var(--surface3); border-radius: 3px; margin: 8px 0; }
+.continue-progress-fill { height: 3px; width: 35%; background: var(--gold); border-radius: 3px; }
+.continue-progress-text { font-size: 10px; color: var(--muted); }
+.continue-btn { width: 32px; height: 32px; background: var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; align-self: center; flex-shrink: 0; }
+.continue-btn svg { stroke: #1A1200; fill: #1A1200; width: 14px; height: 14px; }
+
+.library-list { padding: 4px 16px; }
+.lib-book {
+  display: flex;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  align-items: center;
+}
+.lib-book-cover {
+  width: 48px;
+  height: 66px;
+  border-radius: 6px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.lib-book-info { flex: 1; }
+.lib-book-title { font-size: 13px; font-weight: 500; color: var(--cream); margin-bottom: 2px; font-family: var(--serif); }
+.lib-book-author { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+.lib-book-bar { height: 2px; background: var(--surface3); border-radius: 2px; }
+.lib-book-fill { height: 2px; background: var(--gold); border-radius: 2px; }
+.lib-book-badge {
+  padding: 3px 8px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.lib-book-badge.done { background: rgba(46,139,122,0.2); color: #4DB6A3; }
+.lib-book-badge.reading { background: var(--gold-dim); color: var(--gold-light); }
+
+
+/* ── COVER GRADIENTS (simulated book covers) ── */
+.cov-1 { background: linear-gradient(135deg, #1a3a2a 0%, #2d5a3d 50%, #0d2318 100%); }
+.cov-2 { background: linear-gradient(135deg, #2a1a0a 0%, #5a3a0d 50%, #1a0d00 100%); }
+.cov-3 { background: linear-gradient(135deg, #0a1a2a 0%, #1a3a5a 50%, #051020 100%); }
+.cov-4 { background: linear-gradient(135deg, #2a0a1a 0%, #5a1a3a 50%, #1a0510 100%); }
+.cov-5 { background: linear-gradient(135deg, #1a1a0a 0%, #3a3a1a 50%, #0d0d00 100%); }
+
+/* Cover pattern overlays */
+.cov-pattern {
+  position: absolute;
+  inset: 0;
+  opacity: 0.15;
+  background-image: repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(255,255,255,0.1) 4px, rgba(255,255,255,0.1) 5px);
+}
+
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="page-tag">UI Mockup // Mobile App</div>
+  <h1 class="page-title"><em>Blink</em> — Screen Designs</h1>
+  <p class="page-sub">Click a screen below to explore the app flow</p>
+</div>
+
+<!-- SCREEN SWITCHER -->
+<div class="screen-nav">
+  <button class="screen-btn active" onclick="showScreen('discover',this)">Discover</button>
+  <button class="screen-btn" onclick="showScreen('detail',this)">Book Detail</button>
+  <button class="screen-btn" onclick="showScreen('reader',this)">Reader</button>
+  <button class="screen-btn" onclick="showScreen('player',this)">Audio Player</button>
+  <button class="screen-btn" onclick="showScreen('library',this)">My Library</button>
+</div>
+
+<div class="phone-stage">
+<div class="phone-wrap">
+  <div class="phone">
+
+    <!-- ══ DISCOVER ══ -->
+    <div class="screen active" id="screen-discover">
+      <div class="status-bar">
+        <span class="status-time">9:41</span>
+        <div class="status-icons">
+          <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="3" width="3" height="9" rx="1"/><rect x="4.5" y="2" width="3" height="10" rx="1"/><rect x="9" y="0" width="3" height="12" rx="1"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" opacity="0.3"/></svg>
+          <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="0" width="13" height="12" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/><rect x="13.5" y="4" width="2" height="4" rx="1"/><rect x="1.5" y="1.5" width="8" height="9" rx="1"/></svg>
+        </div>
+      </div>
+
+      <div class="discover-hero">
+        <div class="discover-greeting">Good morning, Alex</div>
+        <div class="discover-title">What will you<br/>learn today?</div>
+      </div>
+
+      <div class="scroll-content">
+        <div class="search-bar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <span class="search-placeholder">Search books, authors…</span>
+        </div>
+
+        <div class="category-pills">
+          <div class="cat-pill active">All</div>
+          <div class="cat-pill">Productivity</div>
+          <div class="cat-pill">Psychology</div>
+          <div class="cat-pill">Business</div>
+          <div class="cat-pill">Science</div>
+          <div class="cat-pill">Philosophy</div>
+        </div>
+
+        <!-- Featured -->
+        <div class="section-header">
+          <span class="section-title">Editor's Pick</span>
+        </div>
+        <div class="featured-card" onclick="showScreen('detail', document.querySelector('.screen-btn:nth-child(2)'))">
+          <div class="featured-bg cov-1"><div class="cov-pattern"></div></div>
+          <div class="featured-overlay">
+            <span class="featured-label">Featured</span>
+            <div class="featured-title">Atomic Habits</div>
+            <div class="featured-author">James Clear</div>
+          </div>
+          <div class="featured-cta">Read · 15 min</div>
+        </div>
+
+        <div class="section-header">
+          <span class="section-title">Trending Now</span>
+          <span class="section-link">See all</span>
+        </div>
+        <div class="book-row">
+          <div class="book-card">
+            <div class="book-cover cov-2"><div class="cov-pattern"></div><div class="book-cover-inner"><div class="book-cover-title">Deep Work</div><div class="book-cover-author">Cal Newport</div></div></div>
+            <div class="book-meta-title">Deep Work</div>
+            <div class="book-meta-time">12 min read</div>
+          </div>
+          <div class="book-card">
+            <div class="book-cover cov-3"><div class="cov-pattern"></div><div class="book-cover-inner"><div class="book-cover-title">Thinking, Fast & Slow</div><div class="book-cover-author">Kahneman</div></div></div>
+            <div class="book-meta-title">Thinking, Fast & Slow</div>
+            <div class="book-meta-time">18 min read</div>
+          </div>
+          <div class="book-card">
+            <div class="book-cover cov-4"><div class="cov-pattern"></div><div class="book-cover-inner"><div class="book-cover-title">The Psychology of Money</div><div class="book-cover-author">Housel</div></div></div>
+            <div class="book-meta-title">Psychology of Money</div>
+            <div class="book-meta-time">14 min read</div>
+          </div>
+          <div class="book-card">
+            <div class="book-cover cov-5"><div class="cov-pattern"></div><div class="book-cover-inner"><div class="book-cover-title">Sapiens</div><div class="book-cover-author">Yuval Harari</div></div></div>
+            <div class="book-meta-title">Sapiens</div>
+            <div class="book-meta-time">22 min read</div>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <span class="section-title">New Arrivals</span>
+          <span class="section-link">See all</span>
+        </div>
+        <div class="book-row">
+          <div class="book-card">
+            <div class="book-cover" style="background:linear-gradient(135deg,#1a2a3a,#2a3a5a)"><div class="cov-pattern"></div><div class="book-cover-inner"><div class="book-cover-title">The Almanack</div><div class="book-cover-author">Naval</div></div></div>
+            <div class="book-meta-title">The Almanack</div>
+            <div class="book-meta-time">16 min read</div>
+          </div>
+          <div class="book-card">
+            <div class="book-cover" style="background:linear-gradient(135deg,#2a2a1a,#4a4a2a)"><div class="cov-pattern"></div><div class="book-cover-inner"><div class="book-cover-title">Start With Why</div><div class="book-cover-author">Sinek</div></div></div>
+            <div class="book-meta-title">Start With Why</div>
+            <div class="book-meta-time">11 min read</div>
+          </div>
+        </div>
+      </div><!-- /scroll -->
+
+      <div class="tab-bar">
+        <div class="tab active">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <span>Discover</span>
+        </div>
+        <div class="tab" onclick="showScreen('library', document.querySelector('.screen-btn:nth-child(5)'))">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          <span>Library</span>
+        </div>
+        <div class="tab" onclick="showScreen('player', document.querySelector('.screen-btn:nth-child(4)'))">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+          <span>Player</span>
+        </div>
+        <div class="tab">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span>Profile</span>
+        </div>
+      </div>
+    </div><!-- /discover -->
+
+
+    <!-- ══ BOOK DETAIL ══ -->
+    <div class="screen" id="screen-detail">
+      <div class="status-bar">
+        <span class="status-time">9:41</span>
+        <div class="status-icons">
+          <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="3" width="3" height="9" rx="1"/><rect x="4.5" y="2" width="3" height="10" rx="1"/><rect x="9" y="0" width="3" height="12" rx="1"/></svg>
+          <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="0" width="13" height="12" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/><rect x="1.5" y="1.5" width="8" height="9" rx="1"/></svg>
+        </div>
+      </div>
+      <div class="scroll-content">
+        <div class="detail-header">
+          <div class="detail-bg cov-1"><div class="cov-pattern"></div></div>
+          <div class="detail-overlay"></div>
+          <div class="detail-back" onclick="showScreen('discover', document.querySelector('.screen-btn:nth-child(1)'))">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </div>
+          <div class="detail-cover cov-1"><div class="cov-pattern"></div><div class="book-cover-inner"><div class="book-cover-title">Atomic Habits</div><div class="book-cover-author">James Clear</div></div></div>
+        </div>
+
+        <div class="detail-info">
+          <div class="detail-category">Productivity · Self-Help</div>
+          <div class="detail-title">Atomic Habits</div>
+          <div class="detail-author">James Clear</div>
+        </div>
+
+        <div class="detail-stats">
+          <div class="stat-item"><div class="stat-val">7</div><div class="stat-label">Chapters</div></div>
+          <div class="stat-item"><div class="stat-val">15</div><div class="stat-label">Min read</div></div>
+          <div class="stat-item"><div class="stat-val">4.8</div><div class="stat-label">Rating</div></div>
+        </div>
+
+        <div class="detail-actions">
+          <div class="btn-primary" onclick="showScreen('reader', document.querySelector('.screen-btn:nth-child(3)'))">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke="#1A1200" width="16" height="16"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            Read Now
+          </div>
+          <div class="btn-secondary" onclick="showScreen('player', document.querySelector('.screen-btn:nth-child(4)'))">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+          </div>
+          <div class="btn-secondary">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </div>
+        </div>
+
+        <div class="detail-desc">
+          <div class="detail-desc-title">What you'll learn</div>
+          <div class="detail-desc-text">Tiny changes can produce remarkable results. This summary reveals the science behind habit formation and shows you a proven system for building good habits and breaking bad ones — permanently.</div>
+        </div>
+
+        <div class="section-header" style="padding-top:0;">
+          <span class="section-title">Chapters</span>
+        </div>
+        <div class="chapter-list">
+          <div class="chapter-item" onclick="showScreen('reader', document.querySelector('.screen-btn:nth-child(3)'))">
+            <div class="chapter-num">01</div>
+            <div class="chapter-info"><div class="chapter-name">The Surprising Power of Tiny Habits</div><div class="chapter-time">2 min</div></div>
+            <div class="chapter-check"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+          </div>
+          <div class="chapter-item" onclick="showScreen('reader', document.querySelector('.screen-btn:nth-child(3)'))">
+            <div class="chapter-num">02</div>
+            <div class="chapter-info"><div class="chapter-name">How Habits Shape Your Identity</div><div class="chapter-time">2 min</div></div>
+            <div class="chapter-check"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+          </div>
+          <div class="chapter-item">
+            <div class="chapter-num">03</div>
+            <div class="chapter-info"><div class="chapter-name">The Four Laws of Behaviour Change</div><div class="chapter-time">2 min</div></div>
+            <div class="chapter-lock"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          </div>
+          <div class="chapter-item">
+            <div class="chapter-num">04</div>
+            <div class="chapter-info"><div class="chapter-name">Make It Obvious</div><div class="chapter-time">2 min</div></div>
+            <div class="chapter-lock"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          </div>
+          <div class="chapter-item">
+            <div class="chapter-num">05</div>
+            <div class="chapter-info"><div class="chapter-name">Make It Attractive</div><div class="chapter-time">2 min</div></div>
+            <div class="chapter-lock"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /detail -->
+
+
+    <!-- ══ READER ══ -->
+    <div class="screen" id="screen-reader">
+      <div class="status-bar">
+        <span class="status-time">9:41</span>
+        <div class="status-icons">
+          <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="3" width="3" height="9" rx="1"/><rect x="4.5" y="2" width="3" height="10" rx="1"/><rect x="9" y="0" width="3" height="12" rx="1"/></svg>
+          <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="0" width="13" height="12" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/><rect x="1.5" y="1.5" width="8" height="9" rx="1"/></svg>
+        </div>
+      </div>
+
+      <div class="reader-nav">
+        <div class="reader-close" onclick="showScreen('detail', document.querySelector('.screen-btn:nth-child(2)'))">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </div>
+        <span class="reader-book-label">Atomic Habits</span>
+        <div class="reader-audio" onclick="showScreen('player', document.querySelector('.screen-btn:nth-child(4)'))">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+        </div>
+      </div>
+
+      <div class="reader-progress-bar"><div class="reader-progress-fill"></div></div>
+      <div class="reader-progress-label">
+        <span>Chapter 2 of 7</span>
+        <span>35%</span>
+      </div>
+
+      <div class="scroll-content">
+        <div class="reader-content">
+          <div class="reader-chapter-label">Chapter 02</div>
+          <div class="reader-chapter-title">How Habits Shape Your Identity</div>
+
+          <p class="reader-text">Many people think that changing habits is about altering behaviour. But there's a deeper layer: <strong>identity</strong>. The most effective way to change who you are is to change what you believe about yourself.</p>
+
+          <div class="reader-key-idea">
+            <div class="reader-key-idea-label">Key Idea</div>
+            <div class="reader-key-idea-text">Every action you take is a vote for the type of person you wish to become. No single vote decides the election — but the accumulation shifts everything.</div>
+          </div>
+
+          <p class="reader-text">Outcomes-based habits focus on what you want to achieve. Identity-based habits focus on <strong>who you wish to become</strong>. The goal isn't to read a book; it's to become a reader.</p>
+
+          <div class="reader-quote">
+            <p>"The real reason habits matter is not because they can get you better results, but because they can change your beliefs about yourself."</p>
+            <cite>— James Clear</cite>
+          </div>
+
+          <p class="reader-text">Each time you write a page, you are a writer. Each time you practice, you are a musician. Habits are the path through which identity is built — one small action at a time.</p>
+        </div>
+      </div>
+
+      <div class="reader-bottom">
+        <div class="reader-prev">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+          Prev
+        </div>
+        <div class="reader-dot"></div>
+        <div class="reader-next">
+          Next
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </div>
+    </div><!-- /reader -->
+
+
+    <!-- ══ PLAYER ══ -->
+    <div class="screen" id="screen-player">
+      <div class="status-bar">
+        <span class="status-time">9:41</span>
+        <div class="status-icons">
+          <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="3" width="3" height="9" rx="1"/><rect x="4.5" y="2" width="3" height="10" rx="1"/><rect x="9" y="0" width="3" height="12" rx="1"/></svg>
+          <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="0" width="13" height="12" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/><rect x="1.5" y="1.5" width="8" height="9" rx="1"/></svg>
+        </div>
+      </div>
+
+      <div class="scroll-content">
+        <div class="player-header">
+          <div class="player-header-btn" onclick="showScreen('detail', document.querySelector('.screen-btn:nth-child(2)'))">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </div>
+          <span class="player-header-label">Now Playing</span>
+          <div class="player-header-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+          </div>
+        </div>
+
+        <div class="player-cover-wrap">
+          <div class="player-cover cov-1"><div class="cov-pattern"></div><div class="book-cover-inner" style="padding:20px"><div class="book-cover-title" style="font-size:22px;margin-bottom:6px">Atomic Habits</div><div class="book-cover-author" style="font-size:13px">James Clear</div></div></div>
+        </div>
+
+        <div class="player-info">
+          <div class="player-chapter">Chapter 02 of 07</div>
+          <div class="player-title">How Habits Shape Your Identity</div>
+          <div class="player-author">James Clear</div>
+        </div>
+
+        <div class="player-controls">
+          <div class="player-seek">
+            <div class="player-seek-fill"></div>
+            <div class="player-seek-thumb"></div>
+          </div>
+          <div class="player-time">
+            <span>2:34</span>
+            <span>6:10</span>
+          </div>
+          <div class="player-btns">
+            <div class="ctrl-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg>
+            </div>
+            <div class="ctrl-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+            </div>
+            <div class="ctrl-btn center">
+              <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
+            </div>
+            <div class="ctrl-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+            </div>
+            <div class="ctrl-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-.49-3.51"/></svg>
+            </div>
+          </div>
+          <div class="player-extras">
+            <div class="player-extra">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+              <span>AirPlay</span>
+            </div>
+            <div class="player-extra">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+              <span>1.0×</span>
+            </div>
+            <div class="player-extra">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              <span>Save</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-header" style="padding-top:8px;">
+          <span class="section-title">All Chapters</span>
+        </div>
+        <div class="player-chapter-list">
+          <div class="player-chapter-item">
+            <div class="player-ch-num">01</div>
+            <div class="player-ch-info"><div class="player-ch-name">The Surprising Power of Tiny Habits</div><div class="player-ch-dur">6:02</div></div>
+            <div><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" width="14" height="14"><polyline points="20 6 9 17 4 12" stroke="var(--gold)"/></svg></div>
+          </div>
+          <div class="player-chapter-item active">
+            <div class="player-ch-num">02</div>
+            <div class="player-ch-info"><div class="player-ch-name">How Habits Shape Your Identity</div><div class="player-ch-dur">6:10</div></div>
+            <div class="player-ch-playing"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg></div>
+          </div>
+          <div class="player-chapter-item">
+            <div class="player-ch-num">03</div>
+            <div class="player-ch-info"><div class="player-ch-name">The Four Laws of Behaviour Change</div><div class="player-ch-dur">5:48</div></div>
+          </div>
+          <div class="player-chapter-item">
+            <div class="player-ch-num">04</div>
+            <div class="player-ch-info"><div class="player-ch-name">Make It Obvious</div><div class="player-ch-dur">4:55</div></div>
+          </div>
+        </div>
+      </div><!-- /scroll -->
+    </div><!-- /player -->
+
+
+    <!-- ══ LIBRARY ══ -->
+    <div class="screen" id="screen-library">
+      <div class="status-bar">
+        <span class="status-time">9:41</span>
+        <div class="status-icons">
+          <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="3" width="3" height="9" rx="1"/><rect x="4.5" y="2" width="3" height="10" rx="1"/><rect x="9" y="0" width="3" height="12" rx="1"/></svg>
+          <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="0" width="13" height="12" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/><rect x="1.5" y="1.5" width="8" height="9" rx="1"/></svg>
+        </div>
+      </div>
+
+      <div class="library-header">
+        <div class="library-title">My Library</div>
+        <div class="library-sub">12 books saved</div>
+      </div>
+
+      <div class="library-tabs">
+        <div class="lib-tab active">In Progress</div>
+        <div class="lib-tab">Saved</div>
+        <div class="lib-tab">Finished</div>
+      </div>
+
+      <div class="scroll-content">
+        <!-- Continue reading -->
+        <div class="continue-card" onclick="showScreen('reader', document.querySelector('.screen-btn:nth-child(3)'))">
+          <div class="continue-cover cov-1"><div class="cov-pattern"></div></div>
+          <div class="continue-info">
+            <div class="continue-label">Continue Reading</div>
+            <div class="continue-title">Atomic Habits</div>
+            <div class="continue-progress-bar"><div class="continue-progress-fill"></div></div>
+            <div class="continue-progress-text">Chapter 2 of 7 · 35% complete</div>
+          </div>
+          <div class="continue-btn">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          </div>
+        </div>
+
+        <div class="library-list">
+          <div class="lib-book">
+            <div class="lib-book-cover cov-2"><div class="cov-pattern"></div></div>
+            <div class="lib-book-info">
+              <div class="lib-book-title">Deep Work</div>
+              <div class="lib-book-author">Cal Newport</div>
+              <div class="lib-book-bar"><div class="lib-book-fill" style="width:70%"></div></div>
+            </div>
+            <div class="lib-book-badge reading">70%</div>
+          </div>
+          <div class="lib-book">
+            <div class="lib-book-cover cov-3"><div class="cov-pattern"></div></div>
+            <div class="lib-book-info">
+              <div class="lib-book-title">Thinking, Fast & Slow</div>
+              <div class="lib-book-author">Daniel Kahneman</div>
+              <div class="lib-book-bar"><div class="lib-book-fill" style="width:100%"></div></div>
+            </div>
+            <div class="lib-book-badge done">Done</div>
+          </div>
+          <div class="lib-book">
+            <div class="lib-book-cover cov-4"><div class="cov-pattern"></div></div>
+            <div class="lib-book-info">
+              <div class="lib-book-title">Psychology of Money</div>
+              <div class="lib-book-author">Morgan Housel</div>
+              <div class="lib-book-bar"><div class="lib-book-fill" style="width:20%"></div></div>
+            </div>
+            <div class="lib-book-badge reading">20%</div>
+          </div>
+          <div class="lib-book">
+            <div class="lib-book-cover cov-5"><div class="cov-pattern"></div></div>
+            <div class="lib-book-info">
+              <div class="lib-book-title">Sapiens</div>
+              <div class="lib-book-author">Yuval Noah Harari</div>
+              <div class="lib-book-bar"><div class="lib-book-fill" style="width:100%"></div></div>
+            </div>
+            <div class="lib-book-badge done">Done</div>
+          </div>
+          <div class="lib-book">
+            <div class="lib-book-cover" style="background:linear-gradient(135deg,#1a3a2a,#0d2318)"><div class="cov-pattern"></div></div>
+            <div class="lib-book-info">
+              <div class="lib-book-title">The Almanack of Naval</div>
+              <div class="lib-book-author">Eric Jorgenson</div>
+              <div class="lib-book-bar"><div class="lib-book-fill" style="width:50%"></div></div>
+            </div>
+            <div class="lib-book-badge reading">50%</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-bar">
+        <div class="tab" onclick="showScreen('discover', document.querySelector('.screen-btn:nth-child(1)'))">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <span>Discover</span>
+        </div>
+        <div class="tab active">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          <span>Library</span>
+        </div>
+        <div class="tab" onclick="showScreen('player', document.querySelector('.screen-btn:nth-child(4)'))">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+          <span>Player</span>
+        </div>
+        <div class="tab">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span>Profile</span>
+        </div>
+      </div>
+    </div><!-- /library -->
+
+  </div><!-- /phone -->
+  <div class="phone-label">interactive — click to navigate</div>
+</div>
+</div><!-- /stage -->
+
+<script>
+function showScreen(id, btn) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.screen-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+</script>
+</body>
+</html>
