@@ -38,6 +38,7 @@
 - Update Readme.md to provide steps on "how to"
 - Update /doc/summz_mobile_architecture.html for high level major architecture decision
 - After any session or changes is done, run both Android and iOS so that I can see the result
+- Place comomon UI inside src/components
 
 
 ## Backend Reference
