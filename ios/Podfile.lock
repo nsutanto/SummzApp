@@ -1629,6 +1629,9 @@ PODS:
     - SocketRocket
   - react-native-safe-area-context (5.6.1):
     - React-Core
+  - react-native-track-player (4.1.2):
+    - React-Core
+    - SwiftAudioEx (= 1.1.0)
   - React-NativeModulesApple (0.80.2):
     - boost
     - DoubleConversion
@@ -2167,6 +2170,7 @@ PODS:
     - SocketRocket
     - Yoga
   - SocketRocket (0.7.1)
+  - SwiftAudioEx (1.1.0)
   - Yoga (0.0.0)
 
 DEPENDENCIES:
@@ -2212,6 +2216,7 @@ DEPENDENCIES:
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
   - React-microtasksnativemodule (from `../node_modules/react-native/ReactCommon/react/nativemodule/microtasks`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
+  - react-native-track-player (from `../node_modules/react-native-track-player`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-oscompat (from `../node_modules/react-native/ReactCommon/oscompat`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
@@ -2267,6 +2272,7 @@ SPEC REPOS:
     - PromisesObjC
     - RecaptchaInterop
     - SocketRocket
+    - SwiftAudioEx
 
 EXTERNAL SOURCES:
   boost:
@@ -2349,6 +2355,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/react/nativemodule/microtasks"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
+  react-native-track-player:
+    :path: "../node_modules/react-native-track-player"
   React-NativeModulesApple:
     :path: "../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios"
   React-oscompat:
@@ -2478,6 +2486,7 @@ SPEC CHECKSUMS:
   React-Mapbuffer: 230c34b1cabd1c4815726c711b9df221c3d3fbfb
   React-microtasksnativemodule: e49787b7a4d7fb990cef35cab494f0760a19b7e3
   react-native-safe-area-context: aac2745e96999c8633d2f6119e4e39b499c2ac8b
+  react-native-track-player: 24ecd55d64da8a6471ba96484b67bc9cee6fc629
   React-NativeModulesApple: 3a04102c851a45eef2576632c731d64150c5fb69
   React-oscompat: 56d6de59f9ae95cd006a1c40be2cde83bc06a4e1
   React-perflogger: 0633844e495d8b34798c9bf0cb32ce315f1d5c9f
@@ -2517,8 +2526,9 @@ SPEC CHECKSUMS:
   RNScreens: 9bb0b31bb2093a5b4ac8b24c115e9fc73d81d3ee
   RNVectorIcons: 1b97cd055eafeee1a1c83e4f90563a59bf855658
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
+  SwiftAudioEx: f6aa653770f3a0d3851edaf8d834a30aee4a7646
   Yoga: 1e9b9a43e24807ab708430d5d1bf5e36a55a1c4d
 
 PODFILE CHECKSUM: 348181803cd3b3b1c258bd41170d45e9ccc3268b
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2

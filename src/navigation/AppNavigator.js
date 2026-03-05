@@ -6,7 +6,9 @@ import LoginScreen from '../screens/LoginScreen';
 import MainScreen from '../screens/MainScreen';
 import ContentByCategoryScreen from '../screens/ContentByCategoryScreen';
 import ContentDetailScreen from '../screens/ContentDetailScreen';
+import AudioPlayerScreen from '../screens/AudioPlayerScreen';
 import { useAuth } from '../context/AuthContext';
+import { navigationRef } from './navigationRef';
 
 const Stack = createStackNavigator();
 
@@ -21,6 +23,11 @@ const MainStack = () => {
       <Stack.Screen name="MainTabs" component={MainScreen} />
       <Stack.Screen name="ContentByCategoryScreen" component={ContentByCategoryScreen} />
       <Stack.Screen name="ContentDetailScreen" component={ContentDetailScreen} />
+      <Stack.Screen
+        name="AudioPlayerScreen"
+        component={AudioPlayerScreen}
+        options={{ headerShown: false, gestureDirection: 'vertical' }}
+      />
     </Stack.Navigator>
   );
 };
@@ -37,7 +44,7 @@ const AppNavigator = () => {
   }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       {user ? (
         <MainStack />
       ) : (

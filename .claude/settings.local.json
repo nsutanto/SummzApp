@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3:*)",
+      "Bash(npx react-native run-android)",
+      "Bash(npx patch-package react-native-track-player)",
+      "Bash(adb logcat -d -s ReactNativeJS)",
+      "Bash(adb logcat -d)"
+    ]
+  }
+}

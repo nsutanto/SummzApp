@@ -18,13 +18,13 @@ const formatDuration = (seconds) => {
   return `${m}:${s.toString().padStart(2, '0')}`;
 };
 
-const ChapterRow = ({ chapter, index, isLast, isCurrentChapter, theme }) => (
+const ChapterRow = ({ chapter, index, isLast, isCurrentChapter, theme, onPress }) => (
   <TouchableOpacity
     style={[
       styles.chapterRow,
       !isLast && { borderBottomWidth: 1, borderBottomColor: theme.border.light },
     ]}
-    onPress={() => console.log('Chapter pressed:', chapter.id)}
+    onPress={onPress}
     activeOpacity={0.7}
   >
     {/* Left: chapter number */}
@@ -92,6 +92,14 @@ const ContentDetailScreen = () => {
 
     loadData();
   }, [content?.id]);
+
+  const navigateToPlayer = (startIndex) => {
+    navigation.navigate('AudioPlayerScreen', {
+      book: content,
+      chapters,
+      initialChapterIndex: startIndex,
+    });
+  };
 
   const handleToggleSave = async () => {
     if (saveLoading) return;
@@ -236,7 +244,13 @@ const ContentDetailScreen = () => {
           {/* Listen */}
           <TouchableOpacity
             style={[styles.btnSecondary, { backgroundColor: theme.surface, borderColor: theme.border.default }]}
-            onPress={() => console.log('Listen pressed')}
+            onPress={() => {
+              if (!chapters.length) return;
+              const startIndex = progress?.last_summary_id
+                ? Math.max(0, chapters.findIndex(c => c.id === progress.last_summary_id))
+                : 0;
+              navigateToPlayer(startIndex);
+            }}
             activeOpacity={0.8}
           >
             <Icon name="headphones" size={18} color={theme.text.primary} style={styles.btnIcon} />
@@ -294,6 +308,7 @@ const ContentDetailScreen = () => {
                 isLast={index === chapters.length - 1}
                 isCurrentChapter={progress?.last_summary_id === chapter.id}
                 theme={theme}
+                onPress={() => navigateToPlayer(index)}
               />
             ))}
           </View>
