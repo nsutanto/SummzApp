@@ -139,9 +139,10 @@ const HomeScreen = () => {
               contentContainerStyle={styles.pillListContent}
               renderItem={({ item }) => {
                 const isActive = activePill === item.id;
+                const icon = item.icon || '';
                 const label = item.id === null
                   ? 'All'
-                  : `${item.icon} ${item.name}`.trim();
+                  : icon ? `${icon} ${item.name}` : item.name;
                 return (
                   <TouchableOpacity
                     style={[
@@ -180,7 +181,7 @@ const HomeScreen = () => {
                 <View key={category.id} style={styles.categorySection}>
                   <View style={styles.categoryHeader}>
                     <View style={styles.categoryTitleContainer}>
-                      {(index !== 0 || activePill !== null) && (
+                      {(index !== 0 || activePill !== null) && !!category.icon && (
                         <Text style={styles.categoryEmoji}>{category.icon}</Text>
                       )}
                       <Text
