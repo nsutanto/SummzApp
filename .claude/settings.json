@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xcodebuild -workspace ios/SummzApp.xcworkspace -scheme SummzApp -configuration Debug -sdk iphonesimulator -destination \"id=5FCE1C66-F6D5-4C33-B02F-990A398CC9A2\")",
+      "Bash(npm install @react-native-community/slider@4.5.5 --legacy-peer-deps)"
+    ]
+  }
+}

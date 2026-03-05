@@ -1,4 +1,6 @@
+// RUN: npm install @react-native-community/slider && cd ios && pod install
 import React, { useState, useEffect, useRef } from 'react';
+import Slider from '@react-native-community/slider';
 import {
   View,
   Text,
@@ -40,6 +42,8 @@ const AudioPlayerScreen = () => {
 
   const [isReady, setIsReady] = useState(false);
   const [activeIndex, setActiveIndex] = useState(initialChapterIndex);
+  const [isSeeking, setIsSeeking] = useState(false);
+  const [seekValue, setSeekValue] = useState(0);
 
   const isPlaying = playbackState.state === State.Playing;
   const isBuffering =
@@ -171,9 +175,94 @@ const AudioPlayerScreen = () => {
           </Text>
         </View>
 
-        {/* (D) Seek bar — added in 4c */}
+        {/* (D) SEEK BAR */}
+        <View style={styles.seekBarWrap}>
+          <Slider
+            style={{ width: '100%', height: 40 }}
+            minimumValue={0}
+            maximumValue={progress.duration > 0 ? progress.duration : 1}
+            value={isSeeking ? seekValue : progress.position}
+            minimumTrackTintColor={theme.primary}
+            maximumTrackTintColor={theme.border?.default || '#333333'}
+            thumbTintColor={theme.primary}
+            onSlidingStart={(val) => {
+              setIsSeeking(true);
+              setSeekValue(val);
+            }}
+            onValueChange={(val) => setSeekValue(val)}
+            onSlidingComplete={async (val) => {
+              setIsSeeking(false);
+              await AudioService.seekTo(val);
+            }}
+          />
+          <View style={styles.timeRow}>
+            <Text
+              style={[
+                styles.timeText,
+                {
+                  color: theme.text.secondary,
+                  fontFamily: Platform.OS === 'ios' ? 'Courier New' : 'monospace',
+                },
+              ]}
+            >
+              {fmt(isSeeking ? seekValue : progress.position)}
+            </Text>
+            <Text
+              style={[
+                styles.timeText,
+                {
+                  color: theme.text.secondary,
+                  fontFamily: Platform.OS === 'ios' ? 'Courier New' : 'monospace',
+                },
+              ]}
+            >
+              {fmt(progress.duration)}
+            </Text>
+          </View>
+        </View>
 
-        {/* (E) Playback controls — added in 4c */}
+        {/* (E) PLAYBACK CONTROLS */}
+        <View style={styles.controlsRow}>
+          <TouchableOpacity onPress={() => AudioService.seekRelative(-15)}>
+            <Icon name="replay" size={28} color={theme.text.secondary} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => AudioService.skipToPrevious()}>
+            <Icon name="skip-previous" size={32} color={theme.text.secondary} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => (isPlaying ? AudioService.pause() : AudioService.play())}
+            style={[styles.playBtn, { backgroundColor: theme.primary }]}
+          >
+            {isBuffering ? (
+              <ActivityIndicator size="small" color="#ffffff" />
+            ) : isPlaying ? (
+              <Icon name="pause" size={32} color="#ffffff" />
+            ) : (
+              <Icon name="play-arrow" size={32} color="#ffffff" />
+            )}
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => AudioService.skipToNext()}>
+            <Icon name="skip-next" size={32} color={theme.text.secondary} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => AudioService.seekRelative(15)}>
+            <Icon name="forward" size={28} color={theme.text.secondary} />
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.extrasRow}>
+          <TouchableOpacity style={styles.extraBtn} onPress={() => {}}>
+            <Icon name="speed" size={22} color={theme.text.secondary} />
+            <Text style={[styles.extraLabel, { color: theme.text.secondary }]}>1.0x</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.extraBtn} onPress={() => {}}>
+            <Icon name="bookmark-border" size={22} color={theme.text.secondary} />
+            <Text style={[styles.extraLabel, { color: theme.text.secondary }]}>Save</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.extraBtn} onPress={() => {}}>
+            <Icon name="share" size={22} color={theme.text.secondary} />
+            <Text style={[styles.extraLabel, { color: theme.text.secondary }]}>Share</Text>
+          </TouchableOpacity>
+        </View>
 
         {/* (F) Chapters list — added in 4d */}
 
@@ -254,6 +343,51 @@ const styles = StyleSheet.create({
   },
   bottomSpacer: {
     height: 40,
+  },
+  seekBarWrap: {
+    paddingHorizontal: 24,
+    marginTop: 24,
+  },
+  timeRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: -8,
+  },
+  timeText: {
+    fontSize: 11,
+  },
+  controlsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 24,
+    marginTop: 16,
+  },
+  playBtn: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  extrasRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 40,
+    marginTop: 24,
+    paddingHorizontal: 24,
+  },
+  extraBtn: {
+    alignItems: 'center',
+    gap: 4,
+  },
+  extraLabel: {
+    fontSize: 10,
   },
 });
 

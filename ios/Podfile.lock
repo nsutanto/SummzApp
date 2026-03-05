@@ -1629,6 +1629,34 @@ PODS:
     - SocketRocket
   - react-native-safe-area-context (5.6.1):
     - React-Core
+  - react-native-slider (4.5.5):
+    - boost
+    - DoubleConversion
+    - fast_float
+    - fmt
+    - glog
+    - RCT-Folly
+    - RCT-Folly/Fabric
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsc
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - SocketRocket
+    - Yoga
   - react-native-track-player (4.1.2):
     - React-Core
     - SwiftAudioEx (= 1.1.0)
@@ -2216,6 +2244,7 @@ DEPENDENCIES:
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
   - React-microtasksnativemodule (from `../node_modules/react-native/ReactCommon/react/nativemodule/microtasks`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
+  - "react-native-slider (from `../node_modules/@react-native-community/slider`)"
   - react-native-track-player (from `../node_modules/react-native-track-player`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-oscompat (from `../node_modules/react-native/ReactCommon/oscompat`)
@@ -2355,6 +2384,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/react/nativemodule/microtasks"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
+  react-native-slider:
+    :path: "../node_modules/@react-native-community/slider"
   react-native-track-player:
     :path: "../node_modules/react-native-track-player"
   React-NativeModulesApple:
@@ -2486,6 +2517,7 @@ SPEC CHECKSUMS:
   React-Mapbuffer: 230c34b1cabd1c4815726c711b9df221c3d3fbfb
   React-microtasksnativemodule: e49787b7a4d7fb990cef35cab494f0760a19b7e3
   react-native-safe-area-context: aac2745e96999c8633d2f6119e4e39b499c2ac8b
+  react-native-slider: c79b216fc39c2d5c825cbf9c79ef26ef8bf6b8cf
   react-native-track-player: 24ecd55d64da8a6471ba96484b67bc9cee6fc629
   React-NativeModulesApple: 3a04102c851a45eef2576632c731d64150c5fb69
   React-oscompat: 56d6de59f9ae95cd006a1c40be2cde83bc06a4e1
