@@ -1,48 +1,48 @@
 {
   "project_info": {
-    "project_number": "116693254687",
-    "project_id": "summzapp",
-    "storage_bucket": "summzapp.firebasestorage.app"
+    "project_number": "19093558891",
+    "project_id": "summzrn",
+    "storage_bucket": "summzrn.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:116693254687:android:60d44cbc759eb8c8d50b2a",
+        "mobilesdk_app_id": "1:19093558891:android:19a2454e59d5d903f7032e",
         "android_client_info": {
-          "package_name": "com.summz.app"
+          "package_name": "com.summzlabs.summz"
         }
       },
       "oauth_client": [
         {
-          "client_id": "116693254687-6lad8t6v9nthdhhhu450llhg0l6n175d.apps.googleusercontent.com",
+          "client_id": "19093558891-td0p8q4snq2rjo786er5pdg65c95viin.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.summz.app",
+            "package_name": "com.summzlabs.summz",
             "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
           }
         },
         {
-          "client_id": "116693254687-msv50an56ln790vfkvheat3vn58vt93r.apps.googleusercontent.com",
+          "client_id": "19093558891-8sphb07ccu7pdrraunqgq00841glarvo.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyB2YPw5vVmoCzTpM1Wg6NzJQh4n2gHEGlg"
+          "current_key": "AIzaSyCSI43ZKm4BGZU2ktXF6xTlDMlocoOJSY8"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "116693254687-8dolbn1j4h42o6qescd5n1r6un75rn5j.apps.googleusercontent.com",
+              "client_id": "19093558891-8sphb07ccu7pdrraunqgq00841glarvo.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "116693254687-ihinn7t61ohbdi0ed10rb5odl7i347u8.apps.googleusercontent.com",
+              "client_id": "19093558891-fjipq07lrdlkbs2kt1lleo79o3puu8dl.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.summz.app"
+                "bundle_id": "com.summzlabs.summz"
               }
             }
           ]
