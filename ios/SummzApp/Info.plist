@@ -24,10 +24,10 @@
 	<array>
 		<dict>
 			<key>CFBundleURLName</key>
-			<string>com.summz.app</string>
+			<string>com.summzlabs.summz</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.116693254687-ihinn7t61ohbdi0ed10rb5odl7i347u8</string>
+				<string>com.googleusercontent.apps.19093558891-fjipq07lrdlkbs2kt1lleo79o3puu8dl</string>
 			</array>
 		</dict>
 	</array>

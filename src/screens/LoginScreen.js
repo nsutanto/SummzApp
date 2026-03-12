@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 import { spacing } from '../styles';
-import { insertUserToSupabase } from '../utils/supabaseUsers';
 import { useTheme } from '../hooks/useTheme';
 
 const LoginScreen = () => {
@@ -23,16 +22,6 @@ const LoginScreen = () => {
   const handleGoogleSignIn = async () => {
     try {
       const user = await signInWithGoogle();
-      
-      // Insert user data to Supabase
-      if (user) {
-        await insertUserToSupabase({
-          uid: user.uid,
-          email: user.email,
-          displayName: user.displayName,
-          photoURL: user.photoURL,
-        });
-      }
       
       // No need to manually navigate - AuthContext will handle the state change
       // and automatically switch to MainScreen
@@ -54,16 +43,6 @@ const LoginScreen = () => {
         user = await signUpWithEmail(email, password);
       } else {
         user = await signInWithEmail(email, password);
-      }
-      
-      // Insert user data to Supabase
-      if (user) {
-        await insertUserToSupabase({
-          uid: user.uid,
-          email: user.email,
-          displayName: user.displayName || null,
-          photoURL: user.photoURL || null,
-        });
       }
       
       // No need to manually navigate - AuthContext will handle the state change

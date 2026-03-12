@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Summz Backend — Architecture</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0B0E1A;
+    --surface: #111627;
+    --surface2: #161D32;
+    --border: #1E2A45;
+    --accent: #4F8EF7;
+    --accent2: #F7A24F;
+    --accent3: #4FF7A2;
+    --accent4: #F74F8E;
+    --text: #E8EBF4;
+    --muted: #6B7A9E;
+    --mono: 'Space Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    padding: 40px 24px 80px;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+
+  .wrapper { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; }
+
+  /* ── HEADER ── */
+  header { margin-bottom: 56px; }
+  .tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent2);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  h1 {
+    font-family: var(--mono);
+    font-size: clamp(24px, 4vw, 40px);
+    font-weight: 700;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  h1 span { color: var(--accent2); }
+  .subtitle {
+    color: var(--muted);
+    font-size: 15px;
+    font-weight: 300;
+    max-width: 560px;
+    line-height: 1.6;
+  }
+
+  /* ── SECTION SPACING ── */
+  .section { margin-top: 16px; }
+
+  /* ── LAYER CARD ── */
+  .layer {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--surface);
+    overflow: hidden;
+    transition: border-color .2s;
+  }
+  .layer:hover { border-color: #2A3A60; }
+
+  .layer-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+  }
+  .layer-icon { font-size: 18px; }
+  .layer-label {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .layer-sub { font-size: 13px; color: var(--muted); margin-left: auto; }
+  .layer-body { padding: 20px; }
+
+  /* ── CONNECTOR ── */
+  .connector {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 6px 0;
+    color: var(--muted);
+    font-size: 11px;
+    font-family: var(--mono);
+    letter-spacing: 1px;
+  }
+  .connector-line {
+    height: 1px; width: 40px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+  }
+
+  /* ── GRID LAYOUTS ── */
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+
+  /* ── CARDS ── */
+  .card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    background: var(--bg);
+    transition: transform .15s, box-shadow .15s;
+    position: relative; overflow: hidden;
+  }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,.4); }
+  .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+  .card.blue::before  { background: var(--accent); }
+  .card.orange::before{ background: var(--accent2); }
+  .card.green::before { background: var(--accent3); }
+  .card.pink::before  { background: var(--accent4); }
+  .card.blue:hover  { border-color: var(--accent);  box-shadow: 0 8px 32px rgba(79,142,247,.12); }
+  .card.orange:hover{ border-color: var(--accent2); box-shadow: 0 8px 32px rgba(247,162,79,.12); }
+  .card.green:hover { border-color: var(--accent3); box-shadow: 0 8px 32px rgba(79,247,162,.12); }
+  .card.pink:hover  { border-color: var(--accent4); box-shadow: 0 8px 32px rgba(247,79,142,.12); }
+
+  .card-title {
+    font-family: var(--mono); font-size: 11px; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px;
+  }
+  .card.blue .card-title  { color: var(--accent); }
+  .card.orange .card-title{ color: var(--accent2); }
+  .card.green .card-title { color: var(--accent3); }
+  .card.pink .card-title  { color: var(--accent4); }
+
+  .card-desc { font-size: 13px; color: var(--muted); line-height: 1.55; }
+
+  /* ── SVC CARD (centered icon style) ── */
+  .svc-card {
+    border: 1px solid var(--border); border-radius: 10px; padding: 16px;
+    background: var(--bg); text-align: center;
+    transition: transform .15s, box-shadow .15s;
+  }
+  .svc-card:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(0,0,0,.4); }
+  .svc-emoji { font-size: 22px; margin-bottom: 8px; }
+  .svc-name { font-family: var(--mono); font-size: 11px; font-weight: 700; margin-bottom: 4px; }
+  .svc-role { font-size: 12px; color: var(--muted); line-height: 1.4; }
+
+  /* ── FLOW DIAGRAM ── */
+  .flow { display: flex; align-items: center; flex-wrap: wrap; gap: 0; padding: 8px 0; }
+  .flow-group { display: flex; flex-direction: column; align-items: center; }
+  .flow-node {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 16px;
+    font-size: 12px; font-family: var(--mono); white-space: nowrap;
+  }
+  .flow-label { font-size: 10px; color: var(--muted); text-align: center; margin-top: 4px; font-family: var(--mono); }
+  .flow-arrow { color: var(--muted); font-size: 18px; padding: 0 8px; flex-shrink: 0; }
+
+  /* ── TABLE ── */
+  .tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .tbl th {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--muted);
+    text-align: left; padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+  }
+  .tbl td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; line-height: 1.5; }
+  .tbl tr:last-child td { border-bottom: none; }
+  .tbl tr:hover td { background: rgba(255,255,255,.02); }
+  code {
+    font-family: var(--mono); font-size: 11px;
+    background: var(--surface2); padding: 2px 6px; border-radius: 4px;
+    color: var(--accent3);
+  }
+  .method {
+    font-family: var(--mono); font-size: 10px; font-weight: 700;
+    padding: 2px 7px; border-radius: 4px; white-space: nowrap;
+  }
+  .get  { background: rgba(79,247,162,.12); color: var(--accent3); }
+  .post { background: rgba(79,142,247,.12); color: var(--accent); }
+  .del  { background: rgba(247,79,142,.12); color: var(--accent4); }
+
+  /* ── PILLS ── */
+  .pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .pill {
+    font-family: var(--mono); font-size: 10px;
+    padding: 3px 8px; border-radius: 4px;
+    border: 1px solid var(--border); color: var(--muted); background: var(--surface2);
+  }
+
+  /* ── CALLOUT ── */
+  .callout {
+    margin-top: 16px; padding: 14px 16px;
+    border-left: 3px solid var(--accent2);
+    background: rgba(247,162,79,.06);
+    border-radius: 0 8px 8px 0;
+    font-size: 13px; color: var(--muted); line-height: 1.6;
+  }
+  .callout strong { color: var(--text); }
+
+  /* ── FILE TREE ── */
+  .tree {
+    font-family: var(--mono); font-size: 12px; line-height: 1.9;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px 20px;
+    overflow-x: auto;
+  }
+  .tree-dir  { color: var(--accent); }
+  .tree-file { color: var(--text); }
+  .tree-note { color: var(--muted); }
+
+  /* ── STEP LIST ── */
+  .steps { display: flex; flex-direction: column; gap: 12px; }
+  .step { display: flex; gap: 16px; align-items: flex-start; }
+  .step-num {
+    flex-shrink: 0; width: 28px; height: 28px;
+    border-radius: 50%; border: 1px solid var(--accent2);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono); font-size: 11px; font-weight: 700;
+    color: var(--accent2);
+  }
+  .step-content { padding-top: 4px; }
+  .step-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .step-desc { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+  /* ── SECTION HEADING ── */
+  .section-heading {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 2px;
+    color: var(--muted); text-transform: uppercase; margin-bottom: 14px;
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- HEADER -->
+  <header>
+    <div class="tag">repo-2 // Backend API // Source of Truth</div>
+    <h1>Summz Backend<br/><span>Architecture Reference</span></h1>
+    <p class="subtitle">Node.js + Express + TypeScript API deployed on Google Cloud Run. Single entry point for all data access — clients never call Supabase directly.</p>
+  </header>
+
+  <div style="display: flex; flex-direction: column; gap: 16px;">
+
+  <!-- ── 1. SYSTEM OVERVIEW ── -->
+  <div class="layer">
+    <div class="layer-header">
+      <span class="layer-icon">🗺️</span>
+      <span class="layer-label">System Overview</span>
+      <span class="layer-sub">High-level topology</span>
+    </div>
+    <div class="layer-body">
+      <div class="grid-3" style="margin-bottom: 20px;">
+        <div class="card orange">
+          <div class="card-title">Client Apps</div>
+          <div class="card-desc">React Native mobile app &amp; Next.js web. Call this API over HTTPS with a Firebase ID token.</div>
+        </div>
+        <div class="card orange">
+          <div class="card-title">summz_backend (this repo)</div>
+          <div class="card-desc">Express REST API. Verifies Firebase tokens, queries Supabase with service role key, returns JSON.</div>
+        </div>
+        <div class="card orange">
+          <div class="card-title">Supabase (PostgreSQL)</div>
+          <div class="card-desc">All application data. Accessed only by this backend — never directly by clients. RLS is bypassed via service role key.</div>
+        </div>
+      </div>
+
+      <div class="section-heading">Request flow</div>
+      <div class="flow" style="flex-wrap: wrap;">
+        <div class="flow-group">
+          <div class="flow-node" style="border-color: var(--accent);">Client App</div>
+          <span class="flow-label">Authorization: Bearer &lt;firebase-token&gt;</span>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-group">
+          <div class="flow-node" style="border-color: var(--accent2);">Cloud Run</div>
+          <span class="flow-label">summz-backend-api</span>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-group">
+          <div class="flow-node" style="border-color: #FF8C00;">Firebase Admin SDK</div>
+          <span class="flow-label">verifyIdToken()</span>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-group">
+          <div class="flow-node" style="border-color: var(--accent3);">Supabase JS Client</div>
+          <span class="flow-label">service role key, filter by firebase_uid</span>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-group">
+          <div class="flow-node" style="border-color: var(--accent);">JSON Response</div>
+          <span class="flow-label">{ data: ... }</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 2. TECH STACK ── -->
+  <div class="layer">
+    <div class="layer-header">
+      <span class="layer-icon">⚙️</span>
+      <span class="layer-label">Tech Stack</span>
+      <span class="layer-sub">Runtime · Framework · Services</span>
+    </div>
+    <div class="layer-body">
+      <div class="grid-4">
+        <div class="svc-card">
+          <div class="svc-emoji">🟩</div>
+          <div class="svc-name" style="color:var(--accent3);">Node.js 20</div>
+          <div class="svc-role">Runtime. Listens on 0.0.0.0:PORT (required for Cloud Run)</div>
+        </div>
+        <div class="svc-card">
+          <div class="svc-emoji">🚂</div>
+          <div class="svc-name" style="color:var(--accent3);">Express 4</div>
+          <div class="svc-role">HTTP framework. Router-per-feature pattern</div>
+        </div>
+        <div class="svc-card">
+          <div class="svc-emoji">🔷</div>
+          <div class="svc-name" style="color:var(--accent);">TypeScript 5</div>
+          <div class="svc-role">Compiled to dist/ via tsc. outDir: ./dist, rootDir: ./src</div>
+        </div>
+        <div class="svc-card">
+          <div class="svc-emoji">🔥</div>
+          <div class="svc-name" style="color:var(--accent2);">Firebase Admin SDK</div>
+          <div class="svc-role">Token verification only. Initialized as singleton at startup</div>
+        </div>
+        <div class="svc-card">
+          <div class="svc-emoji">⚡</div>
+          <div class="svc-name" style="color:var(--accent3);">Supabase JS</div>
+          <div class="svc-role">Service role key. Bypasses RLS. No session / no auto-refresh</div>
+        </div>
+        <div class="svc-card">
+          <div class="svc-emoji">☁️</div>
+          <div class="svc-name" style="color:var(--accent);">Cloud Run</div>
+          <div class="svc-role">Managed, stateless. 512Mi, 1 CPU, 0–10 instances</div>
+        </div>
+        <div class="svc-card">
+          <div class="svc-emoji">🏗️</div>
+          <div class="svc-name" style="color:var(--accent2);">Cloud Build</div>
+          <div class="svc-role">CI/CD via cloudbuild.yaml. Triggered on push to main</div>
+        </div>
+        <div class="svc-card">
+          <div class="svc-emoji">🔑</div>
+          <div class="svc-name" style="color:var(--accent4);">Secret Manager</div>
+          <div class="svc-role">5 secrets injected as env vars at container startup</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 3. AUTHENTICATION ── -->
+  <div class="layer">
+    <div class="layer-header">
+      <span class="layer-icon">🔐</span>
+      <span class="layer-label">Authentication Architecture</span>
+      <span class="layer-sub">Two independent auth layers</span>
+    </div>
+    <div class="layer-body">
+
+      <div class="grid-2" style="margin-bottom: 20px;">
+        <div class="card blue">
+          <div class="card-title">Layer 1 — Cloud Run IAM</div>
+          <div class="card-desc">
+            Deployed with <code>--no-allow-unauthenticated</code>. Cloud Run requires a valid Google identity token on every inbound request before it reaches Express.
+            <br/><br/>
+            For local testing use <code>gcloud auth print-identity-token</code>.<br/>
+            Note: mobile/web clients cannot obtain a Google identity token. If clients call this API directly, switch to <code>--allow-unauthenticated</code> and rely on Layer 2.
+          </div>
+        </div>
+        <div class="card orange">
+          <div class="card-title">Layer 2 — Firebase Middleware</div>
+          <div class="card-desc">
+            <code>verifyFirebaseToken.ts</code> applied to all <code>/auth/*</code> and <code>/user/*</code> routes.<br/><br/>
+            Reads <code>Authorization: Bearer &lt;firebase-id-token&gt;</code> → calls <code>firebase.auth().verifyIdToken()</code> → extracts <code>decoded.uid</code> → sets <code>req.user.firebase_uid</code>.<br/><br/>
+            All downstream DB queries scope data by <code>firebase_uid</code>.
+          </div>
+        </div>
+      </div>
+
+      <div class="section-heading">Firebase Admin init — key detail</div>
+      <div class="callout">
+        <strong>FIREBASE_PRIVATE_KEY newline handling:</strong> The PEM key is stored in Secret Manager with literal <code>\n</code> escape sequences (two chars). <code>lib/firebase.ts</code> calls <code>.replace(/\\n/g, '\n')</code> before passing to the SDK, converting them to real newlines. Cloud Run injects the secret value as-is — no extra escaping needed.
+      </div>
+
+      <div style="margin-top: 20px;">
+        <div class="section-heading">Auth flow</div>
+        <div class="flow" style="flex-wrap: wrap;">
+          <div class="flow-group">
+            <div class="flow-node" style="border-color: var(--accent);">Client</div>
+            <span class="flow-label">signs in via Firebase</span>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-group">
+            <div class="flow-node" style="border-color: #FF8C00;">Firebase Auth</div>
+            <span class="flow-label">returns ID token (JWT)</span>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-group">
+            <div class="flow-node" style="border-color: var(--accent2);">Backend middleware</div>
+            <span class="flow-label">verifyIdToken() → req.user</span>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-group">
+            <div class="flow-node" style="border-color: var(--accent3);">Supabase query</div>
+            <span class="flow-label">filter by firebase_uid</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 5. DATABASE ── -->
+  <div class="layer">
+    <div class="layer-header">
+      <span class="layer-icon">🗄️</span>
+      <span class="layer-label">Database Architecture</span>
+      <span class="layer-sub">Supabase (PostgreSQL) — service role, bypasses RLS</span>
+    </div>
+    <div class="layer-body">
+
+      <div class="callout" style="margin-top: 0; margin-bottom: 20px;">
+        <strong>Design decision:</strong> The backend uses <code>SUPABASE_SERVICE_ROLE_KEY</code> which bypasses all RLS policies. The API itself enforces authorization — callers are scoped to their own <code>firebase_uid</code> by the middleware. <code>users.firebase_uid</code> is <code>TEXT</code> (not a Supabase UUID) and maps 1:1 to Firebase Auth UIDs.
+      </div>
+
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>Table</th>
+            <th>Primary Key</th>
+            <th>Key Columns</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>books</code></td>
+            <td><code>id</code> uuid</td>
+            <td><code>title</code>, <code>author</code>, <code>cover_image_url</code>, <code>description</code>, <code>read_time_minutes</code>, <code>audio_duration_seconds</code>, <code>total_chapters</code>, <code>source_api</code>, <code>external_id</code>, <code>is_published</code></td>
+            <td>Only rows where <code>is_published = true</code> are returned to clients</td>
+          </tr>
+          <tr>
+            <td><code>summaries</code></td>
+            <td><code>id</code> uuid</td>
+            <td><code>book_id</code>, <code>chapter_number</code>, <code>title</code>, <code>content</code>, <code>audio_url</code>, <code>duration_seconds</code></td>
+            <td>List endpoint returns first 200 chars of content as preview</td>
+          </tr>
+          <tr>
+            <td><code>categories</code></td>
+            <td><code>id</code> uuid</td>
+            <td><code>name</code>, <code>slug</code>, <code>icon</code>, <code>sort_order</code></td>
+            <td>Ordered by <code>sort_order</code> ascending</td>
+          </tr>
+          <tr>
+            <td><code>book_categories</code></td>
+            <td><code>(book_id, category_id)</code></td>
+            <td>—</td>
+            <td>Junction table — many-to-many books ↔ categories</td>
+          </tr>
+          <tr>
+            <td><code>book_tags</code></td>
+            <td><code>(book_id, tag)</code></td>
+            <td>—</td>
+            <td>Freeform editorial tags</td>
+          </tr>
+          <tr>
+            <td><code>users</code></td>
+            <td><code>firebase_uid</code> TEXT</td>
+            <td><code>email</code>, <code>display_name</code>, <code>avatar_url</code>, <code>preferred_mode</code></td>
+            <td>Upserted via <code>POST /auth/sync</code> after client login</td>
+          </tr>
+          <tr>
+            <td><code>user_library</code></td>
+            <td><code>id</code> uuid</td>
+            <td><code>firebase_uid</code>, <code>book_id</code>, <code>saved_at</code></td>
+            <td>409 returned if (firebase_uid, book_id) already exists</td>
+          </tr>
+          <tr>
+            <td><code>progress</code></td>
+            <td><code>id</code> uuid</td>
+            <td><code>firebase_uid</code>, <code>book_id</code>, <code>last_summary_id</code>, <code>chapters_completed</code>, <code>completed</code>, <code>mode</code> (read/listen), <code>last_accessed</code></td>
+            <td>Always upserted on <code>(firebase_uid, book_id)</code> — never plain insert</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── 6. API SURFACE ── -->
+  <div class="layer">
+    <div class="layer-header">
+      <span class="layer-icon">🌐</span>
+      <span class="layer-label">API Surface</span>
+      <span class="layer-sub">All responses: { data } on success · { data: null, error } on failure</span>
+    </div>
+    <div class="layer-body">
+
+      <div class="section-heading">Public endpoints — no auth required</div>
+      <table class="tbl" style="margin-bottom: 20px;">
+        <thead>
+          <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="method get">GET</span></td>
+            <td><code>/health</code></td>
+            <td>Returns <code>{ status: "ok", timestamp }</code></td>
+          </tr>
+          <tr>
+            <td><span class="method get">GET</span></td>
+            <td><code>/books</code></td>
+            <td>List published books. Query params: <code>?category=slug&amp;page=1&amp;limit=20</code></td>
+          </tr>
+          <tr>
+            <td><span class="method get">GET</span></td>
+            <td><code>/books/:id</code></td>
+            <td>Book detail + category info</td>
+          </tr>
+          <tr>
+            <td><span class="method get">GET</span></td>
+            <td><code>/books/:id/summaries</code></td>
+            <td>Chapter list with first 200 chars of content as preview</td>
+          </tr>
+          <tr>
+            <td><span class="method get">GET</span></td>
+            <td><code>/books/:id/summaries/:chapterId</code></td>
+            <td>Full chapter content</td>
+          </tr>
+          <tr>
+            <td><span class="method get">GET</span></td>
+            <td><code>/categories</code></td>
+            <td>All categories ordered by <code>sort_order</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="section-heading">Protected endpoints — <code>Authorization: Bearer &lt;firebase-id-token&gt;</code> required</div>
+      <table class="tbl" style="margin-bottom: 20px;">
+        <thead>
+          <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="method post">POST</span></td>
+            <td><code>/auth/sync</code></td>
+            <td>Upsert user row after login. Body: <code>{ email, displayName }</code></td>
+          </tr>
+          <tr>
+            <td><span class="method get">GET</span></td>
+            <td><code>/user/library</code></td>
+            <td>User's saved books with full book detail</td>
+          </tr>
+          <tr>
+            <td><span class="method post">POST</span></td>
+            <td><code>/user/library</code></td>
+            <td>Save a book. Body: <code>{ bookId }</code>. Returns 409 if already saved</td>
+          </tr>
+          <tr>
+            <td><span class="method del">DELETE</span></td>
+            <td><code>/user/library/:bookId</code></td>
+            <td>Remove book from library</td>
+          </tr>
+          <tr>
+            <td><span class="method get">GET</span></td>
+            <td><code>/user/progress/:bookId</code></td>
+            <td>Reading/listening progress for a book, or <code>null</code> if not started</td>
+          </tr>
+          <tr>
+            <td><span class="method post">POST</span></td>
+            <td><code>/user/progress</code></td>
+            <td>Upsert progress. Body: <code>{ bookId, lastSummaryId, chaptersCompleted, completed, mode }</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="section-heading">HTTP status codes</div>
+      <div class="grid-4">
+        <div class="svc-card"><div class="svc-name" style="color:var(--accent3);">200</div><div class="svc-role">Success</div></div>
+        <div class="svc-card"><div class="svc-name" style="color:var(--accent);">201</div><div class="svc-role">Created (POST /user/library)</div></div>
+        <div class="svc-card"><div class="svc-name" style="color:var(--accent4);">401</div><div class="svc-role">Missing or invalid Firebase token</div></div>
+        <div class="svc-card"><div class="svc-name" style="color:var(--accent4);">404</div><div class="svc-role">Resource not found</div></div>
+        <div class="svc-card"><div class="svc-name" style="color:var(--accent2);">409</div><div class="svc-role">Conflict (book already in library)</div></div>
+        <div class="svc-card"><div class="svc-name" style="color:var(--accent4);">500</div><div class="svc-role">Unexpected server error</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 7. DEPLOYMENT ── -->
+  <div class="layer">
+    <div class="layer-header">
+      <span class="layer-icon">🚀</span>
+      <span class="layer-label">Deployment Architecture</span>
+      <span class="layer-sub">Cloud Build → Artifact Registry → Cloud Run</span>
+    </div>
+    <div class="layer-body">
+
+      <div class="section-heading" style="margin-bottom: 16px;">CI/CD pipeline (cloudbuild.yaml)</div>
+      <div class="flow" style="flex-wrap: wrap; margin-bottom: 24px;">
+        <div class="flow-group">
+          <div class="flow-node" style="border-color: var(--accent);">git push → main</div>
+          <span class="flow-label">GitHub trigger</span>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-group">
+          <div class="flow-node" style="border-color: var(--accent2);">Step 1: docker build</div>
+          <span class="flow-label">tags :$COMMIT_SHA + :latest</span>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-group">
+          <div class="flow-node" style="border-color: var(--accent2);">Step 2: docker push</div>
+          <span class="flow-label">Artifact Registry</span>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-group">
+          <div class="flow-node" style="border-color: var(--accent2);">Step 3: gcloud run deploy</div>
+          <span class="flow-label">summz-backend-api</span>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-group">
+          <div class="flow-node" style="border-color: var(--accent3);">Step 4: print URL</div>
+          <span class="flow-label">gcloud run services describe</span>
+        </div>
+      </div>
+
+      <div class="section-heading">Cloud Run service config</div>
+      <div class="grid-4" style="margin-bottom: 24px;">
+        <div class="svc-card"><div class="svc-name" style="color:var(--accent);">Region</div><div class="svc-role">us-central1</div></div>
+        <div class="svc-card"><div class="svc-name" style="color:var(--accent);">Memory / CPU</div><div class="svc-role">512Mi / 1 vCPU</div></div>
+        <div class="svc-card"><div class="svc-name" style="color:var(--accent);">Instances</div><div class="svc-role">0 min · 10 max</div></div>
+        <div class="svc-card"><div class="svc-name" style="color:var(--accent4);">Auth</div><div class="svc-role">--no-allow-unauthenticated</div></div>
+      </div>
+
+      <div class="section-heading">Dockerfile — multi-stage build</div>
+      <div class="grid-2" style="margin-bottom: 24px;">
+        <div class="card blue">
+          <div class="card-title">Stage 1: builder</div>
+          <div class="card-desc"><code>node:20-alpine</code> — installs all deps (including devDeps for tsc), runs <code>npm run build</code> → produces <code>dist/</code></div>
+        </div>
+        <div class="card green">
+          <div class="card-title">Stage 2: runner</div>
+          <div class="card-desc"><code>node:20-alpine</code> — copies only <code>dist/</code> + prod <code>node_modules</code>. Runs as non-root <code>appuser</code>. Exposes 8080. <code>NODE_ENV=production</code> baked in.</div>
+        </div>
+      </div>
+
+      <div class="section-heading">Secrets (Google Secret Manager)</div>
+      <table class="tbl" style="margin-bottom: 20px;">
+        <thead>
+          <tr><th>Secret Name</th><th>Consumed By</th><th>Important Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>SUPABASE_URL</code></td><td><code>lib/supabase.ts</code></td><td>Must be plain URL — no surrounding <code>"</code> quotes</td></tr>
+          <tr><td><code>SUPABASE_SERVICE_ROLE_KEY</code></td><td><code>lib/supabase.ts</code></td><td>Plain string — no surrounding quotes</td></tr>
+          <tr><td><code>FIREBASE_PROJECT_ID</code></td><td><code>lib/firebase.ts</code></td><td>Plain string</td></tr>
+          <tr><td><code>FIREBASE_CLIENT_EMAIL</code></td><td><code>lib/firebase.ts</code></td><td>Plain string</td></tr>
+          <tr><td><code>FIREBASE_PRIVATE_KEY</code></td><td><code>lib/firebase.ts</code></td><td>PEM with literal <code>\n</code>. Code calls <code>.replace(/\\n/g, '\n')</code></td></tr>
+        </tbody>
+      </table>
+      <div class="callout" style="margin-top: 0;">
+        <strong>Do NOT add <code>PORT</code> or <code>NODE_ENV</code> to Secret Manager.</strong> <code>PORT</code> is reserved by Cloud Run (set automatically to 8080). <code>NODE_ENV=production</code> is set in the Dockerfile's runner stage.
+      </div>
+
+      <div style="margin-top: 20px;">
+        <div class="section-heading">IAM requirements</div>
+        <table class="tbl">
+          <thead>
+            <tr><th>Service Account</th><th>Role</th><th>Why</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>19093558891@cloudbuild.gserviceaccount.com</code></td><td><code>roles/run.admin</code></td><td>Deploy to Cloud Run</td></tr>
+            <tr><td><code>19093558891@cloudbuild.gserviceaccount.com</code></td><td><code>roles/iam.serviceAccountUser</code></td><td>Act as the Cloud Run compute SA</td></tr>
+            <tr><td><code>19093558891@cloudbuild.gserviceaccount.com</code></td><td><code>roles/artifactregistry.writer</code></td><td>Push Docker images</td></tr>
+            <tr><td><code>19093558891@cloudbuild.gserviceaccount.com</code></td><td><code>roles/secretmanager.secretAccessor</code></td><td>Read secrets during deploy step</td></tr>
+            <tr><td><code>19093558891-compute@developer.gserviceaccount.com</code></td><td><code>roles/secretmanager.secretAccessor</code></td><td>Read secrets at container startup (Cloud Run revision SA)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 8. GOTCHAS ── -->
+  <div class="layer">
+    <div class="layer-header">
+      <span class="layer-icon">💡</span>
+      <span class="layer-label">Key Design Decisions &amp; Gotchas</span>
+      <span class="layer-sub">Things that are easy to get wrong</span>
+    </div>
+    <div class="layer-body">
+      <div class="steps">
+
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">Clients never call Supabase directly</div>
+            <div class="step-desc">All DB access is proxied through this API. RLS is bypassed via service role key — the only auth that matters is the Firebase token the middleware validates. This means no RLS debugging, and one clear security boundary.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">firebase_uid is TEXT, not a Supabase UUID</div>
+            <div class="step-desc">Firebase Auth UIDs are opaque strings (e.g. <code>abc123xyz</code>). Using them directly as the user PK avoids a mapping layer. All user-scoped tables reference <code>firebase_uid TEXT</code>.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title">Manual gcloud builds submit requires --substitutions</div>
+            <div class="step-desc"><code>$COMMIT_SHA</code> is only auto-populated by GitHub triggers. For manual builds always pass: <code>--substitutions=COMMIT_SHA=$(git rev-parse HEAD)</code>. Without it the Docker tag becomes <code>:""</code> and fails immediately.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="step-title">Secret values must be plain text — no JSON quotes</div>
+            <div class="step-desc">If you copy a value from a JSON file (e.g. a service account JSON), the value may be wrapped in <code>"..."</code>. Cloud Run injects those quotes literally into the env var, breaking the secret. Store and verify using <code>gcloud secrets versions access latest --secret=NAME</code>.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <div class="step-title">Both .gcloudignore AND .dockerignore must include src/ and tsconfig.json</div>
+            <div class="step-desc"><code>.gcloudignore</code> controls what gets uploaded to GCS (= Docker build context). If it excludes <code>src/</code> or <code>tsconfig.json</code>, the Docker builder stage fails. <code>.dockerignore</code> must also not exclude <code>src/</code> since the builder stage needs it to compile TypeScript.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">6</div>
+          <div class="step-content">
+            <div class="step-title">Cloud Run reserves PORT — do not inject it as a secret</div>
+            <div class="step-desc">Cloud Run sets <code>PORT=8080</code> automatically. Adding it to <code>--set-secrets</code> causes a deployment error: <em>"The following reserved env names were provided: PORT"</em>. Same for <code>NODE_ENV</code> — set in the Dockerfile instead.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">7</div>
+          <div class="step-content">
+            <div class="step-title">Two service accounts need Secret Manager access</div>
+            <div class="step-desc">The Cloud Build SA needs <code>secretmanager.secretAccessor</code> to run the deploy command. The Cloud Run compute SA (<code>PROJECT_NUMBER-compute@developer.gserviceaccount.com</code>) also needs it so the container can read secrets at startup. Missing the second one causes a revision startup failure.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  </div><!-- /flex column -->
+
+  <div style="margin-top: 32px; padding: 16px 20px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+    <div style="font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase;">GCP Project: summzrn &nbsp;·&nbsp; Region: us-central1 &nbsp;·&nbsp; Service: summz-backend-api</div>
+    <div style="font-family: var(--mono); font-size: 11px; color: var(--muted);">repo-2 / summz_backend</div>
+  </div>
+
+</div><!-- /wrapper -->
+</body>
+</html>

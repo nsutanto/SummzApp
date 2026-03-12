@@ -9,4 +9,4 @@ export const firebaseConfig = {
 };
 
 
-export const GOOGLE_WEB_CLIENT_ID = "116693254687-msv50an56ln790vfkvheat3vn58vt93r.apps.googleusercontent.com";
+export const GOOGLE_WEB_CLIENT_ID = "19093558891-8sphb07ccu7pdrraunqgq00841glarvo.apps.googleusercontent.com";

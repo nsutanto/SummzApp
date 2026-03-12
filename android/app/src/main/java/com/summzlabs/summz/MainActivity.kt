@@ -1,4 +1,4 @@
-package com.summz.app
+package com.summzlabs.summz
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

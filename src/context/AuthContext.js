@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { AuthService } from '../services/AuthService';
+import { ApiService } from '../services/ApiService';
 
 const AuthContext = createContext({
   user: null,
@@ -35,6 +36,11 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       const result = await AuthService.signInWithGoogle();
+      try {
+        await ApiService.syncUser(result.user.email, result.user.displayName);
+      } catch (e) {
+        console.warn('syncUser failed (non-fatal):', e.message);
+      }
       return result.user; // Return the user object
     } catch (error) {
       console.error('Google sign-in error:', error);
@@ -48,6 +54,11 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       const result = await AuthService.signInWithEmail(email, password);
+      try {
+        await ApiService.syncUser(result.user.email, result.user.displayName);
+      } catch (e) {
+        console.warn('syncUser failed (non-fatal):', e.message);
+      }
       return result.user; // Return the user object
     } catch (error) {
       console.error('Email sign-in error:', error);
@@ -61,6 +72,11 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       const result = await AuthService.signUpWithEmail(email, password);
+      try {
+        await ApiService.syncUser(result.user.email, result.user.displayName);
+      } catch (e) {
+        console.warn('syncUser failed (non-fatal):', e.message);
+      }
       return result.user; // Return the user object
     } catch (error) {
       console.error('Email sign-up error:', error);

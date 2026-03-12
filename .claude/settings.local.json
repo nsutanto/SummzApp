@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3:*)",
+      "Bash(npx react-native run-android)",
+      "Bash(npx patch-package react-native-track-player)",
+      "Bash(adb logcat -d -s ReactNativeJS)",
+      "Bash(adb logcat -d)",
+      "Bash(npm install @react-native-community/slider)",
+      "Bash(npm install @react-native-community/slider --legacy-peer-deps)",
+      "Bash(pod install)",
+      "Bash(npx react-native run-ios)",
+      "Bash(xcodebuild -workspace SummzApp.xcworkspace -scheme SummzApp -configuration Debug -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 16')",
+      "Bash(xcrun simctl list devices available)",
+      "Bash(npx react-native run-ios --simulator \"iPhone 16 Pro\")"
+    ]
+  }
+}
