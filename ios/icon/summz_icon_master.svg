@@ -1,0 +1,42 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background: no rounding — stores clip it themselves -->
+  <rect width="1024" height="1024" fill="#111111"/>
+
+  <!-- Left book page -->
+  <path d="M390 230 Q290 210 290 512 Q290 814 390 794 L390 230Z"
+        fill="none" stroke="#C8952A" stroke-width="22" stroke-linejoin="round" stroke-linecap="round"/>
+
+  <!-- Right book page -->
+  <path d="M634 230 Q734 210 734 512 Q734 814 634 794 L634 230Z"
+        fill="none" stroke="#C8952A" stroke-width="22" stroke-linejoin="round" stroke-linecap="round"/>
+
+  <!-- Spine -->
+  <line x1="512" y1="210" x2="512" y2="814"
+        stroke="#C8952A" stroke-width="22" stroke-linecap="round"/>
+
+  <!-- Outer audio arcs -->
+  <path d="M386 790 Q254 640 254 512 Q254 384 386 234"
+        stroke="#C8952A" stroke-width="14" fill="none" stroke-linecap="round" opacity="0.32"/>
+  <path d="M638 790 Q770 640 770 512 Q770 384 638 234"
+        stroke="#C8952A" stroke-width="14" fill="none" stroke-linecap="round" opacity="0.32"/>
+
+  <!-- Inner audio arcs -->
+  <path d="M388 768 Q300 640 300 512 Q300 384 388 256"
+        stroke="#C8952A" stroke-width="10" fill="none" stroke-linecap="round" opacity="0.18"/>
+  <path d="M636 768 Q724 640 724 512 Q724 384 636 256"
+        stroke="#C8952A" stroke-width="10" fill="none" stroke-linecap="round" opacity="0.18"/>
+
+  <!-- Amber play circle -->
+  <circle cx="512" cy="490" r="118" fill="#C8952A"/>
+  <!-- Play triangle -->
+  <polygon points="484,452 484,528 558,490" fill="#111111"/>
+
+  <!-- SUMMZ wordmark -->
+  <text x="512" y="900"
+        text-anchor="middle"
+        font-family="Georgia, 'Times New Roman', serif"
+        font-size="96"
+        font-weight="700"
+        letter-spacing="28"
+        fill="#C8952A">SUMMZ</text>
+</svg>
