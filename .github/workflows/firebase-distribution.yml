@@ -45,53 +45,33 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-gradle-
 
-    # Clean and prepare React Native build environment
-    - name: Clean and Prepare Build Environment
+    # Install dependencies (exactly like android-ci.yml)
+    - name: Install npm dependencies
       run: |
-        echo "🧹 Cleaning previous build artifacts..."
-        rm -rf node_modules/ android/app/build/ android/build/
-        
-        echo "📦 Installing dependencies with legacy peer deps..."
+        # Use legacy peer deps to resolve @rneui conflicts with react-native-safe-area-context
+        echo "Installing npm dependencies with --legacy-peer-deps..."
         npm install --legacy-peer-deps
-        
-        echo "✅ Build environment cleaned and dependencies installed"
+        echo "✅ npm dependencies installed successfully"
 
-    # Prepare Android Build (skip codegen, use direct Gradle approach)
-    - name: Prepare Android Build
+    # Prepare Android Codegen (exactly like android-ci.yml)
+    - name: Prepare Android Codegen
       run: |
-        echo "🔧 Preparing Android build environment..."
-        
-        echo "🧹 Cleaning Android build cache..."
-        cd android
-        chmod +x gradlew
-        ./gradlew clean
-        
-        # Let Gradle handle autolinking and codegen during build
-        echo "🔗 Initializing autolinking..."
-        ./gradlew generateAutolinkingPackageList || echo "Autolinking initialized"
-        
-        echo "✅ Android build environment prepared"
+        echo "Cleaning Android build artifacts..."
+        rm -rf android/app/build android/build
 
-    # Verify Build Environment
-    - name: Verify Build Environment
-      run: |
-        echo "🔍 Verifying build environment..."
-        
-        # Check Gradle wrapper
-        if [ -f "android/gradlew" ]; then
-          echo "✅ Gradle wrapper found"
-          ls -la android/gradlew
-        else
-          echo "❌ Gradle wrapper not found"
-          exit 1
-        fi
-        
-        # Check Android SDK
-        echo "� Android SDK: $ANDROID_HOME"
-        echo "☕ Java version: $(java -version 2>&1 | head -n 1)"
-        echo "🎯 Node version: $(node --version)"
-        
-        echo "✅ Build environment verified"
+        echo "Creating required codegen directories..."
+        mkdir -p "node_modules/@react-native-async-storage/async-storage/android/build/generated/source/codegen/jni"
+        mkdir -p "node_modules/@react-native-google-signin/google-signin/android/build/generated/source/codegen/jni"
+        mkdir -p "node_modules/react-native-gesture-handler/android/build/generated/source/codegen/jni"
+        mkdir -p "node_modules/react-native-vector-icons/android/build/generated/source/codegen/jni"
+        mkdir -p "node_modules/react-native-safe-area-context/android/build/generated/source/codegen/jni"
+        mkdir -p "node_modules/react-native-screens/android/build/generated/source/codegen/jni"
+
+        echo "Creating CMakeLists.txt files..."
+        for lib in "@react-native-async-storage/async-storage" "@react-native-google-signin/google-signin" "react-native-gesture-handler" "react-native-vector-icons" "react-native-safe-area-context" "react-native-screens"; do
+          echo "# Minimal CMakeLists.txt for autolinking compatibility" > "node_modules/$lib/android/build/generated/source/codegen/jni/CMakeLists.txt"
+          echo "cmake_minimum_required(VERSION 3.13)" >> "node_modules/$lib/android/build/generated/source/codegen/jni/CMakeLists.txt"
+        done
 
     # Create release keystore from secrets
     - name: Setup Release Keystore
@@ -113,7 +93,7 @@ jobs:
           exit 1
         fi
 
-    # Build Android Release APK
+    # Build Android Release APK (similar to android-ci.yml but for release)
     - name: Build Android Release APK
       env:
         ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
@@ -123,21 +103,22 @@ jobs:
       run: |
         cd android
         chmod +x gradlew
+        ./gradlew assembleRelease --stacktrace
 
-        echo "Building Android release APK for Firebase Distribution..."
-        ./gradlew clean assembleRelease --stacktrace
-
+    # Verify APK was built (similar to android-ci.yml)
+    - name: Verify Release APK
+      run: |
         echo "=== Build Verification ==="
-        if [ -f "app/build/outputs/apk/release/app-release.apk" ]; then
-          APK_SIZE=$(du -h app/build/outputs/apk/release/app-release.apk | cut -f1)
+        if [ -f "android/app/build/outputs/apk/release/app-release.apk" ]; then
+          APK_SIZE=$(du -h android/app/build/outputs/apk/release/app-release.apk | cut -f1)
           echo "✅ Release APK built successfully (${APK_SIZE})"
           
           # Additional APK info
           echo "APK details:"
-          ls -lh app/build/outputs/apk/release/app-release.apk
+          ls -lh android/app/build/outputs/apk/release/app-release.apk
           
           # Verify APK is signed
-          if aapt dump badging app/build/outputs/apk/release/app-release.apk | grep -q "package:"; then
+          if aapt dump badging android/app/build/outputs/apk/release/app-release.apk | grep -q "package:"; then
             echo "✅ APK is properly signed and ready for distribution"
           else
             echo "⚠️  Warning: APK verification failed"
@@ -145,7 +126,7 @@ jobs:
         else
           echo "❌ Release APK not found"
           echo "Available files in outputs/apk/release/:"
-          ls -la app/build/outputs/apk/release/ || echo "Directory not found"
+          ls -la android/app/build/outputs/apk/release/ || echo "Directory not found"
           exit 1
         fi
 
